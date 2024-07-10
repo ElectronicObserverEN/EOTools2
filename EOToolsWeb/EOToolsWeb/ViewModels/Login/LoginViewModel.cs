@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -16,15 +15,21 @@ public partial class LoginViewModel : ObservableObject
     public string Username { get; set; } = "";
     public string Password { get; set; } = "";
 
+    public event EventHandler OnAfterLogin;
+
     [ObservableProperty]
     private string _loginMessage = "";
 
-    public LoginViewModel()
+    private HttpClient ClientApi { get; }
+
+    public LoginViewModel(HttpClient clientApi)
     {
         if (!File.Exists("Config.json"))
         {
             LoginMessage = "Config file error";
         }
+
+        ClientApi = clientApi;
     }
 
     [RelayCommand]
@@ -45,7 +50,13 @@ public partial class LoginViewModel : ObservableObject
 
             response.EnsureSuccessStatusCode();
 
+            string token = await response.Content.ReadAsStringAsync();
             LoginMessage = $"Success, token is {await response.Content.ReadAsStringAsync()}";
+
+            ClientApi.BaseAddress = new Uri(url);
+            ClientApi.DefaultRequestHeaders.Authorization = new("Basic", token);
+
+            OnAfterLogin.Invoke(this, null);
         }
         catch (HttpRequestException ex)
         {

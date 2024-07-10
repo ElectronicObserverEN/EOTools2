@@ -1,6 +1,7 @@
 ﻿using EOToolsWeb.Api.Models;
 using System.Security.Cryptography;
 using EOToolsWeb.Api.Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace EOToolsWeb.Api.Services;
 
@@ -43,6 +44,11 @@ public class UsersService(EoToolsDbContext db)
         await db.SaveChangesAsync();
 
         return con;
+    }
+
+    public async Task<UserConnection?> GetConnectionByToken(string token)
+    {
+        return await db.UserConnections.FirstOrDefaultAsync(c => c.Token == token);
     }
 
     public string GetPasswordHashed(string password)

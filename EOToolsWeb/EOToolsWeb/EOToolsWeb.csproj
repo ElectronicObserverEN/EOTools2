@@ -22,8 +22,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\EOToolsWeb.Shared\EOToolsWeb.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\Updates\UpdateManagerView.axaml.cs">
+      <DependentUpon>UpdateManagerView.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

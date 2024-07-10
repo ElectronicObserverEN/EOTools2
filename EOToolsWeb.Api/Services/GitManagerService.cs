@@ -4,22 +4,24 @@ namespace EOToolsWeb.Api.Services;
 
 public class GitManagerService(ConfigurationService configuration)
 {
-    private string FolderPath { get; set; } = "";
+    public string FolderPath { get; set; } = Path.Combine("Data", "DataRepo");
 
     private string Url => configuration.DataRepoUrl;
 
     public async Task Initialize()
     {
-        if (Directory.Exists(FolderPath))
+        /*if (Directory.Exists(FolderPath))
         {
             Directory.Delete(FolderPath, true);
-        }
+        }*/
 
-        string path = Path.Combine(FolderPath, "DataRepo");
+        await Process.Start(new ProcessStartInfo()
+        {
+            FileName = "git",
+            Arguments = $"clone {Url} {FolderPath}",
+        })!.WaitForExitAsync();
 
-        await ExecuteCommand($"clone {Url} {FolderPath}");
-
-        FolderPath = path;
+        await ExecuteCommand("pull");
     }
 
     private async Task ExecuteCommand(string command)

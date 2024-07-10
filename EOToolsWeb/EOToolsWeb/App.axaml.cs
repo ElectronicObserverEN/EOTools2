@@ -4,8 +4,10 @@ using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using EOToolsWeb.ViewModels;
 using EOToolsWeb.ViewModels.Login;
+using EOToolsWeb.ViewModels.Updates;
 using EOToolsWeb.Views;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net.Http;
 
 namespace EOToolsWeb
 {
@@ -26,6 +28,8 @@ namespace EOToolsWeb
             ServiceCollection collection = new();
             collection.AddTransient<MainViewModel>();
             collection.AddTransient<LoginViewModel>();
+            collection.AddTransient<UpdateManagerViewModel>();
+            collection.AddSingleton<HttpClient>();
 
             // Creates a ServiceProvider containing services from the provided IServiceCollection
             var services = collection.BuildServiceProvider();

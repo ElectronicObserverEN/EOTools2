@@ -1,8 +1,11 @@
 using EOToolsWeb.Api.Database;
 using EOToolsWeb.Api.Services;
+using EOToolsWeb.Api.Services.UpdateData;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,8 +44,9 @@ builder.Services.AddSwaggerGen(option =>
 
 builder.Services.AddScoped<UsersService>();
 
-builder.Services.AddAuthentication("")
-    .AddScheme<AuthenticationSchemeOptions, ApiLoginHandler>("ApiAuthentication", null);
+builder.Services.AddAuthentication("TokenAuthentication")
+    .AddScheme<AuthenticationSchemeOptions, ApiLoginHandler>("ApiAuthentication", null)
+    .AddScheme<AuthenticationSchemeOptions, ApiTokenHandler>("TokenAuthentication", null); 
 
 using EoToolsDbContext db = new();
 db.Database.Migrate();
@@ -51,6 +55,12 @@ builder.Services.AddDbContext<EoToolsDbContext>();
 
 builder.Services.AddSingleton<ConfigurationService>();
 builder.Services.AddSingleton<GitManagerService>();
+builder.Services.AddScoped<DatabaseSyncService>();
+builder.Services.AddSingleton(_ => new JsonSerializerOptions()
+{
+    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+    WriteIndented = true,
+});
 
 var app = builder.Build();
 
