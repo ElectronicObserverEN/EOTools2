@@ -1,27 +1,14 @@
 ﻿using System.Diagnostics;
 
-namespace EOToolsWeb.Api.Services;
+namespace EOToolsWeb.Api.Services.GitManager;
 
-public class GitManagerService(ConfigurationService configuration)
+public class GitManagerService : IGitManagerService
 {
     public string FolderPath { get; set; } = Path.Combine("Data", "DataRepo");
 
-    private string Url => configuration.DataRepoUrl;
-
     public async Task Initialize()
     {
-        /*if (Directory.Exists(FolderPath))
-        {
-            Directory.Delete(FolderPath, true);
-        }*/
-
-        await Process.Start(new ProcessStartInfo()
-        {
-            FileName = "git",
-            Arguments = $"clone {Url} {FolderPath}",
-        })!.WaitForExitAsync();
-
-        await ExecuteCommand("pull");
+        await Pull();
     }
 
     private async Task ExecuteCommand(string command)

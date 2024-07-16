@@ -1,9 +1,10 @@
 ﻿using EOToolsWeb.Api.Database;
+using EOToolsWeb.Api.Services.GitManager;
 using System.Text.Json;
 
 namespace EOToolsWeb.Api.Services.UpdateData;
 
-public class DatabaseSyncService(GitManagerService git, EoToolsDbContext db, JsonSerializerOptions options)
+public class DatabaseSyncService(IGitManagerService git, EoToolsDbContext db, JsonSerializerOptions options)
 {
     private EoToolsDbContext Database => db;
     private JsonSerializerOptions SerializationOptions => options;

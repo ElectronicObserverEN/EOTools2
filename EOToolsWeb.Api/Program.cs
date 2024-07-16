@@ -1,9 +1,11 @@
 using EOToolsWeb.Api.Database;
 using EOToolsWeb.Api.Services;
+using EOToolsWeb.Api.Services.GitManager;
 using EOToolsWeb.Api.Services.UpdateData;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using System.Runtime.InteropServices;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 
@@ -26,6 +28,15 @@ builder.Services.AddSwaggerGen(option =>
         Scheme = "Basic",
     });
 
+    option.AddSecurityDefinition("TokenAuthentication", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Basic",
+    });
+
     option.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -35,6 +46,21 @@ builder.Services.AddSwaggerGen(option =>
                 {
                     Type = ReferenceType.SecurityScheme,
                     Id = "ApiAuthentication"
+                }
+            },
+            new string[]{}
+        }
+    });
+
+    option.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "TokenAuthentication"
                 }
             },
             new string[]{}
@@ -53,9 +79,18 @@ db.Database.Migrate();
 
 builder.Services.AddDbContext<EoToolsDbContext>();
 
+if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+{
+    builder.Services.AddSingleton<IGitManagerService, GitManagerServiceLinux>();
+}
+else
+{
+    builder.Services.AddSingleton<IGitManagerService, GitManagerService>();
+}
+
 builder.Services.AddSingleton<ConfigurationService>();
-builder.Services.AddSingleton<GitManagerService>();
-builder.Services.AddScoped<DatabaseSyncService>();
+builder.Services.AddScoped<DatabaseSyncService>(); 
+builder.Services.AddScoped<UpdateMaintenanceDataService>();
 builder.Services.AddSingleton(_ => new JsonSerializerOptions()
 {
     Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
@@ -65,7 +100,7 @@ builder.Services.AddSingleton(_ => new JsonSerializerOptions()
 var app = builder.Build();
 
 await app.Services.GetRequiredService<ConfigurationService>().Initialize();
-await app.Services.GetRequiredService<GitManagerService>().Initialize();
+await app.Services.GetRequiredService<IGitManagerService>().Initialize();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -9,12 +9,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EOToolsWeb.Api", "EOToolsWe
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5A606754-7F70-4A64-8414-A2A0505E5B57}"
 	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
 		.gitignore = .gitignore
+		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EOToolsWeb.Desktop", "EOToolsWeb\EOToolsWeb.Desktop\EOToolsWeb.Desktop.csproj", "{8F0EF9EA-3CED-42F2-BA6F-2AAD1BFF343B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EOToolsWeb.Shared", "EOToolsWeb.Shared\EOToolsWeb.Shared.csproj", "{9D6B5B53-1779-4276-97F8-6A794EFAEB71}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EOToolsWeb.Shared", "EOToolsWeb.Shared\EOToolsWeb.Shared.csproj", "{9D6B5B53-1779-4276-97F8-6A794EFAEB71}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,9 +43,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{9D6B5B53-1779-4276-97F8-6A794EFAEB71} = {5A606754-7F70-4A64-8414-A2A0505E5B57}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B589B7A9-396F-4B3C-BBA0-097E48C6D792}

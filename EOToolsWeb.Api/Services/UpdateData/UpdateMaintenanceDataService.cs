@@ -1,5 +1,6 @@
 ﻿using EOToolsWeb.Api.Database;
 using EOToolsWeb.Api.Models.UpdateData;
+using EOToolsWeb.Api.Services.GitManager;
 using EOToolsWeb.Shared;
 using EOToolsWeb.Shared.Events;
 using EOToolsWeb.Shared.Updates;
@@ -7,9 +8,9 @@ using System.Text.Json;
 
 namespace EOToolsWeb.Api.Services.UpdateData;
 
-public class UpdateMaintenanceDataService(GitManagerService git, EoToolsDbContext db, DatabaseSyncService dbSync, JsonSerializerOptions options)
+public class UpdateMaintenanceDataService(IGitManagerService git, EoToolsDbContext db, DatabaseSyncService dbSync, JsonSerializerOptions options)
 {
-    private GitManagerService GitManager => git;
+    private IGitManagerService GitManager => git;
     private DatabaseSyncService DatabaseSync => dbSync;
     private EoToolsDbContext Database => db;
     private JsonSerializerOptions SerializationOptions => options;

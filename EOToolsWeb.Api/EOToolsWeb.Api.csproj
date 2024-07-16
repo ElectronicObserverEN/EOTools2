@@ -32,4 +32,13 @@
     <ProjectReference Include="..\EOToolsWeb.Shared\EOToolsWeb.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Data\pull.sh">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\push.sh">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

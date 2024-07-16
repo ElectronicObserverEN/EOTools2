@@ -9,6 +9,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["EOToolsWeb.Api/EOToolsWeb.Api.csproj", "EOToolsWeb.Api/"]
+COPY ["EOToolsWeb.Shared/EOToolsWeb.Shared.csproj", "EOToolsWeb.Shared/"]
 RUN dotnet restore "./EOToolsWeb.Api/EOToolsWeb.Api.csproj"
 COPY . .
 WORKDIR "/src/EOToolsWeb.Api"
