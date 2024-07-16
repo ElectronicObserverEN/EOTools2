@@ -9,6 +9,7 @@ namespace EOToolsWeb.Views;
 public partial class MainWindow : Window
 {
     private LoginViewModel? LoginViewModel => DataContext is MainViewModel vm ? vm.Login : null;
+    private MainViewModel? MainViewModel => DataContext is MainViewModel vm ? vm : null;
 
     public MainWindow()
     {
@@ -19,7 +20,7 @@ public partial class MainWindow : Window
     {
         base.OnOpened(e);
 
-        if (LoginViewModel is null)
+        if (LoginViewModel is null || MainViewModel is null)
         {
             Close();
             return;
@@ -32,5 +33,14 @@ public partial class MainWindow : Window
             Close();
             return;
         }
+
+        MainViewModel.PropertyChanged += MainViewModel_PropertyChanged;
+    }
+
+    private void MainViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is not nameof(MainViewModel.CurrentViewModel)) return;
+
+        MainContent.Content = new ViewLocator().Build(MainViewModel?.CurrentViewModel);
     }
 }

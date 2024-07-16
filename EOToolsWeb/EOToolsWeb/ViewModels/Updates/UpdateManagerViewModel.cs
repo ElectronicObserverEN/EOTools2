@@ -8,7 +8,7 @@ using System.Net.Http.Json;
 
 namespace EOToolsWeb.ViewModels.Updates;
 
-public partial class UpdateManagerViewModel
+public partial class UpdateManagerViewModel : ViewModelBase
 {
     public ObservableCollection<UpdateViewModel> UpdateListSorted { get; set; } = new();
     public List<UpdateViewModel> UpdateList { get; set; } = [];

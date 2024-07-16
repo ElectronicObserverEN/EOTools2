@@ -12,12 +12,19 @@ namespace EOToolsWeb
             if (data is null)
                 return null;
 
+            if (!Match(data))
+            {
+                return new TextBlock { Text = "Data doesn't herit from ViewModelBase" };
+            }
+
             var name = data.GetType().FullName!.Replace("ViewModel", "View", StringComparison.Ordinal);
             var type = Type.GetType(name);
 
             if (type != null)
             {
-                return (Control)Activator.CreateInstance(type)!;
+                Control ctrl = (Control)Activator.CreateInstance(type)!;
+                ctrl.DataContext = data;
+                return ctrl;
             }
 
             return new TextBlock { Text = "Not Found: " + name };
