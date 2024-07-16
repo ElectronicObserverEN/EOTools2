@@ -20,7 +20,6 @@
 	</Design.DataContext>
 
 	<StackPanel>
-		<login:LoginView DataContext="{Binding Login}" />
 		<updates:UpdateManagerView DataContext="{Binding Updates}" />
 	</StackPanel>
 </UserControl>

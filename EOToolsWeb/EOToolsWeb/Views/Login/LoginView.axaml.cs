@@ -1,12 +1,16 @@
 ﻿using Avalonia.Controls;
+using EOToolsWeb.ViewModels.Login;
 
-namespace EOToolsWeb.Views.Login
+namespace EOToolsWeb.Views.Login;
+
+public partial class LoginView : Window
 {
-    public partial class LoginView : UserControl
+    public LoginView(LoginViewModel vm)
     {
-        public LoginView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+
+        DataContext = vm;
+
+        vm.OnAfterLogin += (_, _) => Close(true);
     }
 }

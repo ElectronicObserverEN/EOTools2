@@ -13,7 +13,7 @@ public class GitManagerServiceLinux : IGitManagerService
         await Pull();
     }
 
-    private async Task ExecuteCommand(string filename) => await ExecuteCommand(filename);
+    private async Task ExecuteCommand(string filename) => await ExecuteCommand(filename, "");
 
     private async Task ExecuteCommand(string filename, string args)
     {

@@ -15,7 +15,7 @@ public partial class LoginViewModel : ObservableObject
     public string Username { get; set; } = "";
     public string Password { get; set; } = "";
 
-    public event EventHandler OnAfterLogin;
+    public event EventHandler? OnAfterLogin;
 
     [ObservableProperty]
     private string _loginMessage = "";
@@ -51,12 +51,12 @@ public partial class LoginViewModel : ObservableObject
             response.EnsureSuccessStatusCode();
 
             string token = await response.Content.ReadAsStringAsync();
-            LoginMessage = $"Success, token is {await response.Content.ReadAsStringAsync()}";
+            LoginMessage = "";
 
             ClientApi.BaseAddress = new Uri(url);
             ClientApi.DefaultRequestHeaders.Authorization = new("Basic", token);
 
-            OnAfterLogin.Invoke(this, null);
+            OnAfterLogin?.Invoke(this, null);
         }
         catch (HttpRequestException ex)
         {
