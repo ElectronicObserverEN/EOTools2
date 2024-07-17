@@ -48,10 +48,10 @@ public class EventController(EoToolsDbContext db) : ControllerBase
         return Ok(eventModel);
     }
 
-    [HttpDelete]
-    public async Task<IActionResult> DeleteUpdate(EventModel eventModel)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteUpdate(int id)
     {
-        EventModel? actualEvent = await Database.Events.FindAsync(eventModel.Id);
+        EventModel? actualEvent = await Database.Events.FindAsync(id);
 
         if (actualEvent is null)
         {

@@ -64,10 +64,10 @@ public class UpdateController(EoToolsDbContext db, UpdateMaintenanceDataService 
         return Ok(update);
     }
 
-    [HttpDelete]
-    public async Task<IActionResult> DeleteUpdate(UpdateModel update)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteUpdate(int id)
     {
-        UpdateModel? actualUpdate = await Database.Updates.FindAsync(update.Id);
+        UpdateModel? actualUpdate = await Database.Updates.FindAsync(id);
 
         if (actualUpdate is null)
         {

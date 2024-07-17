@@ -1,33 +1,29 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using EOToolsWeb.Shared.Updates;
+using ReactiveUI;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
 
 namespace EOToolsWeb.ViewModels.Updates;
 
-public partial class UpdateManagerViewModel : ViewModelBase
+public partial class UpdateManagerViewModel(HttpClient client) : ViewModelBase
 {
-    public ObservableCollection<UpdateViewModel> UpdateListSorted { get; set; } = new();
-    public List<UpdateViewModel> UpdateList { get; set; } = [];
+    public ObservableCollection<UpdateModel> UpdateListSorted { get; set; } = new();
+    public List<UpdateModel> UpdateList { get; set; } = [];
 
-    private HttpClient HttpClient { get; }
+    public Interaction<UpdateViewModel, bool> ShowEditDialog { get; } = new();
 
-    public UpdateManagerViewModel(HttpClient client)
-    {
-        HttpClient = client;
-    }
+    private HttpClient HttpClient { get; } = client;
 
     public async void LoadAllUpdates()
     {
-        List<UpdateModel>? json = await HttpClient.GetFromJsonAsync<List<UpdateModel>>("Update");
-
-        UpdateList = new(json
-            .Select(update => new UpdateViewModel(update))
-            .ToList());
-
+        UpdateList = await HttpClient.GetFromJsonAsync<List<UpdateModel>>("Update") ?? [];
+        
         ReloadUpdateList();
     }
 
@@ -35,30 +31,43 @@ public partial class UpdateManagerViewModel : ViewModelBase
     {
         UpdateListSorted.Clear();
 
-        List<UpdateViewModel> updates = UpdateList.OrderByDescending(update => update.UpdateDate).ToList();
+        List<UpdateModel> updates = UpdateList.OrderByDescending(update => update.UpdateDate).ToList();
 
-        foreach (UpdateViewModel update in updates)
+        foreach (UpdateModel update in updates)
         {
             UpdateListSorted.Add(update);
         }
     }
 
     [RelayCommand]
-    public void AddUpdate()
+    private async Task AddUpdate()
+    {
+        UpdateModel model = new();
+        UpdateViewModel vm = new(model);
+
+        if (await ShowEditDialog.Handle(vm) is true)
+        {
+            vm.SaveChanges();
+
+            await HttpClient.PostAsJsonAsync("Update", vm.Model);
+
+            UpdateList.Add(vm.Model);
+            ReloadUpdateList();
+        }
+    }
+
+    [RelayCommand]
+    public void EditUpdate(UpdateModel vm)
     {
 
     }
 
-
     [RelayCommand]
-    public void EditUpdate(UpdateViewModel vm)
+    public async Task RemoveUpdate(UpdateModel vm)
     {
+        await HttpClient.DeleteAsync($"Update/{vm.Id}");
 
-    }
-
-    [RelayCommand]
-    public void RemoveUpdate(UpdateViewModel vm)
-    {
-
+        UpdateList.Remove(vm);
+        ReloadUpdateList();
     }
 }

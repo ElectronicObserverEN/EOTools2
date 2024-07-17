@@ -1,0 +1,133 @@
+<Window
+	x:Class="EOToolsWeb.Views.Updates.UpdateEditView"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:updates="clr-namespace:EOToolsWeb.ViewModels.Updates"
+	Title="Edit update data"
+	d:DesignHeight="450"
+	d:DesignWidth="800"
+	x:DataType="updates:UpdateViewModel"
+	SizeToContent="WidthAndHeight"
+	mc:Ignorable="d">
+	<Design.DataContext>
+		<!--
+			This only sets the DataContext for the previewer in an IDE,
+			to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
+		-->
+		<updates:UpdateViewModel />
+	</Design.DataContext>
+
+	<StackPanel Margin="5">
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="auto" />
+				<ColumnDefinition />
+			</Grid.ColumnDefinitions>
+
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*" />
+				<RowDefinition Height="*" />
+				<RowDefinition Height="*" />
+				<RowDefinition Height="*" />
+				<RowDefinition />
+			</Grid.RowDefinitions>
+
+			<TextBlock
+				Grid.Row="0"
+				Grid.Column="0"
+				Margin="5"
+				Text="Name" />
+
+			<TextBox
+				Grid.Row="0"
+				Grid.Column="1"
+				Margin="5"
+				Text="{Binding Name}" />
+
+			<TextBlock
+				Grid.Row="1"
+				Grid.Column="0"
+				Margin="5"
+				Text="Description" />
+
+			<TextBox
+				Grid.Row="1"
+				Grid.Column="1"
+				Height="100"
+				MinWidth="500"
+				Margin="5"
+				AcceptsReturn="True"
+				Text="{Binding Description}"
+				TextWrapping="Wrap" />
+
+			<TextBlock
+				Grid.Row="2"
+				Grid.Column="0"
+				Margin="5"
+				Text="Update start tweet" />
+
+			<TextBox
+				Grid.Row="2"
+				Grid.Column="1"
+				MinWidth="500"
+				Margin="5"
+				Text="{Binding StartTweet}" />
+
+			<TextBlock
+				Grid.Row="3"
+				Grid.Column="0"
+				Margin="5"
+				Text="Update end tweet" />
+
+			<TextBox
+				Grid.Row="3"
+				Grid.Column="1"
+				MinWidth="500"
+				Margin="5"
+				Text="{Binding EndTweet}" />
+
+			<TextBlock
+				Grid.Row="4"
+				Grid.Column="0"
+				Margin="5"
+				Text="Date" />
+
+			<StackPanel
+				Grid.Row="4"
+				Grid.Column="1"
+				Orientation="Horizontal">
+
+				<DatePicker Margin="5" SelectedDate="{Binding UpdateDate}" />
+
+				<TextBlock
+					Margin="5"
+					VerticalAlignment="Center"
+					Text="Start : " />
+				<TextBox Text="{Binding UpdateStartTime}" />
+
+				<TextBlock
+					Margin="5"
+					VerticalAlignment="Center"
+					Text="End : " />
+
+				<TextBox Text="{Binding UpdateEndTime}" />
+			</StackPanel>
+		</Grid>
+
+		<CheckBox Content="Was live update" IsChecked="{Binding WasLiveUpdate}" />
+
+		<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+			<Button
+				Margin="5"
+				Click="OnConfirmClick"
+				Content="Ok" />
+			<Button
+				Margin="5"
+				Click="OnCancelClick"
+				Content="Cancel" />
+		</StackPanel>
+	</StackPanel>
+
+</Window>

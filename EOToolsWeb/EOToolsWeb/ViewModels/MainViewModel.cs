@@ -23,5 +23,6 @@ public partial class MainViewModel : ViewModelBase
     private void OpenUpdates()
     {
         CurrentViewModel = Updates;
+        Updates.LoadAllUpdates();
     }
 }
