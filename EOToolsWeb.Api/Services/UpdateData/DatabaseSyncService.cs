@@ -13,7 +13,7 @@ public class DatabaseSyncService(IGitManagerService git, EoToolsDbContext db, Js
     private string EventsFilePath => Path.Combine(git.FolderPath, "Data", "Events.json");
     private string DataBaseRepoPath => Path.Combine(git.FolderPath, "Data", "Data.db");
 
-    public static string DataBaseLocalPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "EOTools", "EOTools.db");
+    public static string DataBaseLocalPath => Path.Combine("Data", "EOTools.db");
 
     public async Task StageDatabaseChangesToGit()
     {

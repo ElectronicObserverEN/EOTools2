@@ -30,6 +30,17 @@ public class UpdateController(EoToolsDbContext db, UpdateMaintenanceDataService 
             return NotFound();
         }
 
+        actualUpdate.Name = update.Name;
+        actualUpdate.Description = update.Description;
+        actualUpdate.WasLiveUpdate = update.WasLiveUpdate;
+
+        actualUpdate.UpdateDate = update.UpdateDate;
+        actualUpdate.UpdateStartTime = update.UpdateStartTime;
+        actualUpdate.UpdateEndTime = update.UpdateEndTime;
+
+        actualUpdate.EndTweetLink = update.EndTweetLink;
+        actualUpdate.StartTweetLink = update.StartTweetLink;
+
         Database.Updates.Update(actualUpdate);
         await Database.SaveChangesAsync();
 

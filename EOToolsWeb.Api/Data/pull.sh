@@ -1,2 +1,3 @@
-#!/usr/bin/env bash
-cd ./DataRepo/ && git pull
+#!/usr/bin/bash 
+echo "Pulling data repo"
+cd ./Data/DataRepo/ && git pull

@@ -1,2 +1,7 @@
-#!/usr/bin/env bash
-cd ./DataRepo/ && add -A && git pull && commit -m "$1"
+#!/usr/bin/bash 
+echo "Pushing data repo"
+cd ./Data/DataRepo/ 
+git add -A 
+git pull 
+git commit -m "$1"
+git push

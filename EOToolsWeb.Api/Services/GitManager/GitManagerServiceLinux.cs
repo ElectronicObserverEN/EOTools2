@@ -31,6 +31,6 @@ public class GitManagerServiceLinux : IGitManagerService
 
     public async Task Push(string commitMessage)
     {
-        await ExecuteCommand("push.sh", commitMessage);
+        await ExecuteCommand("push.sh", $"\"{commitMessage}\"");
     }
 }

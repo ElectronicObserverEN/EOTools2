@@ -28,6 +28,11 @@ public class EventController(EoToolsDbContext db) : ControllerBase
             return NotFound();
         }
 
+        actualEvent.StartOnUpdateId = eventModel.StartOnUpdateId;
+        actualEvent.EndOnUpdateId = eventModel.EndOnUpdateId;
+        actualEvent.ApiId = eventModel.ApiId;
+        actualEvent.Name = eventModel.Name;
+
         Database.Events.Update(actualEvent);
         await Database.SaveChangesAsync();
 
