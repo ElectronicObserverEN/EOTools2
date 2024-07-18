@@ -57,9 +57,34 @@ public partial class UpdateManagerViewModel(HttpClient client) : ViewModelBase
     }
 
     [RelayCommand]
-    public void EditUpdate(UpdateModel vm)
+    public async Task EditUpdate(UpdateModel vm)
     {
+        UpdateViewModel vmEdit = new(new()
+        {
+            Description = vm.Description,
+            Name = vm.Name,
+            UpdateDate = vm.UpdateDate,
+            WasLiveUpdate = vm.WasLiveUpdate,
+            UpdateStartTime = vm.UpdateStartTime,
+            UpdateEndTime = vm.UpdateEndTime,
 
+            EndTweetLink = vm.EndTweetLink,
+            StartTweetLink = vm.StartTweetLink,
+        });
+        
+        if (await ShowEditDialog.Handle(vmEdit) is true)
+        {
+            vm.Description = vmEdit.Description;
+            vm.Name = vmEdit.Name;
+            vm.UpdateDate = vmEdit.UpdateDate;
+            vm.WasLiveUpdate = vmEdit.WasLiveUpdate;
+            vm.UpdateStartTime = vmEdit.UpdateStartTime;
+            vm.UpdateEndTime = vmEdit.UpdateEndTime;
+            vm.EndTweetLink = vmEdit.EndTweet;
+            vm.StartTweetLink = vmEdit.StartTweet;
+
+            await HttpClient.PutAsJsonAsync("Update", vm);
+        }
     }
 
     [RelayCommand]

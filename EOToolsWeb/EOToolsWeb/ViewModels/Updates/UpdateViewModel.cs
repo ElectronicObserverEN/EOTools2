@@ -7,7 +7,7 @@ namespace EOToolsWeb.ViewModels.Updates;
 public partial class UpdateViewModel : ObservableObject
 {
     [ObservableProperty]
-    private DateTime? _updateDate = DateTime.Now;
+    private DateTimeOffset? _updateDate = DateTime.Now;
 
     [ObservableProperty]
     private TimeSpan? _updateStartTime = TimeSpan.Zero;

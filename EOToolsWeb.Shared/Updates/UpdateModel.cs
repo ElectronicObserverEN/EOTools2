@@ -8,7 +8,7 @@ public class UpdateModel
     public int Id { get; set; }
 
     [JsonPropertyName("start_date")]
-    public DateTime? UpdateDate { get; set; } = DateTime.Now;
+    public DateTimeOffset? UpdateDate { get; set; } = DateTime.Now;
 
     [JsonPropertyName("start_time")]
     public TimeSpan? UpdateStartTime { get; set; } = TimeSpan.Zero;
