@@ -8,6 +8,7 @@ using EOToolsWeb.ViewModels.Updates;
 using EOToolsWeb.Views;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http;
+using EOToolsWeb.ViewModels.Events;
 
 namespace EOToolsWeb
 {
@@ -28,7 +29,15 @@ namespace EOToolsWeb
             ServiceCollection collection = new();
             collection.AddTransient<MainViewModel>();
             collection.AddTransient<LoginViewModel>();
-            collection.AddTransient<UpdateManagerViewModel>();
+
+            // Updates
+            collection.AddScoped<UpdateManagerViewModel>();
+            collection.AddScoped<UpdateListViewModel>();
+
+            // Events
+            collection.AddScoped<EventViewModel>();
+            collection.AddScoped<EventManagerViewModel>();
+
             collection.AddSingleton<HttpClient>();
 
             // Creates a ServiceProvider containing services from the provided IServiceCollection

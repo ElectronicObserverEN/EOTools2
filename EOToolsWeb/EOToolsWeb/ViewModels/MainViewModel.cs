@@ -1,28 +1,36 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using EOToolsWeb.ViewModels.Events;
 using EOToolsWeb.ViewModels.Login;
 using EOToolsWeb.ViewModels.Updates;
 
 namespace EOToolsWeb.ViewModels;
 
-public partial class MainViewModel : ViewModelBase
+public partial class MainViewModel(LoginViewModel login, UpdateManagerViewModel updates, EventManagerViewModel events, UpdateListViewModel updateList, EventViewModel eventViewModel) : ViewModelBase
 {
-    public LoginViewModel Login { get; }
-    public UpdateManagerViewModel Updates { get; }
+    public LoginViewModel Login { get; } = login;
+
+    public UpdateManagerViewModel Updates { get; } = updates;
+    public UpdateListViewModel UpdateList { get; } = updateList;
+
+    public EventManagerViewModel Events { get; } = events;
+    public EventViewModel EventViewModel { get; } = eventViewModel;
 
     [ObservableProperty]
     private ViewModelBase? _currentViewModel;
 
-    public MainViewModel(LoginViewModel login, UpdateManagerViewModel updates)
+    [RelayCommand]
+    private async Task OpenUpdates()
     {
-        Login = login;
-        Updates = updates;
+        CurrentViewModel = Updates;
+        await Updates.LoadAllUpdates();
     }
 
     [RelayCommand]
-    private void OpenUpdates()
+    private async Task OpenEvents()
     {
-        CurrentViewModel = Updates;
-        Updates.LoadAllUpdates();
+        CurrentViewModel = Events;
+        await Events.LoadAllEvents();
     }
 }

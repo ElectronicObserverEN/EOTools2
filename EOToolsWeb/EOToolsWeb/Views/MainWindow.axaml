@@ -7,7 +7,7 @@
 	xmlns:reactiveUi="http://reactiveui.net"
 	xmlns:views="clr-namespace:EOToolsWeb.Views"
 	xmlns:vm="using:EOToolsWeb.ViewModels"
-	Title="EOToolsWeb"
+	Title="Electronic Observer EN Tools"
 	d:DesignHeight="450"
 	d:DesignWidth="800"
 	x:DataType="vm:MainViewModel"
@@ -21,7 +21,7 @@
 		</Grid.RowDefinitions>
 
 		<Menu>
-			<MenuItem Header="Events" />
+			<MenuItem Command="{Binding OpenEventsCommand}" Header="Events" />
 			<MenuItem Command="{Binding OpenUpdatesCommand}" Header="Updates" />
 		</Menu>
 

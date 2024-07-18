@@ -7,6 +7,9 @@ using EOToolsWeb.Views.Updates;
 using Avalonia.ReactiveUI;
 using ReactiveUI;
 using System.Threading.Tasks;
+using EOToolsWeb.Shared.Updates;
+using EOToolsWeb.ViewModels.Events;
+using EOToolsWeb.Views.Events;
 
 namespace EOToolsWeb.Views;
 
@@ -18,7 +21,9 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
     public MainWindow()
     {
         InitializeComponent();
-        this.WhenActivated(d => d(ViewModel!.Updates.ShowEditDialog.RegisterHandler(DoShowUpdateEditDialogAsync)));
+        this.WhenActivated(d => d(ViewModel!.Updates.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
+        this.WhenActivated(d => d(ViewModel!.EventViewModel.ShowUpdatePickerDialog.RegisterHandler(DoShowPickerDialogAsync)));
+        this.WhenActivated(d => d(ViewModel!.Events.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
     }
 
     protected override async void OnOpened(EventArgs e)
@@ -49,12 +54,34 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         MainContent.Content = new ViewLocator().Build(MainViewModel?.CurrentViewModel);
     }
 
-    private async Task DoShowUpdateEditDialogAsync(IInteractionContext<UpdateViewModel, bool> interaction)
+    private async Task DoShowEditDialogAsync(IInteractionContext<UpdateViewModel, bool> interaction)
     {
         UpdateEditView dialog = new();
         dialog.DataContext = interaction.Input;
 
         bool result = await dialog.ShowDialog<bool?>(this) is true;
+        interaction.SetOutput(result);
+    }
+
+    private async Task DoShowEditDialogAsync(IInteractionContext<EventViewModel, bool> interaction)
+    {
+        EventEditView dialog = new();
+        dialog.DataContext = interaction.Input;
+
+        bool result = await dialog.ShowDialog<bool?>(this) is true;
+        interaction.SetOutput(result);
+    }
+
+    private async Task DoShowPickerDialogAsync(IInteractionContext<object?, UpdateModel?> interaction)
+    {
+        if (MainViewModel?.UpdateList is null) return;
+
+        await MainViewModel.UpdateList.Initialize();
+
+        UpdateListView dialog = new();
+        dialog.DataContext = MainViewModel.UpdateList;
+
+        UpdateModel? result = await dialog.ShowDialog<UpdateModel?>(this);
         interaction.SetOutput(result);
     }
 }

@@ -1,5 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using DynamicData;
+using EOToolsWeb.Shared.Events;
 using EOToolsWeb.Shared.Updates;
+using EOToolsWeb.ViewModels.Events;
 using ReactiveUI;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -20,8 +23,10 @@ public partial class UpdateManagerViewModel(HttpClient client) : ViewModelBase
 
     private HttpClient HttpClient { get; } = client;
 
-    public async void LoadAllUpdates()
+    public async Task LoadAllUpdates()
     {
+        if (UpdateList.Count > 0) return;
+
         UpdateList = await HttpClient.GetFromJsonAsync<List<UpdateModel>>("Update") ?? [];
         
         ReloadUpdateList();
@@ -49,10 +54,18 @@ public partial class UpdateManagerViewModel(HttpClient client) : ViewModelBase
         {
             vm.SaveChanges();
 
-            await HttpClient.PostAsJsonAsync("Update", vm.Model);
+            HttpResponseMessage response = await HttpClient.PostAsJsonAsync("Update", model);
 
-            UpdateList.Add(vm.Model);
-            ReloadUpdateList();
+            response.EnsureSuccessStatusCode();
+
+            UpdateModel? postedModel = await response.Content.ReadFromJsonAsync<UpdateModel>();
+
+            if (postedModel is not null)
+            {
+                UpdateList.Add(postedModel);
+
+                ReloadUpdateList();
+            }
         }
     }
 
@@ -94,5 +107,11 @@ public partial class UpdateManagerViewModel(HttpClient client) : ViewModelBase
 
         UpdateList.Remove(vm);
         ReloadUpdateList();
+    }
+
+    [RelayCommand]
+    public async Task UpdateUpdate()
+    {
+        await HttpClient.PutAsync("Update/pushUpdate", null);
     }
 }

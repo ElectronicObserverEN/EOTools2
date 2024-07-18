@@ -19,12 +19,16 @@
 	</Design.DataContext>
 
 	<ScrollViewer>
-		<StackPanel>
+		<Grid RowDefinitions="Auto, *">
 			<StackPanel Margin="5" Orientation="Horizontal">
 				<Button Command="{Binding AddUpdateCommand}" Content="Add" />
+				<Button Command="{Binding UpdateUpdateCommand}" Content="Update maintenance data" />
 			</StackPanel>
 
-			<ListBox Margin="5" ItemsSource="{Binding UpdateListSorted}">
+			<ListBox
+				Grid.Row="1"
+				Margin="5"
+				ItemsSource="{Binding UpdateListSorted}">
 				<ListBox.ItemTemplate>
 					<DataTemplate>
 						<StackPanel Orientation="Horizontal">
@@ -52,6 +56,6 @@
 					</DataTemplate>
 				</ListBox.ItemTemplate>
 			</ListBox>
-		</StackPanel>
+		</Grid>
 	</ScrollViewer>
 </UserControl>

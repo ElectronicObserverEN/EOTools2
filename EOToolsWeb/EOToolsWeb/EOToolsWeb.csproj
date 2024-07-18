@@ -33,6 +33,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\Events\EventManagerView.axaml.cs">
+      <DependentUpon>EventManagerView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Updates\UpdateManagerView.axaml.cs">
       <DependentUpon>UpdateManagerView.axaml</DependentUpon>
     </Compile>

@@ -1,0 +1,50 @@
+<UserControl
+	x:Class="EOToolsWeb.Views.Events.EventManagerView"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:events="clr-namespace:EOToolsWeb.ViewModels.Events"
+	xmlns:events1="clr-namespace:EOToolsWeb.Views.Events"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	d:DesignHeight="450"
+	d:DesignWidth="800"
+	x:DataType="events:EventManagerViewModel"
+	mc:Ignorable="d">
+
+	<ScrollViewer>
+		<StackPanel>
+			<StackPanel Margin="5" Orientation="Horizontal">
+				<Button Command="{Binding AddEventCommand}" Content="Add" />
+			</StackPanel>
+
+			<DataGrid
+				Margin="5"
+				AutoGenerateColumns="False"
+				ItemsSource="{Binding EventListSorted}">
+
+				<DataGrid.Columns>
+					<DataGridTemplateColumn Header="Actions">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate>
+								<StackPanel Orientation="Horizontal">
+									<Button
+										Command="{Binding ViewModel.RemoveEventCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=events1:EventManagerView}}"
+										CommandParameter="{Binding}"
+										Content="Delete" />
+									<Button
+										Margin="5,0,5,0"
+										Command="{Binding ViewModel.EditEventCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=events1:EventManagerView}}"
+										CommandParameter="{Binding}"
+										Content="Edit" />
+								</StackPanel>
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
+
+					<DataGridTextColumn Binding="{Binding Name}" Header="Name" />
+					<DataGridTextColumn Binding="{Binding ApiId}" Header="API Id" />
+				</DataGrid.Columns>
+			</DataGrid>
+		</StackPanel>
+	</ScrollViewer>
+</UserControl>
