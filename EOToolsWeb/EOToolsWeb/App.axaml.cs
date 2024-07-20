@@ -28,7 +28,6 @@ namespace EOToolsWeb
             // Register all the services needed for the application to run
             ServiceCollection collection = new();
             collection.AddTransient<MainViewModel>();
-            collection.AddTransient<LoginViewModel>();
 
             // Updates
             collection.AddScoped<UpdateManagerViewModel>();
@@ -39,6 +38,15 @@ namespace EOToolsWeb
             collection.AddScoped<EventManagerViewModel>();
 
             collection.AddSingleton<HttpClient>();
+
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime)
+            {
+                collection.AddTransient<ILoginViewModel, LoginViewModel>();
+            }
+            else if (ApplicationLifetime is ISingleViewApplicationLifetime)
+            {
+                collection.AddTransient<ILoginViewModel, LoginBrowserViewModel>();
+            }
 
             // Creates a ServiceProvider containing services from the provided IServiceCollection
             var services = collection.BuildServiceProvider();

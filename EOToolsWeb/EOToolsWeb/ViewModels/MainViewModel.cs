@@ -7,9 +7,9 @@ using EOToolsWeb.ViewModels.Updates;
 
 namespace EOToolsWeb.ViewModels;
 
-public partial class MainViewModel(LoginViewModel login, UpdateManagerViewModel updates, EventManagerViewModel events, UpdateListViewModel updateList, EventViewModel eventViewModel) : ViewModelBase
+public partial class MainViewModel(ILoginViewModel login, UpdateManagerViewModel updates, EventManagerViewModel events, UpdateListViewModel updateList, EventViewModel eventViewModel) : ViewModelBase
 {
-    public LoginViewModel Login { get; } = login;
+    public ILoginViewModel Login { get; } = login;
 
     public UpdateManagerViewModel Updates { get; } = updates;
     public UpdateListViewModel UpdateList { get; } = updateList;
@@ -18,7 +18,7 @@ public partial class MainViewModel(LoginViewModel login, UpdateManagerViewModel 
     public EventViewModel EventViewModel { get; } = eventViewModel;
 
     [ObservableProperty]
-    private ViewModelBase? _currentViewModel;
+    private IViewModelBase? _currentViewModel;
 
     [RelayCommand]
     private async Task OpenUpdates()

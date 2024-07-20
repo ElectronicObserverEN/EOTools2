@@ -16,8 +16,8 @@ namespace EOToolsWeb
             {
                 return new TextBlock { Text = "Data doesn't herit from ViewModelBase" };
             }
-
-            var name = data.GetType().FullName!.Replace("ViewModel", "View", StringComparison.Ordinal);
+            var name = data.GetType().FullName!.Replace("BrowserViewModel", "View", StringComparison.Ordinal);
+            name = name.Replace("ViewModel", "View", StringComparison.Ordinal);
             var type = Type.GetType(name);
 
             if (type != null)

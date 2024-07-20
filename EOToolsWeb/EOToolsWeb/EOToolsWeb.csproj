@@ -27,14 +27,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Config.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Update="Views\Events\EventManagerView.axaml.cs">
       <DependentUpon>EventManagerView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Login\LoginWindow.axaml.cs">
+      <DependentUpon>LoginWindow.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\Updates\UpdateManagerView.axaml.cs">
       <DependentUpon>UpdateManagerView.axaml</DependentUpon>

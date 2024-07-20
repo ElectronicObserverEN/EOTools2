@@ -15,7 +15,7 @@ namespace EOToolsWeb.Views;
 
 public partial class MainWindow : ReactiveWindow<MainViewModel>
 {
-    private LoginViewModel? LoginViewModel => DataContext is MainViewModel vm ? vm.Login : null;
+    private ILoginViewModel? LoginViewModel => DataContext is MainViewModel vm ? vm.Login : null;
     private MainViewModel? MainViewModel => ViewModel;
 
     public MainWindow()
@@ -36,7 +36,10 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
             return;
         }
 
-        LoginView login = new(LoginViewModel);
+        LoginWindow login = new()
+        {
+            DataContext = LoginViewModel,
+        };
 
         if (await login.ShowDialog<bool?>(this) is not true)
         {
