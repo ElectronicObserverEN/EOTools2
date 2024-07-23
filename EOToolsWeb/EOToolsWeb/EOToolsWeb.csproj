@@ -40,6 +40,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\Equipments\EquipmentEditView.axaml.cs">
+      <DependentUpon>EquipmentEditView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Equipments\EquipmentManagerView.axaml.cs">
+      <DependentUpon>EquipmentManagerView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Events\EventManagerView.axaml.cs">
       <DependentUpon>EventManagerView.axaml</DependentUpon>
     </Compile>
@@ -64,6 +70,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ViewModels\Equipments\" />
+    <Folder Include="ViewModels\EquipmentUpgrades\" />
   </ItemGroup>
 </Project>

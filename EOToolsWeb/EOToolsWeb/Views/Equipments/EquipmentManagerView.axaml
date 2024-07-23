@@ -1,0 +1,90 @@
+<UserControl
+	x:Class="EOToolsWeb.Views.Equipments.EquipmentManagerView"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:equipments="clr-namespace:EOToolsWeb.ViewModels.Equipments"
+	xmlns:equipments1="clr-namespace:EOToolsWeb.Views.Equipments"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	d:DesignHeight="450"
+	d:DesignWidth="800"
+	x:DataType="equipments:EquipmentManagerViewModel"
+	mc:Ignorable="d">
+	<Design.DataContext>
+		<!--
+			This only sets the DataContext for the previewer in an IDE,
+			to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
+		-->
+		<equipments:EquipmentManagerViewModel />
+	</Design.DataContext>
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+
+
+		<StackPanel Grid.Row="0" Orientation="Vertical">
+			<StackPanel Grid.Row="0" Orientation="Horizontal">
+				<Button Command="{Binding AddNewEquipmentCommand}" Content="Add" />
+				<TextBox
+					Width="500"
+					Margin="5,0"
+					Text="{Binding Filter}" />
+			</StackPanel>
+
+			<StackPanel Grid.Row="0" Orientation="Horizontal">
+				<Button
+					Margin="5"
+					Command="{Binding UpdateTranslationsCommand}"
+					Content="Update translations" />
+				<Button
+					Margin="5"
+					Command="{Binding UpdateUpgradesCommand}"
+					Content="Update upgrades" />
+
+				<Button
+					Margin="5"
+					Command="{Binding OpenEquipmentUpgradeCheckerCommand}"
+					Content="Check upgrade data" />
+
+				<Button
+					Margin="5"
+					Command="{Binding UpdateFitBonusCommand}"
+					Content="Update fit bonuses" />
+			</StackPanel>
+		</StackPanel>
+
+		<DataGrid
+			Grid.Row="1"
+			AutoGenerateColumns="False"
+			IsReadOnly="True"
+			ItemsSource="{Binding EquipmentList}">
+			<DataGrid.Columns>
+
+				<DataGridTemplateColumn>
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<StackPanel Orientation="Horizontal">
+								<Button
+									Command="{Binding ViewModel.RemoveEquipmentCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=equipments1:EquipmentManagerView}}"
+									CommandParameter="{Binding}"
+									Content="Delete" />
+								<Button
+									Margin="5,0,5,0"
+									Command="{Binding ViewModel.EditEquipmentCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=equipments1:EquipmentManagerView}}"
+									CommandParameter="{Binding}"
+									Content="Edit" />
+							</StackPanel>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+
+				<DataGridTextColumn Binding="{Binding ApiId}" Header="Id" />
+				<DataGridTextColumn Binding="{Binding NameEN}" Header="Equipment" />
+				<DataGridTextColumn Binding="{Binding NameJP}" Header="Equipment JP" />
+			</DataGrid.Columns>
+		</DataGrid>
+	</Grid>
+</UserControl>

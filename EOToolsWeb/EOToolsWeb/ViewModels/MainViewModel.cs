@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using EOToolsWeb.ViewModels.Equipments;
 using EOToolsWeb.ViewModels.Events;
 using EOToolsWeb.ViewModels.Login;
 using EOToolsWeb.ViewModels.Ships;
@@ -8,7 +9,17 @@ using EOToolsWeb.ViewModels.Updates;
 
 namespace EOToolsWeb.ViewModels;
 
-public partial class MainViewModel(LoginViewModel login, UpdateManagerViewModel updates, EventManagerViewModel events, UpdateListViewModel updateList, EventViewModel eventViewModel, ShipClassManagerViewModel shipClassManager, ShipManagerViewModel shipManager, ShipClassListViewModel shipClassList) : ViewModelBase
+public partial class MainViewModel(
+    LoginViewModel login, 
+    UpdateManagerViewModel updates, 
+    EventManagerViewModel events, 
+    UpdateListViewModel updateList, 
+    EventViewModel eventViewModel, 
+    ShipClassManagerViewModel shipClassManager, 
+    ShipManagerViewModel shipManager, 
+    ShipClassListViewModel shipClassList, 
+    EquipmentManagerViewModel equipmentManager
+) : ViewModelBase
 {
     public LoginViewModel Login { get; } = login;
 
@@ -22,6 +33,8 @@ public partial class MainViewModel(LoginViewModel login, UpdateManagerViewModel 
     public ShipClassListViewModel ShipClassList { get; } = shipClassList;
 
     public ShipManagerViewModel ShipManager { get; } = shipManager;
+
+    public EquipmentManagerViewModel EquipmentManager { get; } = equipmentManager;
 
     [ObservableProperty]
     private ViewModelBase? _currentViewModel;
@@ -52,5 +65,12 @@ public partial class MainViewModel(LoginViewModel login, UpdateManagerViewModel 
     {
         CurrentViewModel = ShipManager;
         await ShipManager.LoadAllShips();
+    }
+
+    [RelayCommand]
+    private async Task OpenEquipments()
+    {
+        CurrentViewModel = EquipmentManager;
+        await EquipmentManager.LoadAllEquipments();
     }
 }

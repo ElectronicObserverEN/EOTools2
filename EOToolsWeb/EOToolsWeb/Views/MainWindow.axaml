@@ -24,6 +24,7 @@
 			<MenuItem Command="{Binding OpenUpdatesCommand}" Header="Updates" />
 			<MenuItem Command="{Binding OpenShipClassesCommand}" Header="Ship classes" />
 			<MenuItem Command="{Binding OpenShipsCommand}" Header="Ships" />
+			<MenuItem Command="{Binding OpenEquipmentsCommand}" Header="Equipments" />
 		</Menu>
 
 		<ContentPresenter x:Name="MainContent" Grid.Row="1" />

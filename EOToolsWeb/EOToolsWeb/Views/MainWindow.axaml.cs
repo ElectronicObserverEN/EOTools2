@@ -9,8 +9,10 @@ using ReactiveUI;
 using System.Threading.Tasks;
 using EOToolsWeb.Shared.Ships;
 using EOToolsWeb.Shared.Updates;
+using EOToolsWeb.ViewModels.Equipments;
 using EOToolsWeb.ViewModels.Events;
 using EOToolsWeb.ViewModels.Ships;
+using EOToolsWeb.Views.Equipments;
 using EOToolsWeb.Views.Events;
 using EOToolsWeb.Views.Ships;
 
@@ -25,11 +27,16 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
     {
         InitializeComponent();
         this.WhenActivated(d => d(ViewModel!.Updates.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
+
         this.WhenActivated(d => d(ViewModel!.EventViewModel.ShowUpdatePickerDialog.RegisterHandler(DoShowPickerDialogAsync)));
         this.WhenActivated(d => d(ViewModel!.Events.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
+
         this.WhenActivated(d => d(ViewModel!.ShipClassManager.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
         this.WhenActivated(d => d(ViewModel!.ShipClassManager.ShowPicker.RegisterHandler(DoShowPickerDialogAsync)));
+
         this.WhenActivated(d => d(ViewModel!.ShipManager.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
+
+        this.WhenActivated(d => d(ViewModel!.EquipmentManager.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
     }
 
     protected override async void OnOpened(EventArgs e)
@@ -116,6 +123,15 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
     private async Task DoShowEditDialogAsync(IInteractionContext<ShipViewModel, bool> interaction)
     {
         ShipEditView dialog = new();
+        dialog.DataContext = interaction.Input;
+
+        bool result = await dialog.ShowDialog<bool?>(this) is true;
+        interaction.SetOutput(result);
+    }
+
+    private async Task DoShowEditDialogAsync(IInteractionContext<EquipmentViewModel, bool> interaction)
+    {
+        EquipmentEditView dialog = new();
         dialog.DataContext = interaction.Input;
 
         bool result = await dialog.ShowDialog<bool?>(this) is true;
