@@ -92,6 +92,7 @@ builder.Services.AddSingleton<ConfigurationService>();
 builder.Services.AddScoped<DatabaseSyncService>(); 
 builder.Services.AddScoped<UpdateMaintenanceDataService>();
 builder.Services.AddScoped<UpdateShipDataService>();
+builder.Services.AddScoped<UpdateEquipmentDataService>();
 builder.Services.AddSingleton(_ => new JsonSerializerOptions()
 {
     Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
