@@ -1,0 +1,27 @@
+<Window
+	x:Class="EoToolsWeb.Updater.MainWindow"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:updater="clr-namespace:EoToolsWeb.Updater"
+	Title="Electronic Observer Tools Updater"
+	Width="500"
+	Height="100"
+	d:DesignHeight="100"
+	d:DesignWidth="300"
+	x:DataType="updater:UpdaterViewModel"
+	mc:Ignorable="d">
+	<StackPanel>
+		<TextBlock>
+			<Run Text="Current version : " /><Run Text="{Binding CurrentVersion}" />
+		</TextBlock>
+
+		<TextBlock>
+			<Run Text="Latest version : " /><Run Text="{Binding LatestVersion}" />
+		</TextBlock>
+
+		<TextBlock Text="{Binding UpdateText}" />
+		<Button Command="{Binding CopyErrorCommand}" Content="Copy error message" />
+	</StackPanel>
+</Window>

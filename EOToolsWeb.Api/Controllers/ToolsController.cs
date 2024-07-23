@@ -9,16 +9,17 @@ public class ToolsController(ConfigurationService config) : ControllerBase
 {
     private ConfigurationService ConfigurationService { get; } = config;
 
-    [HttpGet("GetUpdate")]
-    public async Task<IActionResult> GetUpdate(string userVersion)
+    [HttpGet("GetVersion")]
+    public async Task<IActionResult> GetVersion()
     {
         string latestVersionString = await ConfigurationService.GetSoftwareVersion();
 
-        if (latestVersionString != userVersion)
-        {
-            return File(System.IO.File.OpenRead(Path.Combine("Assets", "EOTools.zip")), "application/zip");
-        }
+        return Ok(latestVersionString);
+    }
 
-        return Ok();
+    [HttpGet("GetUpdate")]
+    public IActionResult GetUpdate()
+    {
+        return File(System.IO.File.OpenRead(Path.Combine("Assets", "EOTools.zip")), "application/zip");
     }
 }

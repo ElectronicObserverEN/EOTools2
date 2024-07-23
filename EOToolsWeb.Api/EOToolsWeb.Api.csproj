@@ -36,6 +36,9 @@
     <None Update="Assets\EOTools.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Data\EOTools.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Data\pull.sh">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
