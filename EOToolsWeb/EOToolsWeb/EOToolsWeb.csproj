@@ -47,4 +47,9 @@
       <DependentUpon>UpdateManagerView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ViewModels\Equipments\" />
+    <Folder Include="ViewModels\Ships\" />
+  </ItemGroup>
 </Project>
