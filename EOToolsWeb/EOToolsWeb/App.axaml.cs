@@ -42,6 +42,11 @@ namespace EOToolsWeb
             // Ship class
             collection.AddScoped<ShipClassManagerViewModel>();
             collection.AddScoped<ShipClassViewModel>();
+            collection.AddScoped<ShipClassListViewModel>();
+
+            // Ships
+            collection.AddScoped<ShipManagerViewModel>();
+            collection.AddScoped<ShipViewModel>();
 
             collection.AddSingleton<HttpClient>();
 

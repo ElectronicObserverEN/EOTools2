@@ -43,11 +43,20 @@
     <Compile Update="Views\Events\EventManagerView.axaml.cs">
       <DependentUpon>EventManagerView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\Ships\ShipEditView.axaml.cs">
+      <DependentUpon>ShipEditView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Ships\ShipClassEditView.axaml.cs">
       <DependentUpon>ShipClassEditView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\Ships\ShipManagerView.axaml.cs">
+      <DependentUpon>ShipManagerView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Ships\ShipClassManagerView.axaml.cs">
       <DependentUpon>ShipClassManagerView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Ships\ShipClassListView.axaml.cs">
+      <DependentUpon>ShipClassListView.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\Updates\UpdateManagerView.axaml.cs">
       <DependentUpon>UpdateManagerView.axaml</DependentUpon>

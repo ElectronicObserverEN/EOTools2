@@ -8,7 +8,7 @@ using EOToolsWeb.ViewModels.Updates;
 
 namespace EOToolsWeb.ViewModels;
 
-public partial class MainViewModel(LoginViewModel login, UpdateManagerViewModel updates, EventManagerViewModel events, UpdateListViewModel updateList, EventViewModel eventViewModel, ShipClassManagerViewModel shipClassManager) : ViewModelBase
+public partial class MainViewModel(LoginViewModel login, UpdateManagerViewModel updates, EventManagerViewModel events, UpdateListViewModel updateList, EventViewModel eventViewModel, ShipClassManagerViewModel shipClassManager, ShipManagerViewModel shipManager, ShipClassListViewModel shipClassList) : ViewModelBase
 {
     public LoginViewModel Login { get; } = login;
 
@@ -19,6 +19,9 @@ public partial class MainViewModel(LoginViewModel login, UpdateManagerViewModel 
     public EventViewModel EventViewModel { get; } = eventViewModel;
 
     public ShipClassManagerViewModel ShipClassManager { get; } = shipClassManager;
+    public ShipClassListViewModel ShipClassList { get; } = shipClassList;
+
+    public ShipManagerViewModel ShipManager { get; } = shipManager;
 
     [ObservableProperty]
     private ViewModelBase? _currentViewModel;
@@ -42,5 +45,12 @@ public partial class MainViewModel(LoginViewModel login, UpdateManagerViewModel 
     {
         CurrentViewModel = ShipClassManager;
         await ShipClassManager.LoadAllClasses();
+    }
+
+    [RelayCommand]
+    private async Task OpenShips()
+    {
+        CurrentViewModel = ShipManager;
+        await ShipManager.LoadAllShips();
     }
 }

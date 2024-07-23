@@ -7,6 +7,7 @@ using EOToolsWeb.Views.Updates;
 using Avalonia.ReactiveUI;
 using ReactiveUI;
 using System.Threading.Tasks;
+using EOToolsWeb.Shared.Ships;
 using EOToolsWeb.Shared.Updates;
 using EOToolsWeb.ViewModels.Events;
 using EOToolsWeb.ViewModels.Ships;
@@ -27,6 +28,8 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         this.WhenActivated(d => d(ViewModel!.EventViewModel.ShowUpdatePickerDialog.RegisterHandler(DoShowPickerDialogAsync)));
         this.WhenActivated(d => d(ViewModel!.Events.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
         this.WhenActivated(d => d(ViewModel!.ShipClassManager.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
+        this.WhenActivated(d => d(ViewModel!.ShipClassManager.ShowPicker.RegisterHandler(DoShowPickerDialogAsync)));
+        this.WhenActivated(d => d(ViewModel!.ShipManager.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
     }
 
     protected override async void OnOpened(EventArgs e)
@@ -91,6 +94,28 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
     private async Task DoShowEditDialogAsync(IInteractionContext<ShipClassViewModel, bool> interaction)
     {
         ShipClassEditView dialog = new();
+        dialog.DataContext = interaction.Input;
+
+        bool result = await dialog.ShowDialog<bool?>(this) is true;
+        interaction.SetOutput(result);
+    }
+
+    private async Task DoShowPickerDialogAsync(IInteractionContext<object?, ShipClassModel?> interaction)
+    {
+        if (MainViewModel?.ShipClassList is null) return;
+
+        await MainViewModel.ShipClassList.Initialize();
+
+        ShipClassListView dialog = new();
+        dialog.DataContext = MainViewModel.ShipClassList;
+
+        ShipClassModel? result = await dialog.ShowDialog<ShipClassModel?>(this);
+        interaction.SetOutput(result);
+    }
+
+    private async Task DoShowEditDialogAsync(IInteractionContext<ShipViewModel, bool> interaction)
+    {
+        ShipEditView dialog = new();
         dialog.DataContext = interaction.Input;
 
         bool result = await dialog.ShowDialog<bool?>(this) is true;

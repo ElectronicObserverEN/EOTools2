@@ -1,0 +1,55 @@
+<Window
+	x:Class="EOToolsWeb.Views.Ships.ShipClassListView"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:ships="clr-namespace:EOToolsWeb.ViewModels.Ships"
+	Title="Pick a ship class"
+	d:DesignHeight="450"
+	d:DesignWidth="800"
+	x:DataType="ships:ShipClassListViewModel"
+	mc:Ignorable="d">
+
+	<Design.DataContext>
+		<!--
+			This only sets the DataContext for the previewer in an IDE,
+			to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
+		-->
+		<ships:ShipClassListViewModel />
+	</Design.DataContext>
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<TextBox Grid.Row="0" Text="{Binding Filter}" />
+
+		<DataGrid
+			Grid.Row="1"
+			Margin="5"
+			AutoGenerateColumns="False"
+			HorizontalScrollBarVisibility="Visible"
+			IsReadOnly="True"
+			ItemsSource="{Binding ShipListFiltered}"
+			SelectedItem="{Binding SelectedClass}"
+			SelectionMode="Single"
+			VerticalScrollBarVisibility="Visible">
+
+			<DataGrid.Columns>
+				<DataGridTextColumn
+					Width="1000"
+					Binding="{Binding NameEnglish}"
+					Header="Ship" />
+			</DataGrid.Columns>
+		</DataGrid>
+
+		<StackPanel Grid.Row="2" Orientation="Horizontal">
+			<Button Command="{Binding CancelCommand}" Content="Cancel" />
+			<Button Command="{Binding SelectShipCommand}" Content="OK" />
+		</StackPanel>
+	</Grid>
+</Window>

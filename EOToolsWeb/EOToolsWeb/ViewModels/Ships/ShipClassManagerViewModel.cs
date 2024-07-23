@@ -16,7 +16,7 @@ public partial class ShipClassManagerViewModel : ViewModelBase
     [ObservableProperty]
     private string _filter = "";
 
-    private List<ShipClassModel> ShipClass { get; } = [];
+    public List<ShipClassModel> ShipClass { get; } = [];
 
     [ObservableProperty]
     private List<ShipClassModel> _shipClassListFiltered = new();
@@ -24,6 +24,8 @@ public partial class ShipClassManagerViewModel : ViewModelBase
     private HttpClient HttpClient { get; }
 
     public Interaction<ShipClassViewModel, bool> ShowEditDialog { get; } = new();
+
+    public Interaction<object?, ShipClassModel?> ShowPicker { get; } = new();
 
     private ShipClassViewModel ShipClassViewModel { get; }
 
@@ -50,7 +52,6 @@ public partial class ShipClassManagerViewModel : ViewModelBase
 
         ReloadList();
     }
-
 
     private void ReloadList()
     {
@@ -116,5 +117,10 @@ public partial class ShipClassManagerViewModel : ViewModelBase
     private async Task PushTranslations()
     {
         await HttpClient.PutAsync("Ships/pushShips", null);
+    }
+
+    public async Task<ShipClassModel?> OpenClassPicker()
+    {
+        return await ShowPicker.Handle(null);
     }
 }

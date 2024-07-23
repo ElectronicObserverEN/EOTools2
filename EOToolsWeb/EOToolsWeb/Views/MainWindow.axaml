@@ -23,6 +23,7 @@
 			<MenuItem Command="{Binding OpenEventsCommand}" Header="Events" />
 			<MenuItem Command="{Binding OpenUpdatesCommand}" Header="Updates" />
 			<MenuItem Command="{Binding OpenShipClassesCommand}" Header="Ship classes" />
+			<MenuItem Command="{Binding OpenShipsCommand}" Header="Ships" />
 		</Menu>
 
 		<ContentPresenter x:Name="MainContent" Grid.Row="1" />
