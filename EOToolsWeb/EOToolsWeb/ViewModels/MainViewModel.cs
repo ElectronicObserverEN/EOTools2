@@ -3,11 +3,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EOToolsWeb.ViewModels.Events;
 using EOToolsWeb.ViewModels.Login;
+using EOToolsWeb.ViewModels.Ships;
 using EOToolsWeb.ViewModels.Updates;
 
 namespace EOToolsWeb.ViewModels;
 
-public partial class MainViewModel(LoginViewModel login, UpdateManagerViewModel updates, EventManagerViewModel events, UpdateListViewModel updateList, EventViewModel eventViewModel) : ViewModelBase
+public partial class MainViewModel(LoginViewModel login, UpdateManagerViewModel updates, EventManagerViewModel events, UpdateListViewModel updateList, EventViewModel eventViewModel, ShipClassManagerViewModel shipClassManager) : ViewModelBase
 {
     public LoginViewModel Login { get; } = login;
 
@@ -16,6 +17,8 @@ public partial class MainViewModel(LoginViewModel login, UpdateManagerViewModel 
 
     public EventManagerViewModel Events { get; } = events;
     public EventViewModel EventViewModel { get; } = eventViewModel;
+
+    public ShipClassManagerViewModel ShipClassManager { get; } = shipClassManager;
 
     [ObservableProperty]
     private ViewModelBase? _currentViewModel;
@@ -32,5 +35,12 @@ public partial class MainViewModel(LoginViewModel login, UpdateManagerViewModel 
     {
         CurrentViewModel = Events;
         await Events.LoadAllEvents();
+    }
+
+    [RelayCommand]
+    private async Task OpenShipClasses()
+    {
+        CurrentViewModel = ShipClassManager;
+        await ShipClassManager.LoadAllClasses();
     }
 }

@@ -1,8 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using DynamicData;
-using EOToolsWeb.Shared.Events;
 using EOToolsWeb.Shared.Updates;
-using EOToolsWeb.ViewModels.Events;
 using ReactiveUI;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

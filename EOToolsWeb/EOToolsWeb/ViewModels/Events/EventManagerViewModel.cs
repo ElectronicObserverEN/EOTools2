@@ -91,7 +91,7 @@ public partial class EventManagerViewModel(HttpClient client, UpdateListViewMode
         {
             EventViewModel.SaveChanges();
 
-            HttpResponseMessage response = await HttpClient.PutAsJsonAsync($"Event", vm);
+            HttpResponseMessage response = await HttpClient.PutAsJsonAsync("Event", vm);
 
             response.EnsureSuccessStatusCode();
 

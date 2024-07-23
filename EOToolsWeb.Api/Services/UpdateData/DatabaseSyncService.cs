@@ -16,6 +16,7 @@ public class DatabaseSyncService(IGitManagerService git, EoToolsDbContext db, Js
     private string DataBaseRepoPath => Path.Combine(git.FolderPath, "Data", "Data.db");
     private string ShipFilePath => Path.Combine(git.FolderPath, "Data", "Ships.json");
     private string ShipClassFilePath => Path.Combine(git.FolderPath, "Data", "ShipClass.json");
+    private string EquipmentFilePath => Path.Combine(git.FolderPath, "Data", "Equipments.json");
 
     public static string DataBaseLocalPath => Path.Combine("Data", "EOTools.db");
 
@@ -25,6 +26,7 @@ public class DatabaseSyncService(IGitManagerService git, EoToolsDbContext db, Js
         await File.WriteAllTextAsync(EventsFilePath, JsonSerializer.Serialize(Database.Events.ToList(), SerializationOptions));
         await File.WriteAllTextAsync(ShipFilePath, JsonSerializer.Serialize(Database.Ships.Include(nameof(ShipModel.ShipClass)).ToList(), SerializationOptions));
         await File.WriteAllTextAsync(ShipClassFilePath, JsonSerializer.Serialize(Database.ShipClasses.ToList(), SerializationOptions));
+        await File.WriteAllTextAsync(EquipmentFilePath, JsonSerializer.Serialize(Database.Equipments.ToList(), SerializationOptions));
 
         File.Copy(DataBaseLocalPath, DataBaseRepoPath, true);
     }

@@ -9,7 +9,9 @@ using ReactiveUI;
 using System.Threading.Tasks;
 using EOToolsWeb.Shared.Updates;
 using EOToolsWeb.ViewModels.Events;
+using EOToolsWeb.ViewModels.Ships;
 using EOToolsWeb.Views.Events;
+using EOToolsWeb.Views.Ships;
 
 namespace EOToolsWeb.Views;
 
@@ -24,6 +26,7 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         this.WhenActivated(d => d(ViewModel!.Updates.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
         this.WhenActivated(d => d(ViewModel!.EventViewModel.ShowUpdatePickerDialog.RegisterHandler(DoShowPickerDialogAsync)));
         this.WhenActivated(d => d(ViewModel!.Events.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
+        this.WhenActivated(d => d(ViewModel!.ShipClassManager.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
     }
 
     protected override async void OnOpened(EventArgs e)
@@ -82,6 +85,15 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         dialog.DataContext = MainViewModel.UpdateList;
 
         UpdateModel? result = await dialog.ShowDialog<UpdateModel?>(this);
+        interaction.SetOutput(result);
+    }
+
+    private async Task DoShowEditDialogAsync(IInteractionContext<ShipClassViewModel, bool> interaction)
+    {
+        ShipClassEditView dialog = new();
+        dialog.DataContext = interaction.Input;
+
+        bool result = await dialog.ShowDialog<bool?>(this) is true;
         interaction.SetOutput(result);
     }
 }

@@ -9,6 +9,7 @@ using EOToolsWeb.Views;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http;
 using EOToolsWeb.ViewModels.Events;
+using EOToolsWeb.ViewModels.Ships;
 
 namespace EOToolsWeb
 {
@@ -37,6 +38,10 @@ namespace EOToolsWeb
             // Events
             collection.AddScoped<EventViewModel>();
             collection.AddScoped<EventManagerViewModel>();
+
+            // Ship class
+            collection.AddScoped<ShipClassManagerViewModel>();
+            collection.AddScoped<ShipClassViewModel>();
 
             collection.AddSingleton<HttpClient>();
 

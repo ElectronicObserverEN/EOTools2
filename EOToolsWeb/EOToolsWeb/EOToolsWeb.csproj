@@ -43,6 +43,12 @@
     <Compile Update="Views\Events\EventManagerView.axaml.cs">
       <DependentUpon>EventManagerView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\Ships\ShipClassEditView.axaml.cs">
+      <DependentUpon>ShipClassEditView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Ships\ShipClassManagerView.axaml.cs">
+      <DependentUpon>ShipClassManagerView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Updates\UpdateManagerView.axaml.cs">
       <DependentUpon>UpdateManagerView.axaml</DependentUpon>
     </Compile>
@@ -50,6 +56,5 @@
 
   <ItemGroup>
     <Folder Include="ViewModels\Equipments\" />
-    <Folder Include="ViewModels\Ships\" />
   </ItemGroup>
 </Project>
