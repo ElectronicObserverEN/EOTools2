@@ -99,20 +99,40 @@
 				Grid.Column="1"
 				Orientation="Horizontal">
 
-				<DatePicker Margin="5" SelectedDate="{Binding UpdateDate}" />
+				<Grid ColumnDefinitions="Auto, Auto, Auto" RowDefinitions="Auto, Auto">
 
-				<TextBlock
-					Margin="5"
-					VerticalAlignment="Center"
-					Text="Start : " />
-				<TextBox Text="{Binding UpdateStartTime}" />
+					<TextBlock
+						Grid.Row="0"
+						Grid.Column="0"
+						Text="Start :" />
 
-				<TextBlock
-					Margin="5"
-					VerticalAlignment="Center"
-					Text="End : " />
+					<TextBlock
+						Grid.Row="1"
+						Grid.Column="0"
+						Text="End :" />
 
-				<TextBox Text="{Binding UpdateEndTime}" />
+					<DatePicker
+						Grid.Row="0"
+						Grid.Column="1"
+						Margin="5"
+						SelectedDate="{Binding UpdateDate}" />
+
+					<DatePicker
+						Grid.Row="1"
+						Grid.Column="1"
+						Margin="5"
+						SelectedDate="{Binding UpdateEndDate}" />
+
+					<TimePicker
+						Grid.Row="0"
+						Grid.Column="2"
+						SelectedTime="{Binding UpdateStartTime}" />
+
+					<TimePicker
+						Grid.Row="1"
+						Grid.Column="2"
+						SelectedTime="{Binding UpdateEndTime}" />
+				</Grid>
 			</StackPanel>
 		</Grid>
 

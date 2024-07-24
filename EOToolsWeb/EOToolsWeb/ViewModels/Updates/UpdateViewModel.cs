@@ -9,11 +9,14 @@ public partial class UpdateViewModel : ObservableObject
     [ObservableProperty]
     private DateTimeOffset? _updateDate = DateTime.Now;
 
+    [ObservableProperty] 
+    private DateTimeOffset? _updateEndDate;
+
     [ObservableProperty]
     private TimeSpan? _updateStartTime = TimeSpan.Zero;
 
     [ObservableProperty]
-    private TimeSpan? _updateEndTime = null;
+    private TimeSpan? _updateEndTime;
 
     [ObservableProperty]
     private string _name = "";
@@ -30,20 +33,23 @@ public partial class UpdateViewModel : ObservableObject
     [ObservableProperty]
     private string _endTweet = "";
 
-    public UpdateModel Model { get; private set; }
+    public UpdateModel Model { get; set; } = new();
 
-    public UpdateViewModel(UpdateModel update)
+    public void LoadFromModel()
     {
-        UpdateDate = update.UpdateDate;
-        Name = update.Name;
-        Description = update.Description;
-        WasLiveUpdate = update.WasLiveUpdate;
-        UpdateStartTime = update.UpdateStartTime;
-        UpdateEndTime = update.UpdateEndTime;
-        EndTweet = update.EndTweetLink;
-        StartTweet = update.StartTweetLink;
+        UpdateDate = Model.UpdateDate;
+        Name = Model.Name;
+        Description = Model.Description;
+        WasLiveUpdate = Model.WasLiveUpdate;
+        UpdateStartTime = Model.UpdateStartTime;
+        UpdateEndTime = Model.UpdateEndTime;
+        EndTweet = Model.EndTweetLink;
+        StartTweet = Model.StartTweetLink;
 
-        Model = update;
+        if (UpdateEndTime is { } endTime && UpdateDate is { } start)
+        {
+            UpdateEndDate = start.AddDays(endTime.Days);
+        }
     }
 
     public void SaveChanges()
@@ -53,8 +59,12 @@ public partial class UpdateViewModel : ObservableObject
         Model.Description = Description;
         Model.WasLiveUpdate = WasLiveUpdate;
         Model.UpdateStartTime = UpdateStartTime;
-        Model.UpdateEndTime = UpdateEndTime;
         Model.EndTweetLink = EndTweet;
         Model.StartTweetLink = StartTweet;
+
+        if (UpdateEndDate is {} endDate && UpdateEndTime is {} endTime && UpdateDate is {} start)
+        {
+            Model.UpdateEndTime = endTime.Add(new TimeSpan((endDate - start).Days, 0, 0, 0));
+        }
     }
 }

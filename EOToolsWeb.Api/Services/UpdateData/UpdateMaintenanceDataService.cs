@@ -19,6 +19,8 @@ public class UpdateMaintenanceDataService(IGitManagerService git, EoToolsDbConte
 
     public async Task UpdateMaintenanceData()
     {
+        await GitManager.Pull();
+
         UpdateFileModel? updateData = JsonSerializer.Deserialize<UpdateFileModel>(await File.ReadAllTextAsync(UpdateFilePath));
 
         if (updateData is null) return;
