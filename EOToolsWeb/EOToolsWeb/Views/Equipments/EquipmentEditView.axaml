@@ -6,7 +6,7 @@
 	xmlns:equipments="clr-namespace:EOToolsWeb.ViewModels.Equipments"
 	xmlns:equipments1="clr-namespace:EOToolsWeb.Views.Equipments"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	Title="Edit ship"
+	Title="Edit equipment"
 	d:DesignHeight="450"
 	d:DesignWidth="800"
 	x:DataType="equipments:EquipmentViewModel"

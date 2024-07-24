@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.Input;
+using System.Threading;
 
 namespace EoToolsWeb.Updater;
 
@@ -92,17 +93,18 @@ public partial class UpdaterViewModel : ObservableObject
     {
         try
         {
-            HttpClient client = new();
+            File.Delete("EoTools.zip");
+
+            using HttpClient client = new();
+            client.Timeout = TimeSpan.FromMinutes(5);
 
             UpdateText = "Downloading Update...";
 
-            HttpResponseMessage response = await client.GetAsync($"{ServerUrl}Tools/GetUpdate");
-            response.EnsureSuccessStatusCode();
+            await using FileStream file = new("EoTools.zip", FileMode.Create, FileAccess.Write, FileShare.None);
 
-            await using Stream stream = await response.Content.ReadAsStreamAsync();
-            File.Delete("EoTools.zip");
-            await using Stream destination = File.OpenWrite("EoTools.zip");
-            await stream.CopyToAsync(destination);
+            IProgress<float> progress = new Progress<float>(p => UpdateText = $"Downloading Update... {(p*100):F}%");
+
+            await client.DownloadAsync($"{ServerUrl}Tools/GetUpdate", file, progress);
         }
         catch (Exception ex)
         {
