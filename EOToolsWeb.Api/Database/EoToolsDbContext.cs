@@ -1,6 +1,7 @@
 ﻿using EOToolsWeb.Api.Models;
 using EOToolsWeb.Shared.Equipments;
 using EOToolsWeb.Shared.Events;
+using EOToolsWeb.Shared.ShipLocks;
 using EOToolsWeb.Shared.Ships;
 using EOToolsWeb.Shared.Updates;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,8 @@ namespace EOToolsWeb.Api.Database
         public DbSet<ShipModel> Ships { get; set; }
         public DbSet<ShipClassModel> ShipClasses { get; set; }
         public DbSet<EquipmentModel> Equipments { get; set; }
+        public DbSet<ShipLockModel> Locks { get; set; }
+        public DbSet<ShipLockPhaseModel> LockPhases { get; set; }
 
         public string DbPath => Path.Combine("Data", "EOTools.db");
         
