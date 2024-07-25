@@ -100,7 +100,6 @@ public partial class ShipLocksManagerViewModel : ViewModelBase
             if (postedModel is not null)
             {
                 Locks.Add(postedModel);
-                OnPropertyChanged(nameof(Locks));
             }
         }
     }
@@ -118,8 +117,6 @@ public partial class ShipLocksManagerViewModel : ViewModelBase
             HttpResponseMessage response = await HttpClient.PutAsJsonAsync("ShipLock", model);
 
             response.EnsureSuccessStatusCode();
-
-            OnPropertyChanged(nameof(Locks));
         }
     }
 
@@ -129,7 +126,68 @@ public partial class ShipLocksManagerViewModel : ViewModelBase
         await HttpClient.DeleteAsync($"ShipLock/{vm.Id}");
 
         Locks.Remove(vm);
+    }
 
-        OnPropertyChanged(nameof(Locks));
+    [RelayCommand]
+    private async Task AddPhase()
+    {
+        if (SelectedEvent is null) return;
+
+        ShipLockPhaseEditRowModel model = new()
+        {
+            EventId = SelectedEvent.Id,
+        };
+
+        ShipLockPhaseViewModel.Initialize(Locks.ToList());
+        ShipLockPhaseViewModel.Model = model;
+        ShipLockPhaseViewModel.LoadFromModel();
+
+        if (await ShowShipLockPhaseEditDialog.Handle(ShipLockPhaseViewModel))
+        {
+            ShipLockPhaseViewModel.SaveChanges();
+
+            HttpResponseMessage response = await HttpClient.PostAsJsonAsync("ShipLockPhase", model);
+
+            response.EnsureSuccessStatusCode();
+
+            ShipLockPhaseEditRowModel? postedModel = await response.Content.ReadFromJsonAsync<ShipLockPhaseEditRowModel>();
+
+            if (postedModel is not null)
+            {
+                Phases.Add(postedModel);
+            }
+        }
+    }
+
+    [RelayCommand]
+    private async Task EditPhase(ShipLockPhaseEditRowModel model)
+    {
+        ShipLockPhaseViewModel.Initialize(Locks.ToList());
+
+        ShipLockPhaseViewModel.Model = model;
+        ShipLockPhaseViewModel.LoadFromModel();
+
+        if (await ShowShipLockPhaseEditDialog.Handle(ShipLockPhaseViewModel))
+        {
+            ShipLockPhaseViewModel.SaveChanges();
+
+            HttpResponseMessage response = await HttpClient.PutAsJsonAsync("ShipLockPhase", model);
+
+            response.EnsureSuccessStatusCode();
+        }
+    }
+
+    [RelayCommand]
+    private async Task RemovePhase(ShipLockPhaseEditRowModel vm)
+    {
+        await HttpClient.DeleteAsync($"ShipLockPhase/{vm.Id}");
+
+        Phases.Remove(vm);
+    }
+
+    [RelayCommand]
+    private async Task PushLocks()
+    {
+        await HttpClient.PutAsync("ShipLock/pushLockData", null);
     }
 }

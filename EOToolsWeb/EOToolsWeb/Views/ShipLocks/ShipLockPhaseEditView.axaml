@@ -1,0 +1,124 @@
+<Window
+	x:Class="EOToolsWeb.Views.ShipLocks.ShipLockPhaseEditView"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:shipLocks="clr-namespace:EOToolsWeb.ViewModels.ShipLocks"
+	xmlns:shipLocks1="clr-namespace:EOToolsWeb.Views.ShipLocks"
+	Title="Edit phase"
+	d:DesignHeight="450"
+	d:DesignWidth="800"
+	x:DataType="shipLocks:ShipLockPhaseViewModel"
+	SizeToContent="WidthAndHeight"
+	mc:Ignorable="d">
+	<Design.DataContext>
+		<!--
+			This only sets the DataContext for the previewer in an IDE,
+			to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
+		-->
+		<shipLocks:ShipLockPhaseViewModel />
+	</Design.DataContext>
+
+	<StackPanel Margin="5">
+		<Grid ColumnDefinitions="Auto, Auto" RowDefinitions="Auto, Auto, Auto, Auto, *">
+			<TextBlock
+				Grid.Row="0"
+				Grid.Column="0"
+				Text="Name" />
+
+			<TextBox
+				Grid.Row="0"
+				Grid.Column="1"
+				Text="{Binding PhaseName}" />
+
+			<TextBlock
+				Grid.Row="1"
+				Grid.Column="0"
+				Text="Map" />
+
+			<NumericUpDown
+				Grid.Row="1"
+				Grid.Column="1"
+				Maximum="100"
+				Minimum="1"
+				Text="{Binding Map}" />
+
+			<TextBlock
+				Grid.Row="2"
+				Grid.Column="0"
+				Text="Phase number" />
+
+			<NumericUpDown
+				Grid.Row="2"
+				Grid.Column="1"
+				Maximum="999"
+				Minimum="0"
+				Text="{Binding SortId}" />
+
+			<ComboBox
+				Grid.Row="3"
+				Grid.Column="1"
+				MinWidth="250"
+				ItemsSource="{Binding Locks}"
+				SelectedItem="{Binding SelectedLock}">
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<TextBlock><Run Text="{Binding NameEnglish}" /><Run Text=" - " /><Run Text="{Binding NameJapanese}" /><Run Text="(" /><Run Text="{Binding ApiId}" /><Run Text=")" /></TextBlock>
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+
+			<Button
+				Grid.Row="3"
+				Grid.Column="0"
+				Command="{Binding AddLockCommand}"
+				Content="Add lock" />
+
+
+			<DataGrid
+				Grid.Row="4"
+				Grid.Column="0"
+				Grid.ColumnSpan="2"
+				ItemsSource="{Binding LockGroups}">
+				<DataGrid.Columns>
+					<DataGridTemplateColumn>
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate>
+								<StackPanel Orientation="Horizontal">
+									<Button
+										Command="{Binding ViewModel.DeleteLockCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=shipLocks1:ShipLockPhaseEditView}}"
+										CommandParameter="{Binding}"
+										Content="Delete" />
+								</StackPanel>
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
+
+					<DataGridTextColumn Binding="{Binding ApiId}" Header="Id" />
+					<DataGridTextColumn Binding="{Binding NameJapanese}" Header="Name JP" />
+					<DataGridTextColumn Binding="{Binding NameEnglish}" Header="Name EN" />
+					<DataGridTemplateColumn Header="Color">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate>
+								<ColorPicker IsEnabled="False" Color="{Binding Color}" />
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
+				</DataGrid.Columns>
+			</DataGrid>
+		</Grid>
+
+		<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+			<Button
+				Margin="5"
+				Click="OnConfirmClick"
+				Content="Ok" />
+			<Button
+				Margin="5"
+				Click="OnCancelClick"
+				Content="Cancel" />
+		</StackPanel>
+	</StackPanel>
+
+</Window>
