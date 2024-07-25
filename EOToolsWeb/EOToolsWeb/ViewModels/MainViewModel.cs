@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using EOToolsWeb.ViewModels.Equipments;
 using EOToolsWeb.ViewModels.Events;
 using EOToolsWeb.ViewModels.Login;
+using EOToolsWeb.ViewModels.ShipLocks;
 using EOToolsWeb.ViewModels.Ships;
 using EOToolsWeb.ViewModels.Updates;
 
@@ -18,7 +19,8 @@ public partial class MainViewModel(
     ShipClassManagerViewModel shipClassManager, 
     ShipManagerViewModel shipManager, 
     ShipClassListViewModel shipClassList, 
-    EquipmentManagerViewModel equipmentManager
+    EquipmentManagerViewModel equipmentManager,
+    ShipLocksManagerViewModel shipLockManager
 ) : ViewModelBase
 {
     public LoginViewModel Login { get; } = login;
@@ -35,6 +37,8 @@ public partial class MainViewModel(
     public ShipManagerViewModel ShipManager { get; } = shipManager;
 
     public EquipmentManagerViewModel EquipmentManager { get; } = equipmentManager;
+
+    public ShipLocksManagerViewModel ShipLocksManager { get; } = shipLockManager;
 
     [ObservableProperty]
     private ViewModelBase? _currentViewModel;
@@ -72,5 +76,12 @@ public partial class MainViewModel(
     {
         CurrentViewModel = EquipmentManager;
         await EquipmentManager.LoadAllEquipments();
+    }
+
+    [RelayCommand]
+    private async Task OpenShipLockManager()
+    {
+        CurrentViewModel = ShipLocksManager;
+        await ShipLocksManager.Initialize();
     }
 }

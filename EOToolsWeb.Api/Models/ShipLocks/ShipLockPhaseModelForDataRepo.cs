@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
+using EOToolsWeb.Shared.ShipLocks;
 
-namespace EOToolsWeb.Shared.ShipLocks;
+namespace EOToolsWeb.Api.Models.ShipLocks;
 
 public class ShipLockPhaseModelForDataRepo(ShipLockPhaseModel model)
 {

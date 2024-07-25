@@ -1,4 +1,4 @@
-﻿namespace EOToolsWeb.Shared.ShipLocks
+﻿namespace EOToolsWeb.Api.Models.ShipLocks
 {
     public class ShipLocksPhasesModel
     {

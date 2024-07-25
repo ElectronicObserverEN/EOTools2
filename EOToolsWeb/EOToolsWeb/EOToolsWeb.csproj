@@ -49,6 +49,9 @@
     <Compile Update="Views\Events\EventManagerView.axaml.cs">
       <DependentUpon>EventManagerView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\ShipLocks\ShipLocksManagerView.axaml.cs">
+      <DependentUpon>ShipLocksManagerView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Ships\ShipEditView.axaml.cs">
       <DependentUpon>ShipEditView.axaml</DependentUpon>
     </Compile>

@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using EOToolsWeb.Api.Database;
+using EOToolsWeb.Api.Models.ShipLocks;
 using EOToolsWeb.Api.Services.GitManager;
 using EOToolsWeb.Shared.ShipLocks;
 
