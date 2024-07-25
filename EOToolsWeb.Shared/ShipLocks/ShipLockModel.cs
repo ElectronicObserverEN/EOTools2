@@ -6,11 +6,9 @@ namespace EOToolsWeb.Shared.ShipLocks
 {
     public class ShipLockModel
     {
-        [JsonIgnore]
         public int Id { get; set; }
 
-        [JsonPropertyName("Id")]
-        public int SortId { get; set; }
+        public int ApiId { get; set; }
 
         [ForeignKey(nameof(EventModel))]
         public int EventId { get; set; } = new();
@@ -27,10 +25,8 @@ namespace EOToolsWeb.Shared.ShipLocks
         [JsonPropertyName("B")]
         public byte ColorB { get; set; }
 
-        [JsonPropertyName("Name")]
         public string NameJapanese { get; set; } = "";
 
-        [JsonIgnore]
         public string NameEnglish { get; set; } = "";
     }
 }

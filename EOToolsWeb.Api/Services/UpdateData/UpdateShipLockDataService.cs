@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using EOToolsWeb.Api.Database;
@@ -21,16 +22,11 @@ public class UpdateShipLockDataService(EoToolsDbContext db, JsonSerializerOption
     public async Task UpdateLockData()
     {
         await GitManagerService.Pull();
-
-        int lastEventId = Database.Events.OrderByDescending(ev => ev.ApiId).First().Id;
-
-        List<ShipLockModel> locks = Database.Locks.Where(locks => locks.EventId == lastEventId).OrderBy(locks => locks.SortId).ToList();
-        List<ShipLockPhaseModel> phases = Database.LockPhases.Where(phase => phase.EventId == lastEventId).OrderBy(phase => phase.SortId).ToList();
-
+        
         ShipLocksPhasesModel lockAndPhases = new()
         {
-            Locks = locks,
-            Phases = phases,
+            Locks = GetLocks(),
+            Phases = GetPhases(),
         };
 
         // Get version
@@ -38,7 +34,7 @@ public class UpdateShipLockDataService(EoToolsDbContext db, JsonSerializerOption
 
         if (updateJson?["Locks"] is null) return;
 
-        string version = (int.Parse(updateJson["Locks"].GetValue<string>()) + 1).ToString();
+        int version = updateJson["Locks"].GetValue<int>() + 1;
 
         updateJson["Locks"] = version;
 
@@ -46,6 +42,28 @@ public class UpdateShipLockDataService(EoToolsDbContext db, JsonSerializerOption
         await File.WriteAllTextAsync(UpdateDataFilePath, JsonSerializer.Serialize(updateJson, JsonSerializerOptions), Encoding.UTF8);
 
         await GitManagerService.Push($"Locks data - {version}");
+    }
+
+    private List<ShipLockModelForDataRepo> GetLocks()
+    {
+        int lastEventId = Database.Events.OrderByDescending(ev => ev.ApiId).First().Id;
+
+        return Database.Locks
+           .Where(locks => locks.EventId == lastEventId)
+           .OrderBy(locks => locks.ApiId)
+           .Select(locks => new ShipLockModelForDataRepo(locks))
+           .ToList();
+    }
+
+    private List<ShipLockPhaseModelForDataRepo> GetPhases()
+    {
+        int lastEventId = Database.Events.OrderByDescending(ev => ev.ApiId).First().Id;
+
+        return Database.LockPhases
+            .Where(phase => phase.EventId == lastEventId)
+            .OrderBy(phase => phase.SortId)
+            .Select(locks => new ShipLockPhaseModelForDataRepo(locks))
+            .ToList();
     }
 
     public async Task UpdateLockTranslations()
@@ -57,12 +75,12 @@ public class UpdateShipLockDataService(EoToolsDbContext db, JsonSerializerOption
 
         if (updateJson?["Locks"] is null) return;
 
-        string version = (int.Parse(updateJson["Locks"].GetValue<string>()) + 1).ToString();
+        int version = updateJson["Locks"].GetValue<int>() + 1;
 
         updateJson["Locks"] = version;
 
         int lastEventId = Database.Events.OrderByDescending(ev => ev.ApiId).First().Id;
-        List<ShipLockModel> locks = Database.Locks.Where(locks => locks.EventId == lastEventId).OrderBy(locks => locks.SortId).ToList();
+        List<ShipLockModel> locks = Database.Locks.Where(locks => locks.EventId == lastEventId).OrderBy(locks => locks.ApiId).ToList();
 
         foreach (string language in AllLanguages)
         {
@@ -94,7 +112,7 @@ public class UpdateShipLockDataService(EoToolsDbContext db, JsonSerializerOption
 
         if (updateJson?["Locks"] is null) return;
 
-        string version = (int.Parse(updateJson["Locks"].GetValue<string>()) + 1).ToString();
+        int version = updateJson["Locks"].GetValue<int>() + 1;
 
         updateJson["Locks"] = version;
 

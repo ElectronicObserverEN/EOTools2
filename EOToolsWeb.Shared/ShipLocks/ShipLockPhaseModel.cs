@@ -7,10 +7,8 @@ namespace EOToolsWeb.Shared.ShipLocks
 {
     public class ShipLockPhaseModel : ObservableObject
     {
-        [JsonIgnore]
         public int Id { get; set; }
 
-        [JsonIgnore]
         public int SortId { get; set; }
 
         [ForeignKey(nameof(EventModel))]

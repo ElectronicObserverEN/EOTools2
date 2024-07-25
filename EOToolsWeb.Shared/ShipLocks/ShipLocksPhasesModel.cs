@@ -2,8 +2,8 @@
 {
     public class ShipLocksPhasesModel
     {
-        public List<ShipLockModel> Locks { get; set; } = [];
+        public List<ShipLockModelForDataRepo> Locks { get; set; } = [];
 
-        public List<ShipLockPhaseModel> Phases { get; set; } = [];
+        public List<ShipLockPhaseModelForDataRepo> Phases { get; set; } = [];
     }
 }

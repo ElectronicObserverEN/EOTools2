@@ -38,7 +38,7 @@ public class ShipLockController(EoToolsDbContext db, UpdateShipLockDataService d
         savedLock.NameEnglish = lockData.NameEnglish;
         savedLock.NameJapanese = lockData.NameJapanese;
 
-        savedLock.SortId = lockData.SortId;
+        savedLock.ApiId = lockData.ApiId;
         savedLock.EventId = lockData.EventId;
         
         Database.Locks.Update(savedLock);
