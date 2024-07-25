@@ -1,7 +1,7 @@
 ﻿using Avalonia.Media;
 using EOToolsWeb.Shared.ShipLocks;
 
-namespace EOToolsWeb.Models;
+namespace EOToolsWeb.Models.ShipLocks;
 
 public class ShipLockEditRowModel : ShipLockModel
 {

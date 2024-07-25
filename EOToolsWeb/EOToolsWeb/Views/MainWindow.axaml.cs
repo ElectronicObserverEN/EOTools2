@@ -11,9 +11,11 @@ using EOToolsWeb.Shared.Ships;
 using EOToolsWeb.Shared.Updates;
 using EOToolsWeb.ViewModels.Equipments;
 using EOToolsWeb.ViewModels.Events;
+using EOToolsWeb.ViewModels.ShipLocks;
 using EOToolsWeb.ViewModels.Ships;
 using EOToolsWeb.Views.Equipments;
 using EOToolsWeb.Views.Events;
+using EOToolsWeb.Views.ShipLocks;
 using EOToolsWeb.Views.Ships;
 
 namespace EOToolsWeb.Views;
@@ -37,6 +39,8 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         this.WhenActivated(d => d(ViewModel!.ShipManager.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
 
         this.WhenActivated(d => d(ViewModel!.EquipmentManager.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
+
+        this.WhenActivated(d => d(ViewModel!.ShipLocksManager.ShowShipLockEditDialog.RegisterHandler(DoShowEditDialogAsync)));
     }
 
     protected override async void OnOpened(EventArgs e)
@@ -132,6 +136,15 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
     private async Task DoShowEditDialogAsync(IInteractionContext<EquipmentViewModel, bool> interaction)
     {
         EquipmentEditView dialog = new();
+        dialog.DataContext = interaction.Input;
+
+        bool result = await dialog.ShowDialog<bool?>(this) is true;
+        interaction.SetOutput(result);
+    }
+
+    private async Task DoShowEditDialogAsync(IInteractionContext<ShipLockViewModel, bool> interaction)
+    {
+        ShipLockEditView dialog = new();
         dialog.DataContext = interaction.Input;
 
         bool result = await dialog.ShowDialog<bool?>(this) is true;

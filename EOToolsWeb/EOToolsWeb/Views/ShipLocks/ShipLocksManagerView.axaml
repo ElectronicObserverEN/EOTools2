@@ -5,6 +5,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:shipLocks="clr-namespace:EOToolsWeb.ViewModels.ShipLocks"
+	xmlns:shipLocks1="clr-namespace:EOToolsWeb.Views.ShipLocks"
 	d:DesignHeight="450"
 	d:DesignWidth="800"
 	x:DataType="shipLocks:ShipLocksManagerViewModel"
@@ -37,27 +38,53 @@
 		</StackPanel>
 
 		<Grid Grid.Row="1" ColumnDefinitions="Auto, *">
-			<DataGrid ItemsSource="{Binding Locks}">
-				<DataGrid.Columns>
-					<DataGridTextColumn Binding="{Binding ApiId}" Header="Id" />
-					<DataGridTextColumn Binding="{Binding NameJapanese}" Header="Name JP" />
-					<DataGridTextColumn Binding="{Binding NameEnglish}" Header="Name EN" />
-					<DataGridTemplateColumn Header="Color">
-						<DataGridTemplateColumn.CellTemplate>
-							<DataTemplate>
-								<ColorPicker Color="{Binding Color}" />
-							</DataTemplate>
-						</DataGridTemplateColumn.CellTemplate>
-					</DataGridTemplateColumn>
-				</DataGrid.Columns>
-			</DataGrid>
 
-			<DataGrid Grid.Column="1" ItemsSource="{Binding Phases}">
-				<DataGrid.Columns>
-					<DataGridTextColumn Binding="{Binding PhaseName}" Header="Id" />
-					<DataGridTextColumn Binding="{Binding ShipLocks}" Header="Locks" />
-				</DataGrid.Columns>
-			</DataGrid>
+			<Grid Grid.Column="0" RowDefinitions="Auto, *">
+				<Button Command="{Binding AddLockCommand}" Content="Add ship lock" />
+
+				<DataGrid Grid.Row="1" ItemsSource="{Binding Locks}">
+					<DataGrid.Columns>
+
+						<DataGridTemplateColumn>
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<StackPanel Orientation="Horizontal">
+										<Button
+											Command="{Binding ViewModel.RemoveLockCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=shipLocks1:ShipLocksManagerView}}"
+											CommandParameter="{Binding}"
+											Content="Delete" />
+										<Button
+											Margin="5,0,5,0"
+											Command="{Binding ViewModel.EditLockCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=shipLocks1:ShipLocksManagerView}}"
+											CommandParameter="{Binding}"
+											Content="Edit" />
+									</StackPanel>
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+						</DataGridTemplateColumn>
+
+						<DataGridTextColumn Binding="{Binding ApiId}" Header="Id" />
+						<DataGridTextColumn Binding="{Binding NameJapanese}" Header="Name JP" />
+						<DataGridTextColumn Binding="{Binding NameEnglish}" Header="Name EN" />
+						<DataGridTemplateColumn Header="Color">
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<ColorPicker IsEnabled="False" Color="{Binding Color}" />
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+						</DataGridTemplateColumn>
+					</DataGrid.Columns>
+				</DataGrid>
+			</Grid>
+
+			<Grid Grid.Column="1" RowDefinitions="Auto, *">
+				<DataGrid Grid.Row="1" ItemsSource="{Binding Phases}">
+					<DataGrid.Columns>
+						<DataGridTextColumn Binding="{Binding PhaseName}" Header="Id" />
+						<DataGridTextColumn Binding="{Binding ShipLocks}" Header="Locks" />
+					</DataGrid.Columns>
+				</DataGrid>
+			</Grid>
 		</Grid>
 	</Grid>
 </UserControl>

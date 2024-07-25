@@ -56,6 +56,8 @@ namespace EOToolsWeb
 
             // Locks
             collection.AddScoped<ShipLocksManagerViewModel>();
+            collection.AddScoped<ShipLockViewModel>();
+            collection.AddScoped<ShipLockPhaseViewModel>();
 
             collection.AddSingleton<HttpClient>();
 
