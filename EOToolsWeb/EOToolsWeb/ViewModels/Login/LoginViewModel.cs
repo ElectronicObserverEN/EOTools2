@@ -21,7 +21,7 @@ public partial class LoginViewModel : ObservableObject
     private string _loginMessage = "";
 
     private HttpClient ClientApi { get; }
-
+    
     public LoginViewModel(HttpClient clientApi)
     {
         if (!File.Exists("Config.json"))
@@ -30,6 +30,25 @@ public partial class LoginViewModel : ObservableObject
         }
 
         ClientApi = clientApi;
+    }
+
+    public async Task LoginFromConfig()
+    {
+        if (!File.Exists("../UpdaterConfig.json")) return;
+
+        Dictionary<string, string>? config = JsonSerializer.Deserialize<Dictionary<string, string>>(await File.ReadAllTextAsync("../UpdaterConfig.json"));
+
+        string login = config?["login"] ?? "";
+        string password = config?["password"] ?? "";
+
+        if (string.IsNullOrEmpty(login)) return;
+
+        LoginMessage = "Login in from config ...";
+
+        Username = login;
+        Password = password;
+
+        await LoginCommand.ExecuteAsync(null);
     }
 
     [RelayCommand]
