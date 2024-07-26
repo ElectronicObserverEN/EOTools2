@@ -71,5 +71,10 @@ public partial class UpdateViewModel : ObservableObject
 
             Model.UpdateEndTime = endTime.Add(new TimeSpan((realEnd - realStart).Days, 0, 0, 0));
         }
+
+        if (UpdateStartTime is { } startTime)
+        {
+            Model.UpdateStartTime = new TimeSpan(startTime.Hours, startTime.Minutes, startTime.Seconds);
+        }
     }
 }

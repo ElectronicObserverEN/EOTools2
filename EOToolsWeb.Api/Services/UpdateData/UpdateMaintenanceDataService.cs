@@ -25,8 +25,8 @@ public class UpdateMaintenanceDataService(IGitManagerService git, EoToolsDbConte
 
         if (updateData is null) return;
 
-        SetOldUpdateTime(updateData);
         UpdateModel? update = SetUpdateTime(updateData);
+        SetOldUpdateTime(updateData);
 
         await DatabaseSync.StageDatabaseChangesToGit();
 
