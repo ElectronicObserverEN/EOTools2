@@ -152,8 +152,18 @@ public class UpdateMaintenanceDataService(IGitManagerService git, EoToolsDbConte
 
         if (eventStart != null && update.UpdateInProgress() && update.UpdateEndTime is TimeSpan end)
         {
-            update.UpdateStartTime = end;
-            return new(update, (int)MaintenanceState.EventStart);
+            return new(new()
+            {
+                Id = update.Id,
+                Name = update.Name,
+                Description = update.Description,
+                WasLiveUpdate = update.WasLiveUpdate,
+                EndTweetLink = update.EndTweetLink,
+                StartTweetLink = update.StartTweetLink,
+                UpdateDate = update.UpdateDate,
+                UpdateEndTime = end,
+                UpdateStartTime = end,
+            }, (int)MaintenanceState.EventStart);
         }
 
         return new(update, (int)MaintenanceState.Regular);
