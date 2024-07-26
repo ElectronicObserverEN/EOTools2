@@ -45,16 +45,18 @@ public partial class UpdateViewModel : ObservableObject
         UpdateEndTime = Model.UpdateEndTime;
         EndTweet = Model.EndTweetLink;
         StartTweet = Model.StartTweetLink;
-
+        
         if (UpdateEndTime is { } endTime && UpdateDate is { } start)
         {
             UpdateEndDate = start.AddDays(endTime.Days);
+
+            UpdateEndTime = new(endTime.Hours, endTime.Minutes, endTime.Seconds);
         }
     }
 
     public void SaveChanges()
     {
-        Model.UpdateDate = UpdateDate;
+        Model.UpdateDate = UpdateDate?.UtcDateTime;
         Model.Name = Name;
         Model.Description = Description;
         Model.WasLiveUpdate = WasLiveUpdate;
@@ -64,7 +66,10 @@ public partial class UpdateViewModel : ObservableObject
 
         if (UpdateEndDate is {} endDate && UpdateEndTime is {} endTime && UpdateDate is {} start)
         {
-            Model.UpdateEndTime = endTime.Add(new TimeSpan((endDate - start).Days, 0, 0, 0));
+            DateTime realEnd = endDate.UtcDateTime;
+            DateTime realStart = start.UtcDateTime;
+
+            Model.UpdateEndTime = endTime.Add(new TimeSpan((realEnd - realStart).Days, 0, 0, 0));
         }
     }
 }
