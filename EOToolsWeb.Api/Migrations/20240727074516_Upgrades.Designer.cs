@@ -3,6 +3,7 @@ using System;
 using EOToolsWeb.Api.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,12 +11,29 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EOToolsWeb.Api.Migrations
 {
     [DbContext(typeof(EoToolsDbContext))]
-    partial class EoToolsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240727074516_Upgrades")]
+    partial class Upgrades
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.7");
+
+            modelBuilder.Entity("EOToolsWeb.Api.Models.EquipmentUpgrades.EquipmentUpgradeDataModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("EquipmentId")
+                        .HasColumnType("INTEGER")
+                        .HasAnnotation("Relational:JsonPropertyName", "eq_id");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EquipmentUpgrades");
+                });
 
             modelBuilder.Entity("EOToolsWeb.Api.Models.UserConnection", b =>
                 {
@@ -100,8 +118,6 @@ namespace EOToolsWeb.Api.Migrations
                     b.HasIndex("EquipmentUpgradeHelpersModelId");
 
                     b.ToTable("EquipmentUpgradeHelpersDayModel");
-
-                    b.HasAnnotation("Relational:JsonPropertyName", "days");
                 });
 
             modelBuilder.Entity("EOToolsWeb.Shared.EquipmentUpgrades.EquipmentUpgradeHelpersModel", b =>
@@ -139,8 +155,6 @@ namespace EOToolsWeb.Api.Migrations
                     b.HasIndex("EquipmentUpgradeHelpersModelId");
 
                     b.ToTable("EquipmentUpgradeHelpersShipModel");
-
-                    b.HasAnnotation("Relational:JsonPropertyName", "ship_ids");
                 });
 
             modelBuilder.Entity("EOToolsWeb.Shared.EquipmentUpgrades.EquipmentUpgradeImprovmentCost", b =>
@@ -256,30 +270,18 @@ namespace EOToolsWeb.Api.Migrations
                     b.Property<int>("CostsId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("EquipmentUpgradeModelId")
+                    b.Property<int?>("EquipmentUpgradeDataModelId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CostsId");
 
-                    b.HasIndex("EquipmentUpgradeModelId");
+                    b.HasIndex("EquipmentUpgradeDataModelId");
 
                     b.ToTable("Improvments");
-                });
 
-            modelBuilder.Entity("EOToolsWeb.Shared.EquipmentUpgrades.EquipmentUpgradeModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("EquipmentId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("EquipmentUpgradeDataModel");
+                    b.HasAnnotation("Relational:JsonPropertyName", "improvement");
                 });
 
             modelBuilder.Entity("EOToolsWeb.Shared.Equipments.EquipmentModel", b =>
@@ -596,9 +598,9 @@ namespace EOToolsWeb.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EOToolsWeb.Shared.EquipmentUpgrades.EquipmentUpgradeModel", null)
+                    b.HasOne("EOToolsWeb.Api.Models.EquipmentUpgrades.EquipmentUpgradeDataModel", null)
                         .WithMany("Improvement")
-                        .HasForeignKey("EquipmentUpgradeModelId");
+                        .HasForeignKey("EquipmentUpgradeDataModelId");
 
                     b.Navigation("Costs");
                 });
@@ -610,6 +612,11 @@ namespace EOToolsWeb.Api.Migrations
                         .HasForeignKey("ShipClassId1");
 
                     b.Navigation("ShipClass");
+                });
+
+            modelBuilder.Entity("EOToolsWeb.Api.Models.EquipmentUpgrades.EquipmentUpgradeDataModel", b =>
+                {
+                    b.Navigation("Improvement");
                 });
 
             modelBuilder.Entity("EOToolsWeb.Shared.EquipmentUpgrades.EquipmentUpgradeHelpersModel", b =>
@@ -631,11 +638,6 @@ namespace EOToolsWeb.Api.Migrations
                     b.Navigation("ConversionData");
 
                     b.Navigation("Helpers");
-                });
-
-            modelBuilder.Entity("EOToolsWeb.Shared.EquipmentUpgrades.EquipmentUpgradeModel", b =>
-                {
-                    b.Navigation("Improvement");
                 });
 #pragma warning restore 612, 618
         }

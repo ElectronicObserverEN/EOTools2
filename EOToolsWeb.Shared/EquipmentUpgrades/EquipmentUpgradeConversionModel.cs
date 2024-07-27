@@ -5,7 +5,7 @@ namespace EOToolsWeb.Shared.EquipmentUpgrades
     public class EquipmentUpgradeConversionModel
     {
         [JsonIgnore]
-        public EquipmentUpgradeImprovmentModel ImprovmentModel { get; set; }
+        public EquipmentUpgradeImprovmentModel? ImprovmentModel { get; set; }
 
         [JsonIgnore]
         public int ImprovmentModelId { get; set; }

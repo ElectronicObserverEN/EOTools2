@@ -4,7 +4,6 @@ namespace EOToolsWeb.Shared.EquipmentUpgrades
 {
     public class EquipmentUpgradeImprovmentModel
     {
-        [JsonIgnore]
         public int Id { get; set; }
 
         [JsonPropertyName("convert")]
