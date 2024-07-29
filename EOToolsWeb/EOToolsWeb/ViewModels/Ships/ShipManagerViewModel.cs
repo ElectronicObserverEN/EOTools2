@@ -16,7 +16,7 @@ public partial class ShipManagerViewModel : ViewModelBase
     [ObservableProperty]
     private string _filter = "";
 
-    private List<ShipModel> Ships { get; } = [];
+    public List<ShipModel> Ships { get; } = [];
 
     [ObservableProperty]
     private List<ShipModel> _shipsFiltered = new();

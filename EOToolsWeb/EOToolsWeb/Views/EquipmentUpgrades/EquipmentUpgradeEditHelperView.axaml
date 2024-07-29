@@ -1,0 +1,66 @@
+<UserControl
+	x:Class="EOToolsWeb.Views.EquipmentUpgrades.EquipmentUpgradeEditHelperView"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:equipmentUpgrades="clr-namespace:EOToolsWeb.Views.EquipmentUpgrades"
+	xmlns:equipmentUpgrades1="clr-namespace:EOToolsWeb.ViewModels.EquipmentUpgrades"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	d:DesignHeight="450"
+	d:DesignWidth="800"
+	x:DataType="equipmentUpgrades1:EquipmentUpgradeHelpersViewModel"
+	mc:Ignorable="d">
+
+	<StackPanel>
+		<Button
+			Command="{Binding ViewModel.RemoveHelpersCommand, RelativeSource={RelativeSource AncestorType=equipmentUpgrades:EquipmentUpgradeEditView}}"
+			CommandParameter="{Binding}"
+			Content="Remove" />
+
+		<StackPanel Margin="5" Orientation="Horizontal">
+			<TextBlock VerticalAlignment="Center" Text="Ships : " />
+			<NumericUpDown ShowButtonSpinner="False" Value="{Binding ShipId}" />
+			<Button Command="{Binding AddShipIdCommand}" Content="Add" />
+		</StackPanel>
+
+		<ListBox ItemsSource="{Binding Ships}">
+			<ListBox.ItemsPanel>
+				<ItemsPanelTemplate>
+					<StackPanel Orientation="Horizontal" />
+				</ItemsPanelTemplate>
+			</ListBox.ItemsPanel>
+
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<Button
+						Command="{Binding ViewModel.RemoveShipIdCommand, RelativeSource={RelativeSource AncestorType=equipmentUpgrades:EquipmentUpgradeEditHelperView}}"
+						CommandParameter="{Binding}"
+						Content="{Binding ShipModel.NameEN}" />
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+
+		<StackPanel Margin="5" Orientation="Horizontal">
+			<TextBlock VerticalAlignment="Center" Text="Days : " />
+			<ComboBox ItemsSource="{Binding Days}" SelectedItem="{Binding Day}" />
+			<Button Command="{Binding AddDayCommand}" Content="Add" />
+		</StackPanel>
+
+		<ListBox ItemsSource="{Binding CanHelpOnDays}">
+			<ListBox.ItemsPanel>
+				<ItemsPanelTemplate>
+					<StackPanel Orientation="Horizontal" />
+				</ItemsPanelTemplate>
+			</ListBox.ItemsPanel>
+
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<Button
+						Command="{Binding ViewModel.RemoveDayCommand, RelativeSource={RelativeSource AncestorType=equipmentUpgrades:EquipmentUpgradeEditHelperView}}"
+						CommandParameter="{Binding}"
+						Content="{Binding Day}" />
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+	</StackPanel>
+</UserControl>

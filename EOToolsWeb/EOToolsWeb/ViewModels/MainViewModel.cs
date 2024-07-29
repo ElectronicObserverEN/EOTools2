@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EOToolsWeb.ViewModels.Equipments;
+using EOToolsWeb.ViewModels.EquipmentUpgrades;
 using EOToolsWeb.ViewModels.Events;
 using EOToolsWeb.ViewModels.Login;
 using EOToolsWeb.ViewModels.ShipLocks;
@@ -20,6 +21,8 @@ public partial class MainViewModel(
     ShipManagerViewModel shipManager, 
     ShipClassListViewModel shipClassList, 
     EquipmentManagerViewModel equipmentManager,
+    EquipmentViewModel equipmentViewModel,
+    EquipmentUpgradeImprovmentViewModel equipmentUpgradeViewModel,
     ShipLocksManagerViewModel shipLockManager
 ) : ViewModelBase
 {
@@ -37,6 +40,8 @@ public partial class MainViewModel(
     public ShipManagerViewModel ShipManager { get; } = shipManager;
 
     public EquipmentManagerViewModel EquipmentManager { get; } = equipmentManager;
+    public EquipmentViewModel EquipmentViewModel { get; } = equipmentViewModel;
+    public EquipmentUpgradeImprovmentViewModel EquipmentUpgradeImprovmentViewModel { get; } = equipmentUpgradeViewModel;
 
     public ShipLocksManagerViewModel ShipLocksManager { get; } = shipLockManager;
 

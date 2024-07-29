@@ -98,7 +98,7 @@
 				<DataGrid
 					AutoGenerateColumns="False"
 					IsReadOnly="True"
-					ItemsSource="{Binding Upgrades}">
+					ItemsSource="{Binding UpgradeIds}">
 
 					<DataGrid.Columns>
 
@@ -120,7 +120,7 @@
 							</DataGridTemplateColumn.CellTemplate>
 						</DataGridTemplateColumn>
 
-						<DataGridTextColumn Binding="{Binding Id}" Header="Upgrade" />
+						<DataGridTextColumn Binding="{Binding}" Header="Upgrade Id" />
 					</DataGrid.Columns>
 				</DataGrid>
 			</StackPanel>

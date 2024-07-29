@@ -1,5 +1,4 @@
 using EOToolsWeb.Api.Database;
-using EOToolsWeb.Api.Models.EquipmentUpgrades;
 using EOToolsWeb.Api.Services.UpdateData;
 using EOToolsWeb.Shared.EquipmentUpgrades;
 using Microsoft.AspNetCore.Authorization;

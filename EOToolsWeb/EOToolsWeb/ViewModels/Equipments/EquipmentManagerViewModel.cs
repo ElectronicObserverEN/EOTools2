@@ -65,7 +65,7 @@ public partial class EquipmentManagerViewModel : ViewModelBase
         EquipmentModel model = new();
 
         EquipmentViewModel.Model = model;
-        EquipmentViewModel.LoadFromModel();
+        await EquipmentViewModel.LoadFromModel();
 
         if (await ShowEditDialog.Handle(EquipmentViewModel))
         {
@@ -90,7 +90,7 @@ public partial class EquipmentManagerViewModel : ViewModelBase
     private async Task EditEquipment(EquipmentModel vm)
     {
         EquipmentViewModel.Model = vm;
-        EquipmentViewModel.LoadFromModel();
+        await EquipmentViewModel.LoadFromModel();
 
         if (await ShowEditDialog.Handle(EquipmentViewModel))
         {
@@ -121,9 +121,9 @@ public partial class EquipmentManagerViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void UpdateUpgrades()
+    private async Task UpdateUpgrades()
     {
-
+        await HttpClient.PutAsync("EquipmentUpgrades/pushEquipments", null);
     }
 
     [RelayCommand]

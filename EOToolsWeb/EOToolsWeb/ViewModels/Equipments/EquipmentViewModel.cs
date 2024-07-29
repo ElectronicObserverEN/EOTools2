@@ -1,13 +1,18 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EOToolsWeb.Shared.Equipments;
 using EOToolsWeb.Shared.EquipmentUpgrades;
+using EOToolsWeb.ViewModels.EquipmentUpgrades;
+using ReactiveUI;
 
 namespace EOToolsWeb.ViewModels.Equipments;
 
-public partial class EquipmentViewModel : ViewModelBase
+public partial class EquipmentViewModel(HttpClient client) : ViewModelBase
 {
     [ObservableProperty]
     private string _nameEN = "";
@@ -23,14 +28,28 @@ public partial class EquipmentViewModel : ViewModelBase
 
     public EquipmentModel Model { get; set; } = new();
 
-    public ObservableCollection<EquipmentUpgradeImprovmentModel> Upgrades { get; set; } = [];
+    [ObservableProperty]
+    private List<int> _upgradeIds = [];
 
-    public void LoadFromModel()
+    private HttpClient HttpClient { get; } = client;
+
+    public Interaction<EquipmentUpgradeImprovmentModel, bool> ShowUpgradeEditDialog { get; } = new();
+
+    public async Task LoadFromModel()
     {
         NameJP = Model.NameJP;
         NameEN = Model.NameEN;
         ApiId = Model.ApiId;
         CanBeCrafted = Model.CanBeCrafted;
+
+        if (Model.ApiId > 0)
+        {
+            UpgradeIds = await HttpClient.GetFromJsonAsync<List<int>>($"EquipmentUpgrades/{Model.ApiId}") ?? [];
+        }
+        else
+        {
+            UpgradeIds = [];
+        }
     }
 
     public void SaveChanges()
@@ -49,13 +68,26 @@ public partial class EquipmentViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private async Task EditEquipmentUpgrade(EquipmentUpgradeImprovmentModel vm)
+    private async Task EditEquipmentUpgrade(int id)
     {
+        EquipmentUpgradeImprovmentModel? model = await HttpClient.GetFromJsonAsync<EquipmentUpgradeImprovmentModel>($"EquipmentUpgradeImprovmentModel/{id}");
 
+        if (model is null) return;
+        
+        if (await ShowUpgradeEditDialog.Handle(model))
+        {
+            //vm.SaveChanges();
+
+            //HttpResponseMessage response = await HttpClient.PutAsJsonAsync("Equipments", vm);
+
+            //response.EnsureSuccessStatusCode();
+
+            //ReloadEquipmentList();
+        }
     }
 
     [RelayCommand]
-    private async Task RemoveEquipmentUpgrade(EquipmentUpgradeImprovmentModel vm)
+    private async Task RemoveEquipmentUpgrade(int id)
     {
 
     }

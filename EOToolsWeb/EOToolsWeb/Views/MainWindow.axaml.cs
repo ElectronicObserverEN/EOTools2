@@ -7,13 +7,16 @@ using EOToolsWeb.Views.Updates;
 using Avalonia.ReactiveUI;
 using ReactiveUI;
 using System.Threading.Tasks;
+using EOToolsWeb.Shared.EquipmentUpgrades;
 using EOToolsWeb.Shared.Ships;
 using EOToolsWeb.Shared.Updates;
 using EOToolsWeb.ViewModels.Equipments;
+using EOToolsWeb.ViewModels.EquipmentUpgrades;
 using EOToolsWeb.ViewModels.Events;
 using EOToolsWeb.ViewModels.ShipLocks;
 using EOToolsWeb.ViewModels.Ships;
 using EOToolsWeb.Views.Equipments;
+using EOToolsWeb.Views.EquipmentUpgrades;
 using EOToolsWeb.Views.Events;
 using EOToolsWeb.Views.ShipLocks;
 using EOToolsWeb.Views.Ships;
@@ -39,6 +42,7 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         this.WhenActivated(d => d(ViewModel!.ShipManager.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
 
         this.WhenActivated(d => d(ViewModel!.EquipmentManager.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
+        this.WhenActivated(d => d(ViewModel!.EquipmentViewModel.ShowUpgradeEditDialog.RegisterHandler(DoShowEditDialogAsync)));
 
         this.WhenActivated(d => d(ViewModel!.ShipLocksManager.ShowShipLockEditDialog.RegisterHandler(DoShowEditDialogAsync)));
         this.WhenActivated(d => d(ViewModel!.ShipLocksManager.ShowShipLockPhaseEditDialog.RegisterHandler(DoShowEditDialogAsync)));
@@ -142,6 +146,30 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         bool result = await dialog.ShowDialog<bool?>(this) is true;
         interaction.SetOutput(result);
     }
+
+    private async Task DoShowEditDialogAsync(IInteractionContext<EquipmentUpgradeImprovmentModel, bool> interaction)
+    {
+        EquipmentUpgradeEditView dialog = new();
+
+        EquipmentUpgradeImprovmentViewModel? vm = MainViewModel?.EquipmentUpgradeImprovmentViewModel;
+
+        if (vm is null) return;
+
+        vm.Model = interaction.Input;
+        await vm.LoadFromModel();
+
+        dialog.DataContext = vm;
+
+        bool result = await dialog.ShowDialog<bool?>(this) is true;
+
+        if (result)
+        {
+            vm.SaveChanges();
+        }
+
+        interaction.SetOutput(result);
+    }
+
 
     private async Task DoShowEditDialogAsync(IInteractionContext<ShipLockViewModel, bool> interaction)
     {

@@ -12,6 +12,7 @@ using EOToolsWeb.ViewModels.Equipments;
 using EOToolsWeb.ViewModels.Events;
 using EOToolsWeb.ViewModels.ShipLocks;
 using EOToolsWeb.ViewModels.Ships;
+using EOToolsWeb.ViewModels.EquipmentUpgrades;
 
 namespace EOToolsWeb
 {
@@ -53,6 +54,9 @@ namespace EOToolsWeb
             // Equipments
             collection.AddScoped<EquipmentManagerViewModel>();
             collection.AddScoped<EquipmentViewModel>();
+
+            // Equipment Upgrades
+            collection.AddScoped<EquipmentUpgradeImprovmentViewModel>();
 
             // Locks
             collection.AddScoped<ShipLocksManagerViewModel>();
