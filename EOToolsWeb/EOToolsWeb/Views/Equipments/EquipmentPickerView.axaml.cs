@@ -1,14 +1,14 @@
 using System;
 using Avalonia.Controls;
-using EOToolsWeb.ViewModels.Ships;
+using EOToolsWeb.ViewModels.Equipments;
 
-namespace EOToolsWeb.Views.Ships;
+namespace EOToolsWeb.Views.Equipments;
 
-public partial class ShipClassListView : Window
+public partial class EquipmentPickerView : Window
 {
-    private ShipClassListViewModel? ViewModel => DataContext as ShipClassListViewModel;
+    private EquipmentPickerViewModel? ViewModel => DataContext as EquipmentPickerViewModel;
 
-    public ShipClassListView()
+    public EquipmentPickerView()
     {
         InitializeComponent();
     }
@@ -24,8 +24,8 @@ public partial class ShipClassListView : Window
 
     private void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        if (e.PropertyName is not nameof(ViewModel.PickedClass)) return;
+        if (e.PropertyName is not nameof(ViewModel.PickedEquipment)) return;
 
-        Close(ViewModel?.PickedClass);
+        Close(ViewModel?.PickedEquipment);
     }
 }

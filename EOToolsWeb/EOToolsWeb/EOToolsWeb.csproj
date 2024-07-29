@@ -47,6 +47,9 @@
     <Compile Update="Views\Equipments\EquipmentManagerView.axaml.cs">
       <DependentUpon>EquipmentManagerView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\Equipments\EquipmentPickerView.axaml.cs">
+      <DependentUpon>EquipmentPickerView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\EquipmentUpgrades\EquipmentUpgradeEditView.axaml.cs">
       <DependentUpon>EquipmentUpgradeEditView.axaml</DependentUpon>
     </Compile>

@@ -23,6 +23,7 @@ public partial class MainViewModel(
     EquipmentManagerViewModel equipmentManager,
     EquipmentViewModel equipmentViewModel,
     EquipmentUpgradeImprovmentViewModel equipmentUpgradeViewModel,
+    EquipmentPickerViewModel equipmentPicker,
     ShipLocksManagerViewModel shipLockManager
 ) : ViewModelBase
 {
@@ -42,6 +43,7 @@ public partial class MainViewModel(
     public EquipmentManagerViewModel EquipmentManager { get; } = equipmentManager;
     public EquipmentViewModel EquipmentViewModel { get; } = equipmentViewModel;
     public EquipmentUpgradeImprovmentViewModel EquipmentUpgradeImprovmentViewModel { get; } = equipmentUpgradeViewModel;
+    public EquipmentPickerViewModel EquipmentPicker { get; } = equipmentPicker;
 
     public ShipLocksManagerViewModel ShipLocksManager { get; } = shipLockManager;
 

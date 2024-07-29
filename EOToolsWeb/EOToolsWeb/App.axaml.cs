@@ -54,6 +54,7 @@ namespace EOToolsWeb
             // Equipments
             collection.AddScoped<EquipmentManagerViewModel>();
             collection.AddScoped<EquipmentViewModel>();
+            collection.AddScoped<EquipmentPickerViewModel>();
 
             // Equipment Upgrades
             collection.AddScoped<EquipmentUpgradeImprovmentViewModel>();

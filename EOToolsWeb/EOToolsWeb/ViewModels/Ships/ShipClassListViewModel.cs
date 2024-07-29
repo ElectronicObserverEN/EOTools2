@@ -35,6 +35,9 @@ public partial class ShipClassListViewModel : ObservableObject
 
         ClassList = ShipClassManagerViewModel.ShipClass;
 
+        SelectedClass = null;
+        PickedClass = null;
+
         RefreshList();
     }
 

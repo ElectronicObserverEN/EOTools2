@@ -7,6 +7,7 @@ using EOToolsWeb.Views.Updates;
 using Avalonia.ReactiveUI;
 using ReactiveUI;
 using System.Threading.Tasks;
+using EOToolsWeb.Shared.Equipments;
 using EOToolsWeb.Shared.EquipmentUpgrades;
 using EOToolsWeb.Shared.Ships;
 using EOToolsWeb.Shared.Updates;
@@ -42,6 +43,7 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         this.WhenActivated(d => d(ViewModel!.ShipManager.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
 
         this.WhenActivated(d => d(ViewModel!.EquipmentManager.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
+        this.WhenActivated(d => d(ViewModel!.EquipmentManager.ShowPicker.RegisterHandler(DoShowPickerDialogAsync)));
         this.WhenActivated(d => d(ViewModel!.EquipmentViewModel.ShowUpgradeEditDialog.RegisterHandler(DoShowEditDialogAsync)));
 
         this.WhenActivated(d => d(ViewModel!.ShipLocksManager.ShowShipLockEditDialog.RegisterHandler(DoShowEditDialogAsync)));
@@ -126,6 +128,20 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         dialog.DataContext = MainViewModel.ShipClassList;
 
         ShipClassModel? result = await dialog.ShowDialog<ShipClassModel?>(this);
+        interaction.SetOutput(result);
+    }
+
+    private async Task DoShowPickerDialogAsync(IInteractionContext<object?, EquipmentModel?> interaction)
+    {
+        if (MainViewModel?.EquipmentPicker is null) return;
+
+        await MainViewModel.EquipmentManager.LoadAllEquipments();
+        MainViewModel.EquipmentPicker.Initialize(MainViewModel.EquipmentManager.AllEquipments);
+
+        EquipmentPickerView dialog = new();
+        dialog.DataContext = MainViewModel.EquipmentPicker;
+
+        EquipmentModel? result = await dialog.ShowDialog<EquipmentModel?>(this);
         interaction.SetOutput(result);
     }
 
