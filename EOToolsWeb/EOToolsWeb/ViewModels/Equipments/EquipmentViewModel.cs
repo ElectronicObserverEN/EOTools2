@@ -7,7 +7,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EOToolsWeb.Shared.Equipments;
 using EOToolsWeb.Shared.EquipmentUpgrades;
-using EOToolsWeb.ViewModels.EquipmentUpgrades;
 using ReactiveUI;
 
 namespace EOToolsWeb.ViewModels.Equipments;
@@ -64,7 +63,16 @@ public partial class EquipmentViewModel(HttpClient client) : ViewModelBase
     [RelayCommand]
     private async Task ShowAddEquipmentUpgradeDialog()
     {
+        EquipmentUpgradeImprovmentModel model = new();
+        
+        if (await ShowUpgradeEditDialog.Handle(model))
+        {
+            HttpResponseMessage response = await HttpClient.PostAsJsonAsync($"EquipmentUpgradeImprovmentModel/{ApiId}", model);
 
+            response.EnsureSuccessStatusCode();
+
+            UpgradeIds = await HttpClient.GetFromJsonAsync<List<int>>($"EquipmentUpgrades/{Model.ApiId}") ?? [];
+        }
     }
 
     [RelayCommand]
@@ -76,13 +84,9 @@ public partial class EquipmentViewModel(HttpClient client) : ViewModelBase
         
         if (await ShowUpgradeEditDialog.Handle(model))
         {
-            //vm.SaveChanges();
+            HttpResponseMessage response = await HttpClient.PutAsJsonAsync("EquipmentUpgradeImprovmentModel", model);
 
-            //HttpResponseMessage response = await HttpClient.PutAsJsonAsync("Equipments", vm);
-
-            //response.EnsureSuccessStatusCode();
-
-            //ReloadEquipmentList();
+            response.EnsureSuccessStatusCode();
         }
     }
 

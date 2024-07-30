@@ -64,31 +64,22 @@ public partial class EquipmentUpgradeImprovmentCostDetailViewModel(EquipmentMana
         Model.SliderDevmatCost = SliderDevmatCost;
         Model.ImproveMatCost = ImproveMatCost;
         Model.SliderImproveMatCost = SliderImproveMatCost;
-        
+
+        Model.EquipmentDetail.Clear();
+        Model.ConsumableDetail.Clear();
+
         foreach (EquipmentUpgradeImprovmentCostEquipmentRequirementViewModel vm in EquipmentsRequired)
         {
             vm.SaveChanges();
 
-            if (!Model.EquipmentDetail.Contains(vm.Model))
-            {
-                Model.EquipmentDetail.Add(vm.Model);
-            }
-            else
-            {
-            }
+            Model.EquipmentDetail.Add(vm.Model);
         }
         
         foreach (EquipmentUpgradeImprovmentCostUseItemRequirementViewModel vm in UseItemsRequired)
         {
             vm.SaveChanges();
 
-            if (!Model.ConsumableDetail.Contains(vm.Model))
-            {
-                Model.ConsumableDetail.Add(vm.Model);
-            }
-            else
-            {
-            }
+            Model.ConsumableDetail.Add(vm.Model);
         }
     }
     

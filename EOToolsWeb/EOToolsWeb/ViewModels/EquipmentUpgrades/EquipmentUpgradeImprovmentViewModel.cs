@@ -23,7 +23,7 @@ public partial class EquipmentUpgradeImprovmentViewModel(ShipManagerViewModel sh
 
     public ObservableCollection<EquipmentUpgradeHelpersViewModel> Helpers { get; set; } = [];
 
-    public string AfterConversionEquipmentName => ConversionViewModel?.Equipment?.NameEN ?? "Select an equipment";
+    public string AfterConversionEquipmentName => ConversionViewModel?.Equipment?.Id > 0 ? ConversionViewModel.Equipment.NameEN : "Select an equipment";
 
     private ShipManagerViewModel ShipManager { get; } = shipManager;
 
@@ -60,7 +60,7 @@ public partial class EquipmentUpgradeImprovmentViewModel(ShipManagerViewModel sh
             helpers.SaveChanges();
         }
 
-        Model.ConversionData = ConversionViewModel.Model.Id switch
+        Model.ConversionData = ConversionViewModel.Model.IdEquipmentAfter switch
         {
             0 => null,
             _ => ConversionViewModel.Model,
@@ -87,6 +87,8 @@ public partial class EquipmentUpgradeImprovmentViewModel(ShipManagerViewModel sh
             EquipmentLevelAfter = 0,
             IdEquipmentAfter = model.ApiId
         };
+
+        await ConversionViewModel.LoadFromModel();
 
         OnPropertyChanged(nameof(AfterConversionEquipmentName));
     }

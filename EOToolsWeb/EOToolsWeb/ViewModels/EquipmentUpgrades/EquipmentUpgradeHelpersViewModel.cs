@@ -51,14 +51,18 @@ public partial class EquipmentUpgradeHelpersViewModel(ShipManagerViewModel shipM
 
 
     [RelayCommand]
-    public void AddShipId()
+    public async Task AddShipId()
     {
-        EquipmentUpgradeHelpersShipModel model = new()
+        EquipmentUpgradeHelpersShipViewModel vm = new(ShipManager);
+
+        vm.Model = new()
         {
             ShipId = ShipId
         };
 
-        Ships.Add(new EquipmentUpgradeHelpersShipViewModel(ShipManager));
+        await vm.LoadFromModel();
+
+        Ships.Add(vm);
     }
 
     [RelayCommand]

@@ -124,7 +124,10 @@
 							Command="{Binding Cost0To5ViewModel.AddEquipmentRequirementCommand}"
 							Content="Add" />
 
-						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Cost0To5ViewModel.EquipmentsRequired}">
+						<DataGrid
+							MinWidth="200"
+							AutoGenerateColumns="False"
+							ItemsSource="{Binding Cost0To5ViewModel.EquipmentsRequired}">
 							<DataGrid.Columns>
 								<DataGridTemplateColumn Header="Equipment">
 									<DataGridTemplateColumn.CellTemplate>
@@ -136,7 +139,10 @@
 									</DataGridTemplateColumn.CellTemplate>
 								</DataGridTemplateColumn>
 
-								<DataGridTextColumn Binding="{Binding Count}" Header="Count required" />
+								<DataGridTextColumn
+									Binding="{Binding Count}"
+									Header="Count required"
+									IsReadOnly="False" />
 							</DataGrid.Columns>
 						</DataGrid>
 
@@ -157,7 +163,10 @@
 									</DataGridTemplateColumn.CellTemplate>
 								</DataGridTemplateColumn>
 
-								<DataGridTextColumn Binding="{Binding Count}" Header="Count required" />
+								<DataGridTextColumn
+									Binding="{Binding Count}"
+									Header="Count required"
+									IsReadOnly="False" />
 							</DataGrid.Columns>
 						</DataGrid>
 
@@ -215,7 +224,10 @@
 									</DataGridTemplateColumn.CellTemplate>
 								</DataGridTemplateColumn>
 
-								<DataGridTextColumn Binding="{Binding Count}" Header="Count required" />
+								<DataGridTextColumn
+									Binding="{Binding Count}"
+									Header="Count required"
+									IsReadOnly="False" />
 							</DataGrid.Columns>
 						</DataGrid>
 
@@ -235,7 +247,10 @@
 									</DataGridTemplateColumn.CellTemplate>
 								</DataGridTemplateColumn>
 
-								<DataGridTextColumn Binding="{Binding Count}" Header="Count required" />
+								<DataGridTextColumn
+									Binding="{Binding Count}"
+									Header="Count required"
+									IsReadOnly="False" />
 							</DataGrid.Columns>
 						</DataGrid>
 
@@ -310,7 +325,10 @@
 								</DataGridTemplateColumn>
 
 
-								<DataGridTextColumn Binding="{Binding Count}" Header="Count required" />
+								<DataGridTextColumn
+									Binding="{Binding Count}"
+									Header="Count required"
+									IsReadOnly="False" />
 							</DataGrid.Columns>
 						</DataGrid>
 
@@ -331,7 +349,10 @@
 									</DataGridTemplateColumn.CellTemplate>
 								</DataGridTemplateColumn>
 
-								<DataGridTextColumn Binding="{Binding Count}" Header="Count required" />
+								<DataGridTextColumn
+									Binding="{Binding Count}"
+									Header="Count required"
+									IsReadOnly="False" />
 							</DataGrid.Columns>
 						</DataGrid>
 					</StackPanel>

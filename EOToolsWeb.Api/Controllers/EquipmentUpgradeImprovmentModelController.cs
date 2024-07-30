@@ -3,6 +3,7 @@ using EOToolsWeb.Shared.EquipmentUpgrades;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 namespace EOToolsWeb.Api.Controllers;
 
@@ -41,7 +42,18 @@ public class EquipmentUpgradeImprovmentModelController(EoToolsDbContext db) : Co
     [HttpPost("{equipmentId}")]
     public async Task<IActionResult> Post(int equipmentId, EquipmentUpgradeImprovmentModel equipmentUpgrade)
     {
-        EquipmentUpgradeModel model = await Database.EquipmentUpgrades.FirstAsync(upgData => upgData.EquipmentId == equipmentId);
+        EquipmentUpgradeModel? model = await Database.EquipmentUpgrades.FirstOrDefaultAsync(upgData => upgData.EquipmentId == equipmentId);
+
+        bool newModel = model is null;
+
+        if (model is null)
+        {
+            model = new()
+            {
+                EquipmentId = equipmentId,
+                Improvement = [],
+            };
+        }
 
         Database.AddRange(equipmentUpgrade.Helpers);
         Database.AddRange(equipmentUpgrade.Helpers.SelectMany(helpers => helpers.CanHelpOnDays));
@@ -65,7 +77,15 @@ public class EquipmentUpgradeImprovmentModelController(EoToolsDbContext db) : Co
         }
 
         model.Improvement.Add(equipmentUpgrade);
-        Database.EquipmentUpgrades.Update(model);
+
+        if (newModel)
+        {
+            Database.EquipmentUpgrades.Add(model);
+        }
+        else
+        {
+            Database.EquipmentUpgrades.Update(model);
+        }
 
         await Database.SaveChangesAsync();
 
@@ -101,9 +121,47 @@ public class EquipmentUpgradeImprovmentModelController(EoToolsDbContext db) : Co
             Database.RemoveRange(model.ConversionData);
         }
 
+        equipmentUpgrade.Helpers.ForEach(help => help.Id = 0);
+
+        foreach (var entity in equipmentUpgrade.Helpers.SelectMany(helpers => helpers.CanHelpOnDays))
+        {
+            entity.Id = 0;
+        }
+
+        foreach (var entity in equipmentUpgrade.Helpers.SelectMany(helpers => helpers.ShipIds))
+        {
+            entity.Id = 0;
+        }
+
         Database.AddRange(equipmentUpgrade.Helpers);
         Database.AddRange(equipmentUpgrade.Helpers.SelectMany(helpers => helpers.CanHelpOnDays));
         Database.AddRange(equipmentUpgrade.Helpers.SelectMany(helpers => helpers.ShipIds));
+
+        equipmentUpgrade.Costs.Id = 0;
+
+        equipmentUpgrade.Costs.Cost0To5.Id = 0;
+
+        foreach (var entity in equipmentUpgrade.Costs.Cost0To5.EquipmentDetail)
+        {
+            entity.Id = 0;
+        }
+
+        foreach (var entity in equipmentUpgrade.Costs.Cost0To5.ConsumableDetail)
+        {
+            entity.Id = 0;
+        }
+
+        equipmentUpgrade.Costs.Cost6To9.Id = 0;
+
+        foreach (var entity in equipmentUpgrade.Costs.Cost6To9.EquipmentDetail)
+        {
+            entity.Id = 0;
+        }
+
+        foreach (var entity in equipmentUpgrade.Costs.Cost6To9.ConsumableDetail)
+        {
+            entity.Id = 0;
+        }
 
         Database.AddRange(equipmentUpgrade.Costs);
 
@@ -117,6 +175,18 @@ public class EquipmentUpgradeImprovmentModelController(EoToolsDbContext db) : Co
 
         if (equipmentUpgrade.Costs.CostMax is not null)
         {
+            equipmentUpgrade.Costs.CostMax.Id = 0;
+
+            foreach (var entity in equipmentUpgrade.Costs.CostMax.EquipmentDetail)
+            {
+                entity.Id = 0;
+            }
+
+            foreach (var entity in equipmentUpgrade.Costs.CostMax.ConsumableDetail)
+            {
+                entity.Id = 0;
+            }
+
             Database.AddRange(equipmentUpgrade.Costs.CostMax);
             Database.AddRange(equipmentUpgrade.Costs.CostMax.ConsumableDetail);
             Database.AddRange(equipmentUpgrade.Costs.CostMax.EquipmentDetail);
@@ -124,6 +194,8 @@ public class EquipmentUpgradeImprovmentModelController(EoToolsDbContext db) : Co
 
         if (equipmentUpgrade.ConversionData is not null)
         {
+            equipmentUpgrade.ConversionData.Id = 0;
+
             Database.AddRange(equipmentUpgrade.ConversionData);
         }
 

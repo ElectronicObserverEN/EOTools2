@@ -36,7 +36,7 @@ public partial class EquipmentUpgradeImprovmentCostViewModel(EquipmentManagerVie
         Cost0To5ViewModel.Model = Model.Cost0To5;
         await Cost0To5ViewModel.LoadFromModel();
 
-        Cost6To9ViewModel.Model = Model.Cost0To5;
+        Cost6To9ViewModel.Model = Model.Cost6To9;
         await Cost6To9ViewModel.LoadFromModel();
 
         CostMaxViewModel.Model = Model.CostMax ?? new();
@@ -51,8 +51,10 @@ public partial class EquipmentUpgradeImprovmentCostViewModel(EquipmentManagerVie
         Model.Bauxite = Bauxite;
 
         Cost0To5ViewModel.SaveChanges();
+        Model.Cost0To5 = Cost0To5ViewModel.Model;
 
         Cost6To9ViewModel.SaveChanges();
+        Model.Cost6To9 = Cost6To9ViewModel.Model;
 
         CostMaxViewModel.SaveChanges();
 
