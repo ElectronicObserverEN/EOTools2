@@ -23,7 +23,7 @@ public partial class EquipmentUpgradeConversionViewModel(EquipmentManagerViewMod
     {
         await EquipmentManager.LoadAllEquipments();
 
-        Equipment = EquipmentManager.EquipmentList.FirstOrDefault(eq => eq.ApiId == Model.IdEquipmentAfter) ?? new();
+        Equipment = EquipmentManager.AllEquipments.FirstOrDefault(eq => eq.ApiId == Model.IdEquipmentAfter) ?? new();
 
         EquipmentLevelAfter = Model.EquipmentLevelAfter;
     }
