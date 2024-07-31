@@ -1,13 +1,16 @@
 ﻿using System.Collections.ObjectModel;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EOToolsWeb.Shared.EquipmentUpgrades;
+using EOToolsWeb.Shared.UseItem;
 using EOToolsWeb.ViewModels.Equipments;
+using EOToolsWeb.ViewModels.UseItem;
 
 namespace EOToolsWeb.ViewModels.EquipmentUpgrades;
 
-public partial class EquipmentUpgradeImprovmentCostDetailViewModel(EquipmentManagerViewModel equipmentManager) : ObservableObject
+public partial class EquipmentUpgradeImprovmentCostDetailViewModel(EquipmentManagerViewModel equipmentManager, UseItemManagerViewModel useItemManager) : ObservableObject
 {
     [ObservableProperty]
     private int _devmatCost;
@@ -27,6 +30,7 @@ public partial class EquipmentUpgradeImprovmentCostDetailViewModel(EquipmentMana
     public EquipmentUpgradeImprovmentCostDetail Model { get; set; } = new();
 
     private EquipmentManagerViewModel EquipmentManager { get; } = equipmentManager;
+    private UseItemManagerViewModel UseItemManager { get; } = useItemManager;
 
     public async Task LoadFromModel()
     {
@@ -50,7 +54,7 @@ public partial class EquipmentUpgradeImprovmentCostDetailViewModel(EquipmentMana
 
         foreach (var consumable in Model.ConsumableDetail)
         {
-            EquipmentUpgradeImprovmentCostUseItemRequirementViewModel vm = new();
+            EquipmentUpgradeImprovmentCostUseItemRequirementViewModel vm = new(UseItemManager);
             vm.Model = consumable;
             vm.LoadFromModel();
 
@@ -103,14 +107,22 @@ public partial class EquipmentUpgradeImprovmentCostDetailViewModel(EquipmentMana
     }
 
     [RelayCommand]
-    public void AddUseItemRequirement()
+    private async Task AddUseItemRequirement()
     {
-        EquipmentUpgradeImprovmentCostUseItemRequirementViewModel vm = new();
+        UseItemId? pickedId = await UseItemManager.ShowPicker.Handle(null);
 
-        vm.OpenEquipmentPicker();
-
-        if (vm.Id > 0)
+        if (pickedId > 0)
         {
+            EquipmentUpgradeImprovmentCostUseItemRequirementViewModel vm = new(UseItemManager)
+            {
+                Model = new()
+                {
+                    ItemId = (int)pickedId,
+                },
+            };
+
+            vm.LoadFromModel();
+
             UseItemsRequired.Add(vm);
         }
     }

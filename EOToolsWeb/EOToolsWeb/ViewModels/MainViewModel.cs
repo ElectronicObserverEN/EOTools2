@@ -8,6 +8,7 @@ using EOToolsWeb.ViewModels.Login;
 using EOToolsWeb.ViewModels.ShipLocks;
 using EOToolsWeb.ViewModels.Ships;
 using EOToolsWeb.ViewModels.Updates;
+using EOToolsWeb.ViewModels.UseItem;
 
 namespace EOToolsWeb.ViewModels;
 
@@ -24,6 +25,7 @@ public partial class MainViewModel(
     EquipmentViewModel equipmentViewModel,
     EquipmentUpgradeImprovmentViewModel equipmentUpgradeViewModel,
     EquipmentPickerViewModel equipmentPicker,
+    UseItemManagerViewModel useItemManager,
     ShipLocksManagerViewModel shipLockManager
 ) : ViewModelBase
 {
@@ -43,6 +45,8 @@ public partial class MainViewModel(
     public EquipmentManagerViewModel EquipmentManager { get; } = equipmentManager;
     public EquipmentViewModel EquipmentViewModel { get; } = equipmentViewModel;
     public EquipmentUpgradeImprovmentViewModel EquipmentUpgradeImprovmentViewModel { get; } = equipmentUpgradeViewModel;
+    public UseItemManagerViewModel UseItemManager { get; } = useItemManager;
+
     public EquipmentPickerViewModel EquipmentPicker { get; } = equipmentPicker;
 
     public ShipLocksManagerViewModel ShipLocksManager { get; } = shipLockManager;

@@ -11,6 +11,7 @@ using EOToolsWeb.Shared.Equipments;
 using EOToolsWeb.Shared.EquipmentUpgrades;
 using EOToolsWeb.Shared.Ships;
 using EOToolsWeb.Shared.Updates;
+using EOToolsWeb.Shared.UseItem;
 using EOToolsWeb.ViewModels.Equipments;
 using EOToolsWeb.ViewModels.EquipmentUpgrades;
 using EOToolsWeb.ViewModels.Events;
@@ -21,6 +22,8 @@ using EOToolsWeb.Views.EquipmentUpgrades;
 using EOToolsWeb.Views.Events;
 using EOToolsWeb.Views.ShipLocks;
 using EOToolsWeb.Views.Ships;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace EOToolsWeb.Views;
 
@@ -45,6 +48,8 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         this.WhenActivated(d => d(ViewModel!.EquipmentManager.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
         this.WhenActivated(d => d(ViewModel!.EquipmentManager.ShowPicker.RegisterHandler(DoShowPickerDialogAsync)));
         this.WhenActivated(d => d(ViewModel!.EquipmentViewModel.ShowUpgradeEditDialog.RegisterHandler(DoShowEditDialogAsync)));
+
+        this.WhenActivated(d => d(ViewModel!.UseItemManager.ShowPicker.RegisterHandler(DoShowPickerDialogAsync)));
 
         this.WhenActivated(d => d(ViewModel!.ShipLocksManager.ShowShipLockEditDialog.RegisterHandler(DoShowEditDialogAsync)));
         this.WhenActivated(d => d(ViewModel!.ShipLocksManager.ShowShipLockPhaseEditDialog.RegisterHandler(DoShowEditDialogAsync)));
@@ -145,6 +150,25 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         interaction.SetOutput(result);
     }
 
+    private async Task DoShowPickerDialogAsync(IInteractionContext<object?, UseItemId?> interaction)
+    {
+        if (MainViewModel?.EquipmentPicker is null) return;
+
+        List<EquipmentModel> items = Enum.GetValues<UseItemId>().Select(enu => new EquipmentModel()
+        {
+            ApiId = (int)enu,
+            NameEN = enu.ToString(),
+        }).ToList();
+
+        MainViewModel.EquipmentPicker.Initialize(items);
+
+        EquipmentPickerView dialog = new();
+        dialog.DataContext = MainViewModel.EquipmentPicker;
+
+        EquipmentModel? result = await dialog.ShowDialog<EquipmentModel?>(this);
+        interaction.SetOutput((UseItemId?)result?.ApiId);
+    }
+
     private async Task DoShowEditDialogAsync(IInteractionContext<ShipViewModel, bool> interaction)
     {
         ShipEditView dialog = new();
@@ -185,7 +209,6 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
 
         interaction.SetOutput(result);
     }
-
 
     private async Task DoShowEditDialogAsync(IInteractionContext<ShipLockViewModel, bool> interaction)
     {

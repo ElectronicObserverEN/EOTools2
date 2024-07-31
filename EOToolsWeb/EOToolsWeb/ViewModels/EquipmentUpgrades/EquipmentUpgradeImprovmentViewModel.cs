@@ -8,16 +8,17 @@ using EOToolsWeb.Shared.Equipments;
 using EOToolsWeb.Shared.EquipmentUpgrades;
 using EOToolsWeb.ViewModels.Equipments;
 using EOToolsWeb.ViewModels.Ships;
+using EOToolsWeb.ViewModels.UseItem;
 
 namespace EOToolsWeb.ViewModels.EquipmentUpgrades;
 
-public partial class EquipmentUpgradeImprovmentViewModel(ShipManagerViewModel shipManager, EquipmentManagerViewModel equipmentManager) : ObservableObject
+public partial class EquipmentUpgradeImprovmentViewModel(ShipManagerViewModel shipManager, EquipmentManagerViewModel equipmentManager, UseItemManagerViewModel useItemManager) : ObservableObject
 {
     public EquipmentUpgradeImprovmentModel Model { get; set; } = new();
 
     private EquipmentUpgradeConversionViewModel ConversionViewModel { get; } = new(equipmentManager);
 
-    public EquipmentUpgradeImprovmentCostViewModel CostViewModel { get; set; } = new(equipmentManager);
+    public EquipmentUpgradeImprovmentCostViewModel CostViewModel { get; set; } = new(equipmentManager, useItemManager);
 
     private EquipmentManagerViewModel EquipmentManager { get; } = equipmentManager;
 

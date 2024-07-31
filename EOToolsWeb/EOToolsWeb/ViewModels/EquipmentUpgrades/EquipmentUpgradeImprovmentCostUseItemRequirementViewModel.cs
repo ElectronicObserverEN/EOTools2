@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EOToolsWeb.Shared.EquipmentUpgrades;
 using EOToolsWeb.Shared.UseItem;
+using EOToolsWeb.ViewModels.UseItem;
 
 namespace EOToolsWeb.ViewModels.EquipmentUpgrades;
 
@@ -12,18 +15,22 @@ public partial class EquipmentUpgradeImprovmentCostUseItemRequirementViewModel :
 {
     public List<UseItemModel> UseItems { get; } 
 
-    public UseItemModel Item => UseItems.FirstOrDefault(eq => eq.ApiId == Id)!;
+    public UseItemModel Item => UseItems.FirstOrDefault(eq => eq.ApiId == (int)Id)!;
 
     [ObservableProperty]
-    private int _id;
+    private UseItemId _id;
 
     [ObservableProperty]
     private int _count;
 
     public EquipmentUpgradeImprovmentCostItemDetail Model { get; set; } = new();
 
-    public EquipmentUpgradeImprovmentCostUseItemRequirementViewModel()
+    private UseItemManagerViewModel UseItemManagerViewModel { get; }
+
+    public EquipmentUpgradeImprovmentCostUseItemRequirementViewModel(UseItemManagerViewModel useItemManagerViewModel)
     {
+        UseItemManagerViewModel = useItemManagerViewModel;
+
         UseItems = Enum.GetValues<UseItemId>().Select(enu => new UseItemModel()
         {
             ApiId = (int)enu,
@@ -33,7 +40,7 @@ public partial class EquipmentUpgradeImprovmentCostUseItemRequirementViewModel :
 
     public void LoadFromModel()
     {
-        Id = Model.ItemId;
+        Id = (UseItemId)Model.ItemId;
         Count = Model.Count;
     }
 
@@ -44,21 +51,14 @@ public partial class EquipmentUpgradeImprovmentCostUseItemRequirementViewModel :
     }
 
     [RelayCommand]
-    public void OpenEquipmentPicker()
+    private async Task OpenEquipmentPicker()
     {
-        /*EquipmentPickerViewModel vm = new(UseItems.Select(item => new EquipmentModel()
-        {
-            ApiId = item.ApiId,
-            NameEN = item.NameEN
-        }).ToList());
+        UseItemId? id = await UseItemManagerViewModel.ShowPicker.Handle(null);
 
-        EquipmentDataPickerView picker = new(vm);
+        if (id is not { } pickedId) return;
 
-        if (picker.ShowDialog() == true && vm.SelectedEquipment != null)
-        {
-            Id = vm.SelectedEquipment.ApiId;
+        Id = pickedId;
 
-            OnPropertyChanged(nameof(Item));
-        }*/
+        OnPropertyChanged(nameof(Item));
     }
 }

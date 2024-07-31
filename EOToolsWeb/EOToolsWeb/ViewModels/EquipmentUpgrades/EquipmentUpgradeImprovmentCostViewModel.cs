@@ -2,10 +2,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using EOToolsWeb.Shared.EquipmentUpgrades;
 using EOToolsWeb.ViewModels.Equipments;
+using EOToolsWeb.ViewModels.UseItem;
 
 namespace EOToolsWeb.ViewModels.EquipmentUpgrades;
 
-public partial class EquipmentUpgradeImprovmentCostViewModel(EquipmentManagerViewModel equipmentManager)
+public partial class EquipmentUpgradeImprovmentCostViewModel(EquipmentManagerViewModel equipmentManager, UseItemManagerViewModel useItemManager)
     : ObservableObject
 {
     [ObservableProperty]
@@ -20,9 +21,9 @@ public partial class EquipmentUpgradeImprovmentCostViewModel(EquipmentManagerVie
     [ObservableProperty]
     private int _bauxite;
 
-    public EquipmentUpgradeImprovmentCostDetailViewModel Cost0To5ViewModel { get; set; } = new(equipmentManager);
-    public EquipmentUpgradeImprovmentCostDetailViewModel Cost6To9ViewModel { get; set; } = new(equipmentManager);
-    public EquipmentUpgradeImprovmentCostDetailViewModel CostMaxViewModel { get; set; } = new(equipmentManager);
+    public EquipmentUpgradeImprovmentCostDetailViewModel Cost0To5ViewModel { get; set; } = new(equipmentManager, useItemManager);
+    public EquipmentUpgradeImprovmentCostDetailViewModel Cost6To9ViewModel { get; set; } = new(equipmentManager, useItemManager);
+    public EquipmentUpgradeImprovmentCostDetailViewModel CostMaxViewModel { get; set; } = new(equipmentManager, useItemManager);
 
     public EquipmentUpgradeImprovmentCost Model { get; set; } = new();
 
