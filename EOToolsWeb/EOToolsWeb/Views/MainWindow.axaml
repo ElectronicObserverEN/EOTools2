@@ -26,6 +26,7 @@
 			<MenuItem Command="{Binding OpenShipClassesCommand}" Header="Ship classes" />
 			<MenuItem Command="{Binding OpenShipsCommand}" Header="Ships" />
 			<MenuItem Command="{Binding OpenEquipmentsCommand}" Header="Equipments" />
+			<MenuItem Command="{Binding OpenTranslationsManagerCommand}" Header="Translations" />
 		</Menu>
 
 		<ContentPresenter x:Name="MainContent" Grid.Row="1" />

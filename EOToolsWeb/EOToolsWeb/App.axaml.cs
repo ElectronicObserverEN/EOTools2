@@ -14,6 +14,7 @@ using EOToolsWeb.ViewModels.ShipLocks;
 using EOToolsWeb.ViewModels.Ships;
 using EOToolsWeb.ViewModels.EquipmentUpgrades;
 using EOToolsWeb.ViewModels.UseItem;
+using EOToolsWeb.ViewModels.Translations;
 
 namespace EOToolsWeb
 {
@@ -67,6 +68,9 @@ namespace EOToolsWeb
             collection.AddScoped<ShipLocksManagerViewModel>();
             collection.AddScoped<ShipLockViewModel>();
             collection.AddScoped<ShipLockPhaseViewModel>();
+
+            // Translations
+            collection.AddScoped<TranslationManagerViewModel>();
 
             collection.AddSingleton<HttpClient>();
 

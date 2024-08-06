@@ -7,6 +7,7 @@ using EOToolsWeb.ViewModels.Events;
 using EOToolsWeb.ViewModels.Login;
 using EOToolsWeb.ViewModels.ShipLocks;
 using EOToolsWeb.ViewModels.Ships;
+using EOToolsWeb.ViewModels.Translations;
 using EOToolsWeb.ViewModels.Updates;
 using EOToolsWeb.ViewModels.UseItem;
 
@@ -26,7 +27,8 @@ public partial class MainViewModel(
     EquipmentUpgradeImprovmentViewModel equipmentUpgradeViewModel,
     EquipmentPickerViewModel equipmentPicker,
     UseItemManagerViewModel useItemManager,
-    ShipLocksManagerViewModel shipLockManager
+    ShipLocksManagerViewModel shipLockManager,
+    TranslationManagerViewModel translations
 ) : ViewModelBase
 {
     public LoginViewModel Login { get; } = login;
@@ -50,6 +52,8 @@ public partial class MainViewModel(
     public EquipmentPickerViewModel EquipmentPicker { get; } = equipmentPicker;
 
     public ShipLocksManagerViewModel ShipLocksManager { get; } = shipLockManager;
+
+    public TranslationManagerViewModel TranslationManager { get; } = translations;
 
     [ObservableProperty]
     private ViewModelBase? _currentViewModel;
@@ -94,5 +98,12 @@ public partial class MainViewModel(
     {
         CurrentViewModel = ShipLocksManager;
         await ShipLocksManager.Initialize();
+    }
+
+    [RelayCommand]
+    private async Task OpenTranslationsManager()
+    {
+        CurrentViewModel = TranslationManager;
+        await TranslationManager.LoadTranslations();
     }
 }
