@@ -3,7 +3,7 @@ using EOToolsWeb.Shared.Ships;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EOToolsWeb.Api.Controllers;
+namespace EOToolsWeb.Api.Controllers.Ships;
 
 [ApiController]
 [Authorize(AuthenticationSchemes = "TokenAuthentication")]

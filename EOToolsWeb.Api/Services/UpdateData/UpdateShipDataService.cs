@@ -1,10 +1,11 @@
 ﻿using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using EOTools.Models.ShipTranslation;
 using EOToolsWeb.Api.Database;
 using EOToolsWeb.Api.Services.GitManager;
 using EOToolsWeb.Shared.Ships;
+using EOToolsWeb.Shared.Translations;
+using Microsoft.EntityFrameworkCore;
 
 namespace EOToolsWeb.Api.Services.UpdateData;
 
@@ -17,9 +18,7 @@ public class UpdateShipDataService(IGitManagerService git, EoToolsDbContext db, 
 
     private string UpdateFilePath => Path.Combine(GitManager.FolderPath, "Translations", "en-US", "update.json");
     public string ShipTranslationsFilePath => Path.Combine(GitManager.FolderPath, "Translations", "en-US", "ship.json");
-
-    private Dictionary<string, string> Suffixes { get; set; } = [];
-
+    
     public async Task UpdateShipTranslations()
     {
         // --- Stage & push
@@ -36,11 +35,7 @@ public class UpdateShipDataService(IGitManagerService git, EoToolsDbContext db, 
 
         if (toSerialize is null) return;
 
-        Suffixes = toSerialize.Suffixes;
-
-        await UpdateOtherLanguage("en-US");
-
-        foreach (string lang in OtherLanguages)
+        foreach (Language lang in AllLanguagesTyped)
         {
             await UpdateOtherLanguage(lang);
         }
@@ -50,10 +45,10 @@ public class UpdateShipDataService(IGitManagerService git, EoToolsDbContext db, 
         await GitManager.Push($"Ships - {version}");
     }
 
-    public async Task UpdateOtherLanguage(string language)
+    public async Task UpdateOtherLanguage(Language language)
     {
-        string updatePath = UpdateFilePath.Replace("en-US", language);
-        string shipPath = ShipTranslationsFilePath.Replace("en-US", language);
+        string updatePath = UpdateFilePath.Replace(Language.English.GetCulture(), language.GetCulture());
+        string shipPath = ShipTranslationsFilePath.Replace(Language.English.GetCulture(), language.GetCulture());
 
         // Get version
         JsonObject? updateJson = JsonSerializer.Deserialize<JsonObject>(await File.ReadAllTextAsync(updatePath));
@@ -64,9 +59,12 @@ public class UpdateShipDataService(IGitManagerService git, EoToolsDbContext db, 
 
         updateJson["ship"] = version;
 
-        List<ShipModel> ships = Database.Ships
-            .AsEnumerable()
-            .OrderBy(ship => ship.ApiId)
+        List<ShipNameTranslationModel> ships = Database.ShipTranslations
+            .Include(nameof(ShipNameTranslationModel.Translations))
+            .ToList();
+
+        List<ShipSuffixTranslationModel> suffixes = Database.ShipSuffixTranslations
+            .Include(nameof(ShipNameTranslationModel.Translations))
             .ToList();
 
         List<ShipClassModel> classes = Database.ShipClasses
@@ -81,12 +79,27 @@ public class UpdateShipDataService(IGitManagerService git, EoToolsDbContext db, 
         toSerialize.Version = version;
         Dictionary<string, string> translationsShips = toSerialize.Ships;
         Dictionary<string, string> translationsClasses = toSerialize.Classes;
-        
-        foreach (ShipModel model in ships)
+        Dictionary<string, string> translationsSuffixes = toSerialize.Suffixes;
+
+        foreach (ShipNameTranslationModel model in ships)
         {
-            if (!translationsShips.ContainsKey(model.NameJP) && ShouldBeTranslated(model))
+            TranslationModel? jp = model.Translations.FirstOrDefault(t => t.Language is Language.Japanese);
+            TranslationModel? tl = model.Translations.FirstOrDefault(t => t.Language == language);
+
+            if (jp?.Translation is {} jpTranslation && !translationsShips.ContainsKey(jpTranslation))
             {
-                translationsShips.Add(model.NameJP, model.NameEN);
+                translationsShips.Add(jpTranslation, tl?.Translation ?? "");
+            }
+        }
+
+        foreach (ShipSuffixTranslationModel model in suffixes)
+        {
+            TranslationModel? jp = model.Translations.FirstOrDefault(t => t.Language is Language.Japanese);
+            TranslationModel? tl = model.Translations.FirstOrDefault(t => t.Language == language);
+
+            if (jp?.Translation is { } jpTranslation && !translationsSuffixes.ContainsKey(jpTranslation))
+            {
+                translationsSuffixes.Add(jpTranslation, tl?.Translation ?? "");
             }
         }
 
@@ -100,20 +113,5 @@ public class UpdateShipDataService(IGitManagerService git, EoToolsDbContext db, 
 
         await File.WriteAllTextAsync(shipPath, JsonSerializer.Serialize(toSerialize, SerializationOptions), Encoding.UTF8);
         await File.WriteAllTextAsync(updatePath, JsonSerializer.Serialize(updateJson, SerializationOptions), Encoding.UTF8);
-    }
-
-    private bool ShouldBeTranslated(ShipModel model)
-    {
-        if (model.NameJP == model.NameEN) return false;
-
-        foreach (KeyValuePair<string, string> suffix in Suffixes)
-        {
-            if (model.NameJP.Contains(suffix.Key) && model.NameEN.Contains(suffix.Value))
-            {
-                return false;
-            }
-        }
-
-        return true;
     }
 }

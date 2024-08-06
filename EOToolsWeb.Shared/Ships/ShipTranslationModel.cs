@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
-namespace EOTools.Models.ShipTranslation;
+namespace EOToolsWeb.Shared.Ships;
 
 public class ShipTranslationModel
 {

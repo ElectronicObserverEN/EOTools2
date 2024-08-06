@@ -17,8 +17,12 @@ namespace EOToolsWeb.Api.Database
         public DbSet<UserConnection> UserConnections { get; set; }
         public DbSet<EventModel> Events { get; set; }
         public DbSet<UpdateModel> Updates { get; set; }
+
         public DbSet<ShipModel> Ships { get; set; }
+        public DbSet<ShipNameTranslationModel> ShipTranslations { get; set; }
+        public DbSet<ShipSuffixTranslationModel> ShipSuffixTranslations { get; set; }
         public DbSet<ShipClassModel> ShipClasses { get; set; }
+
         public DbSet<EquipmentModel> Equipments { get; set; }
         public DbSet<ShipLockModel> Locks { get; set; }
         public DbSet<ShipLockPhaseModel> LockPhases { get; set; }
