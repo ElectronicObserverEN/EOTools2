@@ -62,7 +62,7 @@ public partial class SettingsViewModel(SettingsModel settings, JsonSerializerOpt
     private async Task OpenEoApiFolderPicker()
     {
         if (await ShowFolderPicker.Handle(null) is not {} folder) return;
-
-        KancolleEoApiFolder = folder.Path.ToString();
+        
+        KancolleEoApiFolder = folder.TryGetLocalPath() ?? "";
     }
 }

@@ -47,7 +47,12 @@ public partial class TranslationManagerViewModel : ViewModelBase
 
     public async Task LoadTranslations()
     {
-        Translations = await HttpClient.GetFromJsonAsync<List<TranslationBaseModelRow>>(SelectedTranslationKind.GetApiRoute()) ?? [];
+        Translations = await LoadTranslations(SelectedTranslationKind);
+    }
+
+    public async Task<List<TranslationBaseModelRow>> LoadTranslations(TranslationKind kind)
+    {
+        return await HttpClient.GetFromJsonAsync<List<TranslationBaseModelRow>>(kind.GetApiRoute()) ?? [];
     }
 
     public TranslationBaseModel CreateModel() => SelectedTranslationKind switch

@@ -76,6 +76,7 @@ namespace EOToolsWeb
             // Translations
             collection.AddScoped<TranslationManagerViewModel>();
             collection.AddScoped<TranslationViewModel>();
+            collection.AddScoped<ShipTranslationManager>();
 
             // Settings
             collection.AddScoped<SettingsModel>();
