@@ -24,6 +24,8 @@ using EOToolsWeb.Views.ShipLocks;
 using EOToolsWeb.Views.Ships;
 using System.Linq;
 using System.Collections.Generic;
+using EOToolsWeb.ViewModels.Translations;
+using EOToolsWeb.Views.Translations;
 
 namespace EOToolsWeb.Views;
 
@@ -53,6 +55,8 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
 
         this.WhenActivated(d => d(ViewModel!.ShipLocksManager.ShowShipLockEditDialog.RegisterHandler(DoShowEditDialogAsync)));
         this.WhenActivated(d => d(ViewModel!.ShipLocksManager.ShowShipLockPhaseEditDialog.RegisterHandler(DoShowEditDialogAsync)));
+
+        this.WhenActivated(d => d(ViewModel!.TranslationManager.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
     }
 
     protected override async void OnOpened(EventArgs e)
@@ -222,6 +226,15 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
     private async Task DoShowEditDialogAsync(IInteractionContext<ShipLockPhaseViewModel, bool> interaction)
     {
         ShipLockPhaseEditView dialog = new();
+        dialog.DataContext = interaction.Input;
+
+        bool result = await dialog.ShowDialog<bool?>(this) is true;
+        interaction.SetOutput(result);
+    }
+
+    private async Task DoShowEditDialogAsync(IInteractionContext<TranslationViewModel, bool> interaction)
+    {
+        TranslationEditView dialog = new();
         dialog.DataContext = interaction.Input;
 
         bool result = await dialog.ShowDialog<bool?>(this) is true;

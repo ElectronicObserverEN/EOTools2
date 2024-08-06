@@ -1,0 +1,63 @@
+<Window
+	x:Class="EOToolsWeb.Views.Translations.TranslationEditView"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:translations="clr-namespace:EOToolsWeb.ViewModels.Translations"
+	Title="Translation edit"
+	Width="300"
+	Height="200"
+	x:DataType="translations:TranslationViewModel"
+	mc:Ignorable="d">
+	<Grid Margin="10" RowDefinitions="*, Auto">
+		<Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto">
+			<TextBlock
+				Grid.Row="0"
+				Grid.Column="0"
+				Margin="0,0,10,0"
+				Text="Japanese :" />
+
+			<TextBox
+				Grid.Row="0"
+				Grid.Column="1"
+				Text="{Binding Japanese}" />
+
+			<TextBlock
+				Grid.Row="1"
+				Grid.Column="0"
+				Margin="0,0,10,0"
+				Text="English :" />
+
+			<TextBox
+				Grid.Row="1"
+				Grid.Column="1"
+				Text="{Binding English}" />
+
+			<TextBlock
+				Grid.Row="2"
+				Grid.Column="0"
+				Margin="0,0,10,0"
+				Text="Korean :" />
+
+			<TextBox
+				Grid.Row="2"
+				Grid.Column="1"
+				Text="{Binding Korean}" />
+		</Grid>
+
+		<StackPanel
+			Grid.Row="1"
+			HorizontalAlignment="Right"
+			Orientation="Horizontal">
+			<Button
+				Margin="5"
+				Click="OnConfirmClick"
+				Content="Ok" />
+			<Button
+				Margin="5"
+				Click="OnCancelClick"
+				Content="Cancel" />
+		</StackPanel>
+	</Grid>
+</Window>

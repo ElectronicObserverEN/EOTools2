@@ -11,8 +11,10 @@
 	x:DataType="translations:TranslationManagerViewModel"
 	mc:Ignorable="d">
 	<Grid RowDefinitions="Auto, *">
-		<StackPanel>
+		<StackPanel Orientation="Horizontal">
 			<ComboBox ItemsSource="{Binding TranslationKinds}" SelectedItem="{Binding SelectedTranslationKind}" />
+			<Button Command="{Binding AddTranslationCommand}" Content="Add translation" />
+			<Button Command="{Binding PushTranslationsCommand}" Content="Update translations" />
 		</StackPanel>
 		<DataGrid
 			Grid.Row="1"
