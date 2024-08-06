@@ -240,4 +240,11 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         bool result = await dialog.ShowDialog<bool?>(this) is true;
         interaction.SetOutput(result);
     }
+
+    protected override async void OnClosed(EventArgs e)
+    {
+        await MainViewModel!.Settings.OnViewClosing();
+
+        base.OnClosed(e);
+    }
 }

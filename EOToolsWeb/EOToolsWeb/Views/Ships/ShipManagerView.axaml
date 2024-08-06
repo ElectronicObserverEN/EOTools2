@@ -27,6 +27,7 @@
 		<StackPanel Grid.Row="0" Orientation="Vertical">
 			<StackPanel Grid.Row="0" Orientation="Horizontal">
 				<Button Command="{Binding ShowAddShipDialogCommand}" Content="Add" />
+				<Button Command="{Binding ImportFromAPICommand}" Content="Import from API" />
 				<TextBox
 					Width="500"
 					Margin="5,0"

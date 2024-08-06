@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using EOToolsWeb.Shared.Ships;
 using ReactiveUI;
@@ -8,6 +9,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using EOToolsWeb.Models.Settings;
 
 namespace EOToolsWeb.ViewModels.Ships;
 
@@ -23,14 +25,18 @@ public partial class ShipManagerViewModel : ViewModelBase
 
     private HttpClient HttpClient { get; }
     private ShipViewModel ShipViewModel { get; }
+    private ShipClassManagerViewModel ShipClassManagerViewModel { get; }
+    private SettingsModel Settings { get; }
 
     public Interaction<ShipViewModel, bool> ShowEditDialog { get; } = new();
     public Interaction<object?, ShipModel?> ShowPicker { get; } = new();
 
-    public ShipManagerViewModel(HttpClient client, ShipViewModel viewModel)
+    public ShipManagerViewModel(HttpClient client, ShipViewModel viewModel, ShipClassManagerViewModel classManager, SettingsModel settings)
     {
         HttpClient = client;
         ShipViewModel = viewModel;
+        ShipClassManagerViewModel = classManager;
+        Settings = settings;
 
         PropertyChanged += (_, e) =>
         {
@@ -116,5 +122,66 @@ public partial class ShipManagerViewModel : ViewModelBase
     private async Task PushTranslations()
     {
         await HttpClient.PutAsync("Ships/pushShips", null);
+    }
+
+    [RelayCommand]
+    public async Task ImportFromAPI()
+    {
+        /*if (string.IsNullOrEmpty(AppSettings.KancolleEOAPIFolder)) return;
+
+        string importPath = Path.Combine(AppSettings.KancolleEOAPIFolder, "kcsapi", "api_start2", "getData");
+
+        JObject data = JsonHelper.ReadKCJson(importPath);
+
+        using EOToolsDbContext db = new();
+        ShipTranslationService translationService = Ioc.Default.GetRequiredService<ShipTranslationService>();
+
+        foreach (JObject shipJson in data["api_data"]["api_mst_ship"].Children<JObject>())
+        {
+            int apiId = int.Parse(shipJson["api_id"].ToString());
+            string nameJp = shipJson["api_name"].ToString();
+            ShipClassModel? shipClass = null;
+
+            if (shipJson.ContainsKey("api_ctype") && apiId < 1500)
+            {
+                int classId = int.Parse(shipJson["api_ctype"].ToString());
+
+                string nameJapanese = GetShipClassUntranslated(classId, apiId);
+                shipClass = db.ShipClass.FirstOrDefault(sc => sc.ApiId == classId);
+
+                if (shipClass is null)
+                {
+                    shipClass = new()
+                    {
+                        ApiId = classId,
+                        NameJapanese = nameJapanese,
+                        NameEnglish = translationService.Class(nameJapanese),
+                    };
+
+                    await db.ShipClass.AddAsync(shipClass);
+                }
+            }
+
+            ShipViewModel? vm = Ships.Find(sh => sh.Model.ApiId == apiId);
+
+            if (vm is null)
+            {
+                ShipModel model = new()
+                {
+                    ApiId = apiId,
+                    NameJP = nameJp
+                };
+
+                model.NameEN = model.GetNameEN();
+
+                db.Add(model);
+
+                Ships.Add(new(model));
+            }
+        }
+
+        await db.SaveChangesAsync();
+
+        ReloadShipList();*/
     }
 }

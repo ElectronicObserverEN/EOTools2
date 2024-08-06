@@ -8,13 +8,17 @@ using EOToolsWeb.ViewModels.Updates;
 using EOToolsWeb.Views;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http;
+using EOToolsWeb.Models.Settings;
 using EOToolsWeb.ViewModels.Equipments;
 using EOToolsWeb.ViewModels.Events;
 using EOToolsWeb.ViewModels.ShipLocks;
 using EOToolsWeb.ViewModels.Ships;
 using EOToolsWeb.ViewModels.EquipmentUpgrades;
+using EOToolsWeb.ViewModels.Settings;
 using EOToolsWeb.ViewModels.UseItem;
 using EOToolsWeb.ViewModels.Translations;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 
 namespace EOToolsWeb
 {
@@ -73,7 +77,17 @@ namespace EOToolsWeb
             collection.AddScoped<TranslationManagerViewModel>();
             collection.AddScoped<TranslationViewModel>();
 
+            // Settings
+            collection.AddScoped<SettingsModel>();
+            collection.AddScoped<SettingsViewModel>();
+
             collection.AddSingleton<HttpClient>();
+
+            collection.AddSingleton(_ => new JsonSerializerOptions()
+            {
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                WriteIndented = true,
+            });
 
             // Creates a ServiceProvider containing services from the provided IServiceCollection
             var services = collection.BuildServiceProvider();

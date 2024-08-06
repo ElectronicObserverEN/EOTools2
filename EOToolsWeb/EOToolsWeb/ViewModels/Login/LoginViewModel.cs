@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using EOToolsWeb.ViewModels.Settings;
 
 namespace EOToolsWeb.ViewModels.Login;
 
@@ -21,8 +22,9 @@ public partial class LoginViewModel : ObservableObject
     private string _loginMessage = "";
 
     private HttpClient ClientApi { get; }
-    
-    public LoginViewModel(HttpClient clientApi)
+    private SettingsViewModel Settings { get; }
+
+    public LoginViewModel(HttpClient clientApi, SettingsViewModel settings)
     {
         if (!File.Exists("Config.json"))
         {
@@ -30,6 +32,7 @@ public partial class LoginViewModel : ObservableObject
         }
 
         ClientApi = clientApi;
+        Settings = settings;
     }
 
     public async Task LoginFromConfig()
@@ -74,6 +77,9 @@ public partial class LoginViewModel : ObservableObject
 
             ClientApi.BaseAddress = new Uri(url);
             ClientApi.DefaultRequestHeaders.Authorization = new("Basic", token);
+
+            LoginMessage = "Loading settings ...";
+            await Settings.Initialize();
 
             OnAfterLogin?.Invoke(this, null);
         }
