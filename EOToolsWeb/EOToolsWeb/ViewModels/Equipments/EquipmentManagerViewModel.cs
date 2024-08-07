@@ -133,8 +133,8 @@ public partial class EquipmentManagerViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void UpdateFitBonus()
+    private async Task UpdateFitBonus()
     {
-
+        await HttpClient.PutAsync("FitBonus/updateFits", null);
     }
 }

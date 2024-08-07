@@ -94,7 +94,8 @@ builder.Services.AddScoped<UpdateMaintenanceDataService>();
 builder.Services.AddScoped<UpdateShipDataService>();
 builder.Services.AddScoped<UpdateEquipmentDataService>();
 builder.Services.AddScoped<UpdateShipLockDataService>();
-builder.Services.AddScoped<UpdateEquipmentUpgradeDataService>();
+builder.Services.AddScoped<UpdateEquipmentUpgradeDataService>(); 
+builder.Services.AddScoped<FitBonusUpdaterService>();
 
 builder.Services.AddSingleton(_ => new JsonSerializerOptions()
 {
