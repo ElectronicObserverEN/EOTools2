@@ -21,7 +21,6 @@ public class UpdateShipDataService(IGitManagerService git, EoToolsDbContext db, 
     
     public async Task UpdateShipTranslations()
     {
-        // --- Stage & push
         await GitManager.Pull();
 
         // Get version

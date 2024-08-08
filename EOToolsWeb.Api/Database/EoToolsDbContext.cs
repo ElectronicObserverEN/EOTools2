@@ -1,8 +1,8 @@
 ﻿using EOToolsWeb.Api.Models;
-using EOToolsWeb.Api.Models.EquipmentUpgrades;
 using EOToolsWeb.Shared.Equipments;
 using EOToolsWeb.Shared.EquipmentUpgrades;
 using EOToolsWeb.Shared.Events;
+using EOToolsWeb.Shared.Maps;
 using EOToolsWeb.Shared.ShipLocks;
 using EOToolsWeb.Shared.Ships;
 using EOToolsWeb.Shared.Updates;
@@ -22,6 +22,9 @@ namespace EOToolsWeb.Api.Database
         public DbSet<ShipNameTranslationModel> ShipTranslations { get; set; }
         public DbSet<ShipSuffixTranslationModel> ShipSuffixTranslations { get; set; }
         public DbSet<ShipClassModel> ShipClasses { get; set; }
+
+        public DbSet<MapNameTranslationModel> Maps { get; set; }
+        public DbSet<FleetNameTranslationModel> Fleets { get; set; }
 
         public DbSet<EquipmentModel> Equipments { get; set; }
         public DbSet<ShipLockModel> Locks { get; set; }

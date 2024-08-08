@@ -96,6 +96,7 @@ builder.Services.AddScoped<UpdateEquipmentDataService>();
 builder.Services.AddScoped<UpdateShipLockDataService>();
 builder.Services.AddScoped<UpdateEquipmentUpgradeDataService>(); 
 builder.Services.AddScoped<FitBonusUpdaterService>();
+builder.Services.AddScoped<OperationUpdateService>();
 
 builder.Services.AddSingleton(_ => new JsonSerializerOptions()
 {
@@ -112,7 +113,10 @@ await app.Services.GetRequiredService<IGitManagerService>().Initialize();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(config =>
+    {
+        config.EnablePersistAuthorization();
+    });
 }
 
 app.UseHttpsRedirection();

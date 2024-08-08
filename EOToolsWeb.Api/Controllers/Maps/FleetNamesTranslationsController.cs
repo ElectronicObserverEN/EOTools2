@@ -11,24 +11,24 @@ namespace EOToolsWeb.Api.Controllers.Maps;
 [ApiController]
 [Authorize(AuthenticationSchemes = "TokenAuthentication")]
 [Route("[controller]")]
-public class MapNamesTranslationsController(EoToolsDbContext db, OperationUpdateService dataUpdateService) : ControllerBase
+public class FleetNamesTranslationsController(EoToolsDbContext db, OperationUpdateService dataUpdateService) : ControllerBase
 {
     private EoToolsDbContext Database { get; } = db;
     private OperationUpdateService DataUpdateService { get; } = dataUpdateService;
 
     [HttpGet]
-    public List<MapNameTranslationModel> Get()
+    public List<FleetNameTranslationModel> Get()
     {
-        return Database.Maps
-            .Include(nameof(MapNameTranslationModel.Translations))
+        return Database.Fleets
+            .Include(nameof(FleetNameTranslationModel.Translations))
             .ToList();
     }
 
     [HttpPut]
-    public async Task<IActionResult> Put(MapNameTranslationModel newData)
+    public async Task<IActionResult> Put(FleetNameTranslationModel newData)
     {
-        MapNameTranslationModel? savedData = Database.Maps
-            .Include(nameof(MapNameTranslationModel.Translations))
+        FleetNameTranslationModel? savedData = Database.Fleets
+            .Include(nameof(FleetNameTranslationModel.Translations))
             .FirstOrDefault(tl => tl.Id == newData.Id);
 
         if (savedData is null)
@@ -57,7 +57,7 @@ public class MapNamesTranslationsController(EoToolsDbContext db, OperationUpdate
             }
         }
 
-        Database.Maps.Update(savedData);
+        Database.Fleets.Update(savedData);
         await Database.SaveChangesAsync();
 
         return Ok(savedData);
@@ -72,14 +72,14 @@ public class MapNamesTranslationsController(EoToolsDbContext db, OperationUpdate
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(MapNameTranslationModel newData)
+    public async Task<IActionResult> Post(FleetNameTranslationModel newData)
     {
         foreach (TranslationModel newTranslation in newData.Translations)
         {
             Database.Add(newTranslation);
         }
 
-        await Database.Maps.AddAsync(newData);
+        await Database.Fleets.AddAsync(newData);
         await Database.SaveChangesAsync();
 
         return Ok(newData);
@@ -88,14 +88,14 @@ public class MapNamesTranslationsController(EoToolsDbContext db, OperationUpdate
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        MapNameTranslationModel? data = await Database.Maps.FindAsync(id);
+        FleetNameTranslationModel? data = await Database.Fleets.FindAsync(id);
 
         if (data is null)
         {
             return NotFound();
         }
 
-        Database.Maps.Remove(data);
+        Database.Fleets.Remove(data);
         await Database.SaveChangesAsync();
 
         return Ok();
@@ -106,10 +106,10 @@ public class MapNamesTranslationsController(EoToolsDbContext db, OperationUpdate
     [HttpPost("init/{tlLanguage}")]
     public async Task<IActionResult> Post(MapsTranslationModel translations, Language tlLanguage)
     {
-        foreach (KeyValuePair<string, string> newTranslation in translations.Maps)
+        foreach (KeyValuePair<string, string> newTranslation in translations.Fleets)
         {
-            MapNameTranslationModel? savedData = Database.Maps
-                .Include(nameof(MapNameTranslationModel.Translations))
+            FleetNameTranslationModel? savedData = Database.Fleets
+                .Include(nameof(FleetNameTranslationModel.Translations))
                 .FirstOrDefault(tl => tl.Translations.Any(t => t.Translation == newTranslation.Key && t.Language == Language.Japanese));
 
             if (savedData is null)
