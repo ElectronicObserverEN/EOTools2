@@ -39,6 +39,7 @@ public partial class MainViewModel : ViewModelBase
     public ShipLocksManagerViewModel ShipLocksManager { get; }
 
     public TranslationManagerViewModel TranslationManager { get; }
+    public MapTranslationManager MapTranslationManager { get; }
 
     public SettingsViewModel Settings { get; }
 
@@ -61,7 +62,8 @@ public partial class MainViewModel : ViewModelBase
         UseItemManagerViewModel useItemManager,
         ShipLocksManagerViewModel shipLockManager,
         SettingsViewModel settings,
-        TranslationManagerViewModel translations)
+        TranslationManagerViewModel translations,
+        MapTranslationManager mapTranslationManager)
     {
         Login = login;
         Updates = updates;
@@ -78,6 +80,7 @@ public partial class MainViewModel : ViewModelBase
         EquipmentPicker = equipmentPicker;
         ShipLocksManager = shipLockManager;
         TranslationManager = translations;
+        MapTranslationManager = mapTranslationManager;
         Settings = settings;
 
         PropertyChanging += ViewModelChanging;
@@ -142,8 +145,15 @@ public partial class MainViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private async Task OpenSettings()
+    private void OpenSettings()
     {
         CurrentViewModel = Settings;
+    }
+
+    [RelayCommand]
+    private async Task UpdateMapsTranslation()
+    {
+        await MapTranslationManager.Initialize();
+        await MapTranslationManager.GetNonTranslatedDataAndPushItToTheApi();
     }
 }

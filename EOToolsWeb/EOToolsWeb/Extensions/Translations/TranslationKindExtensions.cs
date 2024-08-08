@@ -8,6 +8,8 @@ public static class TranslationKindExtensions
     {
         TranslationKind.ShipsName => "ShipNameTranslations",
         TranslationKind.ShipsSuffixes => "ShipSuffixTranslations",
+        TranslationKind.MapName => "MapNamesTranslations",
+        TranslationKind.FleetName => "FleetNamesTranslations",
         _ => "",
     };
 
@@ -15,6 +17,8 @@ public static class TranslationKindExtensions
     {
         TranslationKind.ShipsName => "Ship names",
         TranslationKind.ShipsSuffixes => "Ship suffixes",
+        TranslationKind.MapName => "Map names",
+        TranslationKind.FleetName => "Fleet names",
         _ => "",
     };
 }

@@ -4,4 +4,6 @@ public enum TranslationKind
 {
     ShipsName,
     ShipsSuffixes,
+    MapName,
+    FleetName,
 }

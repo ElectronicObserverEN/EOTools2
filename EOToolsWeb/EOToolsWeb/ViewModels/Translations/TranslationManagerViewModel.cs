@@ -10,6 +10,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using EOToolsWeb.Models.Translations;
+using EOToolsWeb.Shared.Maps;
 using EOToolsWeb.Shared.Ships;
 using ReactiveUI;
 
@@ -59,6 +60,8 @@ public partial class TranslationManagerViewModel : ViewModelBase
     {
         TranslationKind.ShipsName => new ShipNameTranslationModel(),
         TranslationKind.ShipsSuffixes => new ShipSuffixTranslationModel(),
+        TranslationKind.MapName => new MapNameTranslationModel(),
+        TranslationKind.FleetName => new FleetNameTranslationModel(),
         _ => throw new NotSupportedException(),
     };
 
