@@ -3,6 +3,7 @@ using EOToolsWeb.Extensions.Translations;
 using EOToolsWeb.Shared.Translations;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -19,7 +20,7 @@ namespace EOToolsWeb.ViewModels.Translations;
 public partial class TranslationManagerViewModel : ViewModelBase
 {
     [ObservableProperty]
-    private List<TranslationBaseModelRow> _translations = [];
+    private ObservableCollection<TranslationBaseModelRow> _translations = [];
 
     [ObservableProperty] 
     private TranslationKind _selectedTranslationKind;
@@ -48,7 +49,7 @@ public partial class TranslationManagerViewModel : ViewModelBase
 
     public async Task LoadTranslations()
     {
-        Translations = await LoadTranslations(SelectedTranslationKind);
+        Translations = new(await LoadTranslations(SelectedTranslationKind));
     }
 
     public async Task<List<TranslationBaseModelRow>> LoadTranslations(TranslationKind kind)
@@ -88,8 +89,6 @@ public partial class TranslationManagerViewModel : ViewModelBase
                 if (postedModel is not null)
                 {
                     Translations.Add(postedModel);
-
-                    OnPropertyChanged(nameof(Translations));
                 }
             }
         }
@@ -131,12 +130,9 @@ public partial class TranslationManagerViewModel : ViewModelBase
         {
             HttpResponseMessage response = await HttpClient.DeleteAsync($"{SelectedTranslationKind.GetApiRoute()}/{vm.Id}");
 
-            // TODO : server returns error 500 cause i need to delete translationModel before the parent in the controller
             response.EnsureSuccessStatusCode();
 
             Translations.Remove(vm);
-
-            OnPropertyChanged(nameof(Translations));
         }
         catch (Exception ex)
         {

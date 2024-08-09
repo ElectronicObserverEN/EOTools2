@@ -1,6 +1,7 @@
 using EOToolsWeb.Api.Database;
 using EOToolsWeb.Api.Services.UpdateData;
 using EOToolsWeb.Shared.Maps;
+using EOToolsWeb.Shared.Ships;
 using EOToolsWeb.Shared.Translations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -88,13 +89,16 @@ public class MapNamesTranslationsController(EoToolsDbContext db, OperationUpdate
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        MapNameTranslationModel? data = await Database.Maps.FindAsync(id);
+        MapNameTranslationModel? data = await Database.Maps
+            .Include(nameof(MapNameTranslationModel.Translations))
+            .FirstOrDefaultAsync(tl => tl.Id == id);
 
         if (data is null)
         {
             return NotFound();
         }
 
+        Database.RemoveRange(data.Translations);
         Database.Maps.Remove(data);
         await Database.SaveChangesAsync();
 

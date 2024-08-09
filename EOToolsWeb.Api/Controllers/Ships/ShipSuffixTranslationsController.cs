@@ -88,13 +88,16 @@ public class ShipSuffixTranslationsController(EoToolsDbContext db, UpdateShipDat
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        ShipSuffixTranslationModel? data = await Database.ShipSuffixTranslations.FindAsync(id);
+        ShipSuffixTranslationModel? data = await Database.ShipSuffixTranslations
+            .Include(nameof(ShipSuffixTranslationModel.Translations))
+            .FirstOrDefaultAsync(tl => tl.Id == id);
 
         if (data is null)
         {
             return NotFound();
         }
 
+        Database.RemoveRange(data.Translations);
         Database.ShipSuffixTranslations.Remove(data);
         await Database.SaveChangesAsync();
 
