@@ -68,64 +68,92 @@ public partial class TranslationManagerViewModel : ViewModelBase
     [RelayCommand]
     private async Task AddTranslation()
     {
-        TranslationBaseModel model = CreateModel();
-
-        TranslationViewModel.Model = model;
-        TranslationViewModel.LoadFromModel();
-
-        if (await ShowEditDialog.Handle(TranslationViewModel))
+        try
         {
-            TranslationViewModel.SaveChanges();
+            TranslationBaseModel model = CreateModel();
 
-            HttpResponseMessage response = await HttpClient.PostAsJsonAsync(SelectedTranslationKind.GetApiRoute(), model);
+            TranslationViewModel.Model = model;
+            TranslationViewModel.LoadFromModel();
 
-            response.EnsureSuccessStatusCode();
-
-            TranslationBaseModelRow? postedModel = await response.Content.ReadFromJsonAsync<TranslationBaseModelRow>();
-
-            if (postedModel is not null)
+            if (await ShowEditDialog.Handle(TranslationViewModel))
             {
-                Translations.Add(postedModel);
+                TranslationViewModel.SaveChanges();
 
-                OnPropertyChanged(nameof(Translations));
+                HttpResponseMessage response = await HttpClient.PostAsJsonAsync(SelectedTranslationKind.GetApiRoute(), model);
+
+                response.EnsureSuccessStatusCode();
+
+                TranslationBaseModelRow? postedModel = await response.Content.ReadFromJsonAsync<TranslationBaseModelRow>();
+
+                if (postedModel is not null)
+                {
+                    Translations.Add(postedModel);
+
+                    OnPropertyChanged(nameof(Translations));
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            await HandleException(ex);
         }
     }
 
     [RelayCommand]
     private async Task EditTranslation(TranslationBaseModelRow vm)
     {
-        TranslationViewModel.Model = vm;
-        TranslationViewModel.LoadFromModel();
-
-        if (await ShowEditDialog.Handle(TranslationViewModel))
+        try
         {
-            TranslationViewModel.SaveChanges();
+            TranslationViewModel.Model = vm;
+            TranslationViewModel.LoadFromModel();
 
-            HttpResponseMessage response = await HttpClient.PutAsJsonAsync(SelectedTranslationKind.GetApiRoute(), vm);
+            if (await ShowEditDialog.Handle(TranslationViewModel))
+            {
+                TranslationViewModel.SaveChanges();
 
-            response.EnsureSuccessStatusCode();
+                HttpResponseMessage response = await HttpClient.PutAsJsonAsync(SelectedTranslationKind.GetApiRoute(), vm);
 
-            OnPropertyChanged(nameof(Translations));
+                response.EnsureSuccessStatusCode();
+
+                OnPropertyChanged(nameof(Translations));
+            }
+        }
+        catch (Exception ex)
+        {
+            await HandleException(ex);
         }
     }
 
     [RelayCommand]
     private async Task DeleteTranslation(TranslationBaseModelRow vm)
     {
-        HttpResponseMessage response = await HttpClient.DeleteAsync($"{SelectedTranslationKind.GetApiRoute()}/{vm.Id}");
-        
-        // TODO : server returns error 500 cause i need to delete translationModel before the parent in the controller
-        response.EnsureSuccessStatusCode();
+        try
+        {
+            HttpResponseMessage response = await HttpClient.DeleteAsync($"{SelectedTranslationKind.GetApiRoute()}/{vm.Id}");
 
-        Translations.Remove(vm);
+            // TODO : server returns error 500 cause i need to delete translationModel before the parent in the controller
+            response.EnsureSuccessStatusCode();
 
-        OnPropertyChanged(nameof(Translations));
+            Translations.Remove(vm);
+
+            OnPropertyChanged(nameof(Translations));
+        }
+        catch (Exception ex)
+        {
+            await HandleException(ex);
+        }
     }
 
     [RelayCommand]
     private async Task PushTranslations()
     {
-        await HttpClient.PutAsync($"{SelectedTranslationKind.GetApiRoute()}/pushTranslations", null);
+        try
+        {
+            await HttpClient.PutAsync($"{SelectedTranslationKind.GetApiRoute()}/pushTranslations", null);
+        }
+        catch (Exception ex)
+        {
+            await HandleException(ex);
+        }
     }
 }

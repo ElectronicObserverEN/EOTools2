@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using EOToolsWeb.Shared.Equipments;
 using ReactiveUI;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -62,68 +63,103 @@ public partial class EquipmentManagerViewModel : ViewModelBase
     [RelayCommand]
     private async Task AddNewEquipment()
     {
-        EquipmentModel model = new();
-
-        EquipmentViewModel.Model = model;
-        await EquipmentViewModel.LoadFromModel();
-
-        if (await ShowEditDialog.Handle(EquipmentViewModel))
+        try
         {
-            EquipmentViewModel.SaveChanges();
+            EquipmentModel model = new();
 
-            HttpResponseMessage response = await HttpClient.PostAsJsonAsync("Equipments", model);
+            EquipmentViewModel.Model = model;
+            await EquipmentViewModel.LoadFromModel();
 
-            response.EnsureSuccessStatusCode();
-
-            EquipmentModel? postedModel = await response.Content.ReadFromJsonAsync<EquipmentModel>();
-
-            if (postedModel is not null)
+            if (await ShowEditDialog.Handle(EquipmentViewModel))
             {
-                EquipmentList.Add(postedModel);
+                EquipmentViewModel.SaveChanges();
 
-                ReloadEquipmentList();
+                HttpResponseMessage response = await HttpClient.PostAsJsonAsync("Equipments", model);
+
+                response.EnsureSuccessStatusCode();
+
+                EquipmentModel? postedModel = await response.Content.ReadFromJsonAsync<EquipmentModel>();
+
+                if (postedModel is not null)
+                {
+                    EquipmentList.Add(postedModel);
+
+                    ReloadEquipmentList();
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            await HandleException(ex);
         }
     }
     
     [RelayCommand]
     private async Task EditEquipment(EquipmentModel vm)
     {
-        EquipmentViewModel.Model = vm;
-        await EquipmentViewModel.LoadFromModel();
-
-        if (await ShowEditDialog.Handle(EquipmentViewModel))
+        try
         {
-            EquipmentViewModel.SaveChanges();
+            EquipmentViewModel.Model = vm;
+            await EquipmentViewModel.LoadFromModel();
 
-            HttpResponseMessage response = await HttpClient.PutAsJsonAsync("Equipments", vm);
+            if (await ShowEditDialog.Handle(EquipmentViewModel))
+            {
+                EquipmentViewModel.SaveChanges();
 
-            response.EnsureSuccessStatusCode();
+                HttpResponseMessage response = await HttpClient.PutAsJsonAsync("Equipments", vm);
 
-            ReloadEquipmentList();
+                response.EnsureSuccessStatusCode();
+
+                ReloadEquipmentList();
+            }
+        }
+        catch (Exception ex)
+        {
+            await HandleException(ex);
         }
     }
 
     [RelayCommand]
     private async Task RemoveEquipment(EquipmentModel vm)
     {
-        await HttpClient.DeleteAsync($"Equipments/{vm.Id}");
+        try
+        {
+            await HttpClient.DeleteAsync($"Equipments/{vm.Id}");
 
-        EquipmentList.Remove(vm);
+            EquipmentList.Remove(vm);
 
-        ReloadEquipmentList();
+            ReloadEquipmentList();
+        }
+        catch (Exception ex)
+        {
+            await HandleException(ex);
+        }
     }
 
     [RelayCommand]
     private async Task UpdateTranslations()
     {
-        await HttpClient.PutAsync("Equipments/pushEquipments", null);
+        try
+        {
+            await HttpClient.PutAsync("Equipments/pushEquipments", null);
+        }
+        catch (Exception ex)
+        {
+            await HandleException(ex);
+        }
     }
 
     [RelayCommand]
     private async Task UpdateUpgrades()
     {
-        await HttpClient.PutAsync("EquipmentUpgrades/pushEquipments", null);
+        try
+        {
+            await HttpClient.PutAsync("EquipmentUpgrades/pushEquipments", null);
+        }
+        catch (Exception ex)
+        {
+            await HandleException(ex);
+        }
     }
 
     [RelayCommand]
@@ -135,6 +171,13 @@ public partial class EquipmentManagerViewModel : ViewModelBase
     [RelayCommand]
     private async Task UpdateFitBonus()
     {
-        await HttpClient.PutAsync("FitBonus/updateFits", null);
+        try
+        {
+            await HttpClient.PutAsync("FitBonus/updateFits", null);
+        }
+        catch (Exception ex)
+        {
+            await HandleException(ex);
+        }
     }
 }
