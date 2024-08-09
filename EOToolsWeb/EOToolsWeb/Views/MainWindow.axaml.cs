@@ -57,6 +57,8 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         this.WhenActivated(d => d(ViewModel!.ShipLocksManager.ShowShipLockPhaseEditDialog.RegisterHandler(DoShowEditDialogAsync)));
 
         this.WhenActivated(d => d(ViewModel!.TranslationManager.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
+
+        this.WhenActivated(d => d(ViewModel!.ShowDialogService!.ShowDialog.RegisterHandler(DoShowDialog)));
     }
 
     protected override async void OnOpened(EventArgs e)
@@ -239,6 +241,15 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
 
         bool result = await dialog.ShowDialog<bool?>(this) is true;
         interaction.SetOutput(result);
+    }
+
+    private async Task DoShowDialog(IInteractionContext<MessageViewModel, object?> interaction)
+    {
+        MessageWindow message = new();
+        message.DataContext = interaction.Input;
+
+        await message.ShowDialog(this);
+        interaction.SetOutput(null);
     }
 
     protected override async void OnClosed(EventArgs e)

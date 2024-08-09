@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EOToolsWeb.Models.Settings;
 using EOToolsWeb.Shared.Ships;
@@ -71,62 +72,90 @@ public partial class ShipManagerViewModel : ViewModelBase
     [RelayCommand]
     private async Task ShowAddShipDialog()
     {
-        ShipModel model = new();
-
-        ShipViewModel.Model = model;
-        await ShipViewModel.LoadModel();
-
-        if (await ShowEditDialog.Handle(ShipViewModel))
+        try
         {
-            ShipViewModel.SaveChanges();
+            ShipModel model = new();
 
-            HttpResponseMessage response = await HttpClient.PostAsJsonAsync("Ships", model);
+            ShipViewModel.Model = model;
+            await ShipViewModel.LoadModel();
 
-            response.EnsureSuccessStatusCode();
-
-            ShipModel? postedModel = await response.Content.ReadFromJsonAsync<ShipModel>();
-
-            if (postedModel is not null)
+            if (await ShowEditDialog.Handle(ShipViewModel))
             {
-                Ships.Add(postedModel);
+                ShipViewModel.SaveChanges();
 
-                ReloadShipList();
+                HttpResponseMessage response = await HttpClient.PostAsJsonAsync("Ships", model);
+
+                response.EnsureSuccessStatusCode();
+
+                ShipModel? postedModel = await response.Content.ReadFromJsonAsync<ShipModel>();
+
+                if (postedModel is not null)
+                {
+                    Ships.Add(postedModel);
+
+                    ReloadShipList();
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            await HandleException(ex);
         }
     }
 
     [RelayCommand]
     private async Task EditShip(ShipModel vm)
     {
-        ShipViewModel.Model = vm;
-        await ShipViewModel.LoadModel();
-
-        if (await ShowEditDialog.Handle(ShipViewModel))
+        try
         {
-            ShipViewModel.SaveChanges();
+            ShipViewModel.Model = vm;
+            await ShipViewModel.LoadModel();
 
-            HttpResponseMessage response = await HttpClient.PutAsJsonAsync("Ships", vm);
+            if (await ShowEditDialog.Handle(ShipViewModel))
+            {
+                ShipViewModel.SaveChanges();
 
-            response.EnsureSuccessStatusCode();
+                HttpResponseMessage response = await HttpClient.PutAsJsonAsync("Ships", vm);
 
-            ReloadShipList();
+                response.EnsureSuccessStatusCode();
+
+                ReloadShipList();
+            }
+        }
+        catch (Exception ex)
+        {
+            await HandleException(ex);
         }
     }
 
     [RelayCommand]
     private async Task RemoveShip(ShipModel vm)
     {
-        await HttpClient.DeleteAsync($"Ships/{vm.Id}");
+        try
+        {
+            await HttpClient.DeleteAsync($"Ships/{vm.Id}");
 
-        Ships.Remove(vm);
+            Ships.Remove(vm);
 
-        ReloadShipList();
+            ReloadShipList();
+        }
+        catch (Exception ex)
+        {
+            await HandleException(ex);
+        }
     }
     
     [RelayCommand]
     private async Task PushTranslations()
     {
-        await HttpClient.PutAsync("Ships/pushShips", null);
+        try
+        {
+            await HttpClient.PutAsync("Ships/pushShips", null);
+        }
+        catch (Exception ex)
+        {
+            await HandleException(ex);
+        }
     }
 
     [RelayCommand]

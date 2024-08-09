@@ -1,3 +1,4 @@
+using System;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
@@ -19,6 +20,7 @@ using EOToolsWeb.ViewModels.UseItem;
 using EOToolsWeb.ViewModels.Translations;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using EOToolsWeb.Services;
 
 namespace EOToolsWeb
 {
@@ -83,6 +85,8 @@ namespace EOToolsWeb
             collection.AddScoped<SettingsModel>();
             collection.AddScoped<SettingsViewModel>();
 
+            collection.AddScoped<ShowDialogService>();
+
             collection.AddSingleton<HttpClient>();
 
             collection.AddSingleton(_ => new JsonSerializerOptions()
@@ -95,6 +99,9 @@ namespace EOToolsWeb
             var services = collection.BuildServiceProvider();
 
             var vm = services.GetRequiredService<MainViewModel>();
+            var messages = services.GetRequiredService<ShowDialogService>();
+
+            vm.ShowDialogService = messages;
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {

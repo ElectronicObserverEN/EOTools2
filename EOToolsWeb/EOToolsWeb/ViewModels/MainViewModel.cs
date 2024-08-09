@@ -1,6 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.ComponentModel;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using EOToolsWeb.Services;
 using EOToolsWeb.ViewModels.Equipments;
 using EOToolsWeb.ViewModels.EquipmentUpgrades;
 using EOToolsWeb.ViewModels.Events;
@@ -84,6 +87,16 @@ public partial class MainViewModel : ViewModelBase
         Settings = settings;
 
         PropertyChanging += ViewModelChanging;
+        PropertyChanged += ViewModelChanged;
+    }
+
+    private void ViewModelChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is not nameof(CurrentViewModel)) return;
+
+        if (CurrentViewModel is null) return;
+
+        CurrentViewModel.ShowDialogService = ShowDialogService;
     }
 
     private async void ViewModelChanging(object? sender, System.ComponentModel.PropertyChangingEventArgs e)
