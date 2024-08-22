@@ -1,0 +1,174 @@
+<UserControl
+	x:Class="EOToolsWeb.Views.FitBonus.FitBonusCheckerView"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:generic11="clr-namespace:EOToolsWeb.Models.FitBonus"
+	xmlns:grid="clr-namespace:EOToolsWeb.Control.Grid"
+	xmlns:local="clr-namespace:EOToolsWeb.ViewModels.FitBonus"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	d:DesignHeight="450"
+	d:DesignWidth="800"
+	x:DataType="local:FitBonusCheckerViewModel"
+	mc:Ignorable="d">
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<DataGrid
+			AutoGenerateColumns="False"
+			ItemsSource="{Binding (generic11:FitBonusList)Pagination.DisplayedData}"
+			VerticalScrollBarVisibility="Visible">
+			<DataGrid.Columns>
+				<DataGridTextColumn
+					Binding="{Binding Ship.NameEN}"
+					Header="Ship"
+					IsReadOnly="True" />
+
+				<DataGridTemplateColumn Header="Equipments" IsReadOnly="True">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate DataType="{x:Type local:FitBonusIssueViewModel}">
+							<Grid>
+								<ItemsRepeater ItemsSource="{Binding Equipments}">
+									<ItemsRepeater.ItemTemplate>
+										<DataTemplate DataType="{x:Type local:EquipmentWithStatsViewModel}">
+											<TextBlock>
+												<Run Text="{Binding Equipment.NameEN}" /> <Run Text="+" /><Run Text="{Binding Level}" />
+											</TextBlock>
+										</DataTemplate>
+									</ItemsRepeater.ItemTemplate>
+								</ItemsRepeater>
+							</Grid>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+
+				<DataGridTemplateColumn Header="Issue" IsReadOnly="True">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate DataType="{x:Type local:FitBonusIssueViewModel}">
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition />
+									<RowDefinition />
+									<RowDefinition />
+									<RowDefinition />
+									<RowDefinition />
+									<RowDefinition />
+									<RowDefinition />
+									<RowDefinition />
+								</Grid.RowDefinitions>
+
+
+								<Grid Grid.Row="0">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition SharedSizeGroup="statName" />
+										<ColumnDefinition SharedSizeGroup="expectedValue" />
+										<ColumnDefinition SharedSizeGroup="actualValue" />
+									</Grid.ColumnDefinitions>
+
+									<TextBlock Grid.Column="0" Text="Stat" />
+									<TextBlock Grid.Column="1" Text="Expected" />
+									<TextBlock Grid.Column="2" Text="Actual" />
+								</Grid>
+
+								<Grid Grid.Row="1">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition SharedSizeGroup="statName" />
+										<ColumnDefinition SharedSizeGroup="expectedValue" />
+										<ColumnDefinition SharedSizeGroup="actualValue" />
+									</Grid.ColumnDefinitions>
+
+									<TextBlock Grid.Column="0" Text="FP" />
+									<TextBlock Grid.Column="1" Text="{Binding ExpectedValue.Firepower}" />
+									<TextBlock Grid.Column="2" Text="{Binding ActualValue.Firepower}" />
+								</Grid>
+
+								<Grid Grid.Row="2">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition SharedSizeGroup="statName" />
+										<ColumnDefinition SharedSizeGroup="expectedValue" />
+										<ColumnDefinition SharedSizeGroup="actualValue" />
+									</Grid.ColumnDefinitions>
+
+									<TextBlock Grid.Column="0" Text="Torp" />
+									<TextBlock Grid.Column="1" Text="{Binding ExpectedValue.Torpedo}" />
+									<TextBlock Grid.Column="2" Text="{Binding ActualValue.Torpedo}" />
+								</Grid>
+
+								<Grid Grid.Row="3">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition SharedSizeGroup="statName" />
+										<ColumnDefinition SharedSizeGroup="expectedValue" />
+										<ColumnDefinition SharedSizeGroup="actualValue" />
+									</Grid.ColumnDefinitions>
+
+									<TextBlock Grid.Column="0" Text="AA" />
+									<TextBlock Grid.Column="1" Text="{Binding ExpectedValue.AntiAir}" />
+									<TextBlock Grid.Column="2" Text="{Binding ActualValue.AntiAir}" />
+								</Grid>
+
+								<Grid Grid.Row="4">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition SharedSizeGroup="statName" />
+										<ColumnDefinition SharedSizeGroup="expectedValue" />
+										<ColumnDefinition SharedSizeGroup="actualValue" />
+									</Grid.ColumnDefinitions>
+
+									<TextBlock Grid.Column="0" Text="Armor" />
+									<TextBlock Grid.Column="1" Text="{Binding ExpectedValue.Armor}" />
+									<TextBlock Grid.Column="2" Text="{Binding ActualValue.Armor}" />
+								</Grid>
+
+								<Grid Grid.Row="5">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition SharedSizeGroup="statName" />
+										<ColumnDefinition SharedSizeGroup="expectedValue" />
+										<ColumnDefinition SharedSizeGroup="actualValue" />
+									</Grid.ColumnDefinitions>
+
+									<TextBlock Grid.Column="0" Text="ASW" />
+									<TextBlock Grid.Column="1" Text="{Binding ExpectedValue.ASW}" />
+									<TextBlock Grid.Column="2" Text="{Binding ActualValue.ASW}" />
+								</Grid>
+
+								<Grid Grid.Row="6">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition SharedSizeGroup="statName" />
+										<ColumnDefinition SharedSizeGroup="expectedValue" />
+										<ColumnDefinition SharedSizeGroup="actualValue" />
+									</Grid.ColumnDefinitions>
+
+									<TextBlock Grid.Column="0" Text="Eva" />
+									<TextBlock Grid.Column="1" Text="{Binding ExpectedValue.Evasion}" />
+									<TextBlock Grid.Column="2" Text="{Binding ActualValue.Evasion}" />
+								</Grid>
+
+								<Grid Grid.Row="7">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition SharedSizeGroup="statName" />
+										<ColumnDefinition SharedSizeGroup="expectedValue" />
+										<ColumnDefinition SharedSizeGroup="actualValue" />
+									</Grid.ColumnDefinitions>
+
+									<TextBlock Grid.Column="0" Text="LOS" />
+									<TextBlock Grid.Column="1" Text="{Binding ExpectedValue.LOS}" />
+									<TextBlock Grid.Column="2" Text="{Binding ActualValue.LOS}" />
+								</Grid>
+							</Grid>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+
+			</DataGrid.Columns>
+		</DataGrid>
+
+		<grid:PaginationControl
+			Grid.Row="1"
+			Margin="20,10"
+			HorizontalAlignment="Right"
+			DataContext="{Binding Pagination}" />
+	</Grid>
+</UserControl>

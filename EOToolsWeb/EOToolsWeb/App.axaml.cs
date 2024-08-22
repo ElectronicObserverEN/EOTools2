@@ -21,6 +21,7 @@ using EOToolsWeb.ViewModels.Translations;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using EOToolsWeb.Services;
+using EOToolsWeb.ViewModels.FitBonus;
 
 namespace EOToolsWeb
 {
@@ -80,6 +81,10 @@ namespace EOToolsWeb
             collection.AddScoped<TranslationViewModel>();
             collection.AddScoped<ShipTranslationManager>();
             collection.AddScoped<MapTranslationManager>();
+
+            // Fit bonus
+            collection.AddScoped<FitBonusCheckerViewModel>();
+            collection.AddScoped<FitBonusIssuesFetcher>();
 
             // Settings
             collection.AddScoped<SettingsModel>();

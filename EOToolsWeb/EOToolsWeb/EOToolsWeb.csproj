@@ -26,6 +26,7 @@
     <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
     <PackageReference Include="Avalonia.Controls.ColorPicker" Version="11.0.6" />
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.6" />
+    <PackageReference Include="Avalonia.Controls.ItemsRepeater" Version="11.0.6" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="$(AvaloniaVersion)" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="$(AvaloniaVersion)" />
@@ -41,6 +42,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Control\Grid\PaginationControl.axaml.cs">
+      <DependentUpon>PaginationControl.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Equipments\EquipmentEditView.axaml.cs">
       <DependentUpon>EquipmentEditView.axaml</DependentUpon>
     </Compile>
@@ -55,6 +59,9 @@
     </Compile>
     <Compile Update="Views\Events\EventManagerView.axaml.cs">
       <DependentUpon>EventManagerView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\FitBonus\FitBonusCheckerView.axaml.cs">
+      <DependentUpon>FitBonusCheckerView.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\Settings\SettingsView.axaml.cs">
       <DependentUpon>%(Filename)</DependentUpon>

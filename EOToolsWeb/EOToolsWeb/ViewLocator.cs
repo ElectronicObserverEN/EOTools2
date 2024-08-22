@@ -2,12 +2,13 @@ using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using EOToolsWeb.ViewModels;
 using System;
+using AvaloniaControl = Avalonia.Controls.Control;
 
 namespace EOToolsWeb
 {
     public class ViewLocator : IDataTemplate
     {
-        public Control? Build(object? data)
+        public AvaloniaControl? Build(object? data)
         {
             if (data is null)
                 return null;
@@ -22,7 +23,7 @@ namespace EOToolsWeb
 
             if (type != null)
             {
-                Control ctrl = (Control)Activator.CreateInstance(type)!;
+                AvaloniaControl ctrl = (AvaloniaControl)Activator.CreateInstance(type)!;
                 ctrl.DataContext = data;
                 return ctrl;
             }

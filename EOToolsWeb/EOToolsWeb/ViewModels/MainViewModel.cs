@@ -3,10 +3,10 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EOToolsWeb.Services;
 using EOToolsWeb.ViewModels.Equipments;
 using EOToolsWeb.ViewModels.EquipmentUpgrades;
 using EOToolsWeb.ViewModels.Events;
+using EOToolsWeb.ViewModels.FitBonus;
 using EOToolsWeb.ViewModels.Login;
 using EOToolsWeb.ViewModels.Settings;
 using EOToolsWeb.ViewModels.ShipLocks;
@@ -44,6 +44,8 @@ public partial class MainViewModel : ViewModelBase
     public TranslationManagerViewModel TranslationManager { get; }
     public MapTranslationManager MapTranslationManager { get; }
 
+    public FitBonusCheckerViewModel FitBonusChecker { get; }
+
     public SettingsViewModel Settings { get; }
 
     [ObservableProperty]
@@ -66,6 +68,7 @@ public partial class MainViewModel : ViewModelBase
         ShipLocksManagerViewModel shipLockManager,
         SettingsViewModel settings,
         TranslationManagerViewModel translations,
+        FitBonusCheckerViewModel fitBonusChecker,
         MapTranslationManager mapTranslationManager)
     {
         Login = login;
@@ -85,6 +88,7 @@ public partial class MainViewModel : ViewModelBase
         TranslationManager = translations;
         MapTranslationManager = mapTranslationManager;
         Settings = settings;
+        FitBonusChecker = fitBonusChecker;
 
         PropertyChanging += ViewModelChanging;
         PropertyChanged += ViewModelChanged;
@@ -155,6 +159,13 @@ public partial class MainViewModel : ViewModelBase
     {
         CurrentViewModel = TranslationManager;
         await TranslationManager.LoadTranslations();
+    }
+
+    [RelayCommand]
+    private async Task OpenFitBonusChecker()
+    {
+        CurrentViewModel = FitBonusChecker;
+        await FitBonusChecker.Initialize();
     }
 
     [RelayCommand]

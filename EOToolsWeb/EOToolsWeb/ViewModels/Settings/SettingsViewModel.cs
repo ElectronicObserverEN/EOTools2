@@ -18,6 +18,12 @@ public partial class SettingsViewModel(SettingsModel settings, JsonSerializerOpt
     [ObservableProperty]
     private string _kancolleEoApiFolder = "";
 
+    [ObservableProperty]
+    private string _eoApiUrl = "";
+
+    [ObservableProperty]
+    private string _eoApiKey = "";
+
     private string SettingsPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "EOTools", "Configuration.json");
 
     public Interaction<string?, IStorageFolder?> ShowFolderPicker { get; } = new();
@@ -35,6 +41,8 @@ public partial class SettingsViewModel(SettingsModel settings, JsonSerializerOpt
         if (settings is null) return;
 
         Settings.KancolleEoApiFolder = settings.KancolleEoApiFolder;
+        Settings.EoApiUrl = settings.EoApiUrl;
+        Settings.EoApiKey = settings.EoApiKey;
 
         LoadFromModel();
     }
@@ -42,6 +50,8 @@ public partial class SettingsViewModel(SettingsModel settings, JsonSerializerOpt
     public void LoadFromModel()
     {
         KancolleEoApiFolder = Settings.KancolleEoApiFolder;
+        EoApiUrl = Settings.EoApiUrl;
+        EoApiKey = Settings.EoApiKey;
     }
 
     public override async Task OnViewClosing()
@@ -54,6 +64,8 @@ public partial class SettingsViewModel(SettingsModel settings, JsonSerializerOpt
     private async Task SaveChanges()
     {
         Settings.KancolleEoApiFolder = KancolleEoApiFolder;
+        Settings.EoApiUrl = EoApiUrl;
+        Settings.EoApiKey = EoApiKey;
 
         await File.WriteAllTextAsync(SettingsPath, JsonSerializer.Serialize(Settings, jsonOptions));
     }
