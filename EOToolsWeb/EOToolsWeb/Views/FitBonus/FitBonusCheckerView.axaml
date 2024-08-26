@@ -20,13 +20,17 @@
 
 		<DataGrid
 			AutoGenerateColumns="False"
-			ItemsSource="{Binding (generic11:FitBonusList)Pagination.DisplayedData}"
+			ItemsSource="{Binding Pagination.DisplayedData}"
 			VerticalScrollBarVisibility="Visible">
 			<DataGrid.Columns>
-				<DataGridTextColumn
-					Binding="{Binding Ship.NameEN}"
-					Header="Ship"
-					IsReadOnly="True" />
+
+				<DataGridTemplateColumn Header="Ship" IsReadOnly="True">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate DataType="{x:Type local:FitBonusIssueViewModel}">
+							<TextBlock Text="{Binding Ship.NameEN}" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
 
 				<DataGridTemplateColumn Header="Equipments" IsReadOnly="True">
 					<DataGridTemplateColumn.CellTemplate>
@@ -162,6 +166,21 @@
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>
 
+				<DataGridTemplateColumn Header="Software Version" IsReadOnly="True">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate DataType="{x:Type local:FitBonusIssueViewModel}">
+							<TextBlock Text="{Binding SoftwareVersion}" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+
+				<DataGridTemplateColumn Header="Data Version" IsReadOnly="True">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate DataType="{x:Type local:FitBonusIssueViewModel}">
+							<TextBlock Text="{Binding DataVersion}" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
 			</DataGrid.Columns>
 		</DataGrid>
 

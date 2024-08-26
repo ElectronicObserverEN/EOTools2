@@ -29,6 +29,12 @@ public partial class FitBonusIssueViewModel : ObservableObject, IGridRowFetched
     [ObservableProperty]
     private FitBonusValueModel _actualValue = new();
 
+    [ObservableProperty]
+    private string _dataVersion = "";
+
+    [ObservableProperty]
+    private string _softwareVersion = "";
+
     public int Id => Model.Id;
 
     public FitBonusIssueViewModel(FitBonusIssueModel model, ShipManagerViewModel ships, EquipmentManagerViewModel equipments)
@@ -51,5 +57,8 @@ public partial class FitBonusIssueViewModel : ObservableObject, IGridRowFetched
 
         ExpectedValue = Model.ExpectedBonus;
         ActualValue = Model.ActualBonus;
+
+        SoftwareVersion = Model.SoftwareVersion;
+        DataVersion = Model.DataVersion.ToString();
     }
 }

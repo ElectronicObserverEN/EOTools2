@@ -7,10 +7,10 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	d:DesignHeight="450"
 	d:DesignWidth="800"
-	x:DataType="grid:PaginationControl"
+	x:DataType="grid:PaginationViewModel"
 	mc:Ignorable="d">
 
-	<StackPanel DataContext="{Binding ViewModel}" Orientation="Horizontal">
+	<StackPanel Orientation="Horizontal">
 		<TextBlock Margin="5" VerticalAlignment="Center">
 			<Run Text="{Binding CurrentPage.PageIndex}" />
 			<Run Text="/" />

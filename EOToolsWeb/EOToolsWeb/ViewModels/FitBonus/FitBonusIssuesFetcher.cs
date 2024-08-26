@@ -40,14 +40,25 @@ public class FitBonusIssuesFetcher(SettingsViewModel settings, EquipmentManagerV
             Initialized = true;
         }
 
-        PaginatedResultModel<FitBonusIssueModel>? result = await Client.GetFromJsonAsync<PaginatedResultModel<FitBonusIssueModel>>($"FitBonusIssues?issueState=1&skip={skip}&take={take}");
-
-        if (result is null) return null;
-        
-        return new()
+        try
         {
-            Results = result.Results.Select(model => new FitBonusIssueViewModel(model, ShipManagerViewModel, EquipmentManagerViewModel)),
-            TotalCount = result.TotalCount,
-        };
+
+            PaginatedResultModel<FitBonusIssueModel>? result =
+                await Client.GetFromJsonAsync<PaginatedResultModel<FitBonusIssueModel>>(
+                    $"FitBonusIssues?issueState=1&skip={skip}&take={take}");
+
+            if (result is null) return null;
+
+            return new()
+            {
+                Results = result.Results.Select(model =>
+                    new FitBonusIssueViewModel(model, ShipManagerViewModel, EquipmentManagerViewModel)),
+                TotalCount = result.TotalCount,
+            };
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
     }
 }

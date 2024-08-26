@@ -164,8 +164,8 @@ public partial class MainViewModel : ViewModelBase
     [RelayCommand]
     private async Task OpenFitBonusChecker()
     {
-        CurrentViewModel = FitBonusChecker;
         await FitBonusChecker.Initialize();
+        CurrentViewModel = FitBonusChecker;
     }
 
     [RelayCommand]
