@@ -56,7 +56,7 @@ public partial class UpdateViewModel : ObservableObject
 
     public void SaveChanges()
     {
-        Model.UpdateDate = UpdateDate?.LocalDateTime;
+        Model.UpdateDate = UpdateDate is {} date ? new DateTime(date.LocalDateTime.Year, date.LocalDateTime.Month, date.LocalDateTime.Day) : null;
         Model.Name = Name;
         Model.Description = Description;
         Model.WasLiveUpdate = WasLiveUpdate;
