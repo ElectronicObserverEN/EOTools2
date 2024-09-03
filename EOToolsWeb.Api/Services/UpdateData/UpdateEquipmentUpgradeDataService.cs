@@ -21,6 +21,8 @@ public class UpdateEquipmentUpgradeDataService(IGitManagerService git, EoToolsDb
 
     public async Task UpdateEquipmentUpgrades()
     {
+        await GitManager.Pull();
+
         // Get version
         JsonObject? updateJson = JsonSerializer.Deserialize<JsonObject>(await File.ReadAllTextAsync(UpdateDataFilePath));
 
@@ -45,7 +47,6 @@ public class UpdateEquipmentUpgradeDataService(IGitManagerService git, EoToolsDb
 
 
         // --- Stage & push
-        await GitManager.Pull();
         await DatabaseSyncService.StageDatabaseChangesToGit();
 
         await File.WriteAllTextAsync(EquipmentUpgradesFilePath, JsonSerializer.Serialize(upgradesJson, SerializationOptions), Encoding.UTF8);

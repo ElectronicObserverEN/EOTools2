@@ -19,6 +19,8 @@ public class FitBonusUpdaterService(ConfigurationService config, IGitManagerServ
 
     public async Task UpdateThenSaveFileThenPush()
     {
+        await GitManagerService.Pull();
+
         List<FitBonusPerEquipmentModel>? bonuses = await GetFitBonuses();
         if (bonuses is null) return;
 

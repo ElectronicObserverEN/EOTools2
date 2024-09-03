@@ -22,7 +22,6 @@ public class OperationUpdateService(IGitManagerService git, EoToolsDbContext db,
 
     public async Task PushTranslations()
     {
-        // --- Stage & push
         await GitManager.Pull();
 
         // Get version

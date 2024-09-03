@@ -20,7 +20,6 @@ public class UpdateEquipmentDataService(IGitManagerService git, EoToolsDbContext
 
     public async Task UpdateEquipmentTranslations()
     {
-        // --- Stage & push
         await GitManager.Pull();
 
         // Get version
