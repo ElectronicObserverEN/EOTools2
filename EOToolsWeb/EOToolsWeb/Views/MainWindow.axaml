@@ -22,6 +22,7 @@
 		<Menu>
 			<MenuItem Command="{Binding OpenEventsCommand}" Header="Events" />
 			<MenuItem Command="{Binding OpenShipLockManagerCommand}" Header="Ship locks" />
+			<MenuItem Command="{Binding OpenSeasonManagerCommand}" Header="Seasons" />
 			<MenuItem Command="{Binding OpenUpdatesCommand}" Header="Updates" />
 			<MenuItem Command="{Binding OpenShipClassesCommand}" Header="Ship classes" />
 			<MenuItem Command="{Binding OpenShipsCommand}" Header="Ships" />

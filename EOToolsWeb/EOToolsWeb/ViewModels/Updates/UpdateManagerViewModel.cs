@@ -17,6 +17,7 @@ public partial class UpdateManagerViewModel(HttpClient client) : ViewModelBase
     public List<UpdateModel> UpdateList { get; set; } = [];
 
     public Interaction<UpdateViewModel, bool> ShowEditDialog { get; } = new();
+    public Interaction<object?, UpdateModel?> ShowPickerDialog { get; } = new();
 
     private HttpClient HttpClient { get; } = client;
 

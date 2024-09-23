@@ -1,4 +1,5 @@
 using EOToolsWeb.Api.Database;
+using EOToolsWeb.Shared.Quests;
 using EOToolsWeb.Shared.Seasons;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -59,6 +60,31 @@ public class SeasonController(EoToolsDbContext db) : ControllerBase
 
         Database.Seasons.Remove(actualSeason);
         await Database.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    [HttpPut("{id}/EndQuests")]
+    public async Task<IActionResult> EndQuests(int id)
+    {
+        SeasonModel? actualSeason = await Database.Seasons.FindAsync(id);
+
+        if (actualSeason is null)
+        {
+            return NotFound();
+        }
+
+        if (actualSeason.RemovedOnUpdateId is null) return Ok();
+
+        List<QuestModel> quests = Database.Quests.Where(q => q.SeasonId == id).ToList();
+
+        foreach (QuestModel quest in quests)
+        {
+            quest.RemovedOnUpdateId = actualSeason.RemovedOnUpdateId;
+            db.Update(quest);
+        }
+
+        await db.SaveChangesAsync();
 
         return Ok();
     }

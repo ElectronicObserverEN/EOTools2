@@ -22,6 +22,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using EOToolsWeb.Services;
 using EOToolsWeb.ViewModels.FitBonus;
+using EOToolsWeb.ViewModels.Seasons;
 
 namespace EOToolsWeb
 {
@@ -85,6 +86,10 @@ namespace EOToolsWeb
             // Fit bonus
             collection.AddScoped<FitBonusCheckerViewModel>();
             collection.AddScoped<FitBonusIssuesFetcher>();
+
+            // Seasons
+            collection.AddScoped<SeasonManagerViewModel>();
+            collection.AddScoped<SeasonViewModel>();
 
             // Settings
             collection.AddScoped<SettingsModel>();

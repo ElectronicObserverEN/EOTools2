@@ -24,7 +24,9 @@ using EOToolsWeb.Views.ShipLocks;
 using EOToolsWeb.Views.Ships;
 using System.Linq;
 using System.Collections.Generic;
+using EOToolsWeb.ViewModels.Seasons;
 using EOToolsWeb.ViewModels.Translations;
+using EOToolsWeb.Views.Seasons;
 using EOToolsWeb.Views.Translations;
 
 namespace EOToolsWeb.Views;
@@ -38,8 +40,8 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
     {
         InitializeComponent();
         this.WhenActivated(d => d(ViewModel!.Updates.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
+        this.WhenActivated(d => d(ViewModel!.Updates.ShowPickerDialog.RegisterHandler(DoShowPickerDialogAsync)));
 
-        this.WhenActivated(d => d(ViewModel!.EventViewModel.ShowUpdatePickerDialog.RegisterHandler(DoShowPickerDialogAsync)));
         this.WhenActivated(d => d(ViewModel!.Events.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
 
         this.WhenActivated(d => d(ViewModel!.ShipClassManager.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
@@ -57,6 +59,8 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         this.WhenActivated(d => d(ViewModel!.ShipLocksManager.ShowShipLockPhaseEditDialog.RegisterHandler(DoShowEditDialogAsync)));
 
         this.WhenActivated(d => d(ViewModel!.TranslationManager.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
+
+        this.WhenActivated(d => d(ViewModel!.SeasonManager!.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
 
         this.WhenActivated(d => d(ViewModel!.ShowDialogService!.ShowDialog.RegisterHandler(DoShowDialog)));
     }
@@ -178,6 +182,15 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
     private async Task DoShowEditDialogAsync(IInteractionContext<ShipViewModel, bool> interaction)
     {
         ShipEditView dialog = new();
+        dialog.DataContext = interaction.Input;
+
+        bool result = await dialog.ShowDialog<bool?>(this) is true;
+        interaction.SetOutput(result);
+    }
+
+    private async Task DoShowEditDialogAsync(IInteractionContext<SeasonViewModel, bool> interaction)
+    {
+        SeasonEditView dialog = new();
         dialog.DataContext = interaction.Input;
 
         bool result = await dialog.ShowDialog<bool?>(this) is true;

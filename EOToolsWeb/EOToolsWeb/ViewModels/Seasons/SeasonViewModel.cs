@@ -3,7 +3,8 @@ using CommunityToolkit.Mvvm.Input;
 using EOToolsWeb.Shared.Seasons;
 using EOToolsWeb.Shared.Updates;
 using EOToolsWeb.ViewModels.Updates;
-using EOToolsWeb.Views.Updates;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
 
 namespace EOToolsWeb.ViewModels.Seasons;
 
@@ -16,32 +17,43 @@ public partial class SeasonViewModel : ObservableObject
     private int? _addedOnUpdateId;
 
     public string AddedOnUpdateDisplay => AddedOnUpdate?.Name ?? "Select an update";
+
     public UpdateModel? AddedOnUpdate => AddedOnUpdateId switch
     {
-        int id => DbContext.Updates.Find(id),
+        int id => UpdateManager.UpdateList.Find(upd => upd.Id == id),
         _ => null,
     };
 
     [ObservableProperty]
-    private int? removedOnUpdateId;
+    private int? _removedOnUpdateId;
+
     public UpdateModel? RemovedOnUpdate => RemovedOnUpdateId switch
     {
-        int id => DbContext.Updates.Find(id),
+        int id => UpdateManager.UpdateList.Find(upd => upd.Id == id),
         _ => null,
     };
     public string RemovedOnUpdateDisplay => RemovedOnUpdate?.Name ?? "Select an update";
 
-    public SeasonModel Model { get; private set; }
+    public SeasonModel? Model { get; set; }
 
-    public SeasonViewModel(SeasonModel season)
+    private UpdateManagerViewModel UpdateManager { get; }
+
+    public SeasonViewModel(UpdateManagerViewModel updateManager)
     {
-        Name = season.Name;
-        RemovedOnUpdateId = season.RemovedOnUpdateId;
-        AddedOnUpdateId = season.AddedOnUpdateId;
-
-        Model = season;
+        UpdateManager = updateManager;
 
         PropertyChanged += SeasonViewModel_PropertyChanged;
+    }
+
+    public async Task LoadFromModel()
+    {
+        await UpdateManager.LoadAllUpdates();
+
+        if (Model is null) return;
+
+        Name = Model.Name;
+        RemovedOnUpdateId = Model.RemovedOnUpdateId;
+        AddedOnUpdateId = Model.AddedOnUpdateId;
     }
 
     private void SeasonViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -52,6 +64,8 @@ public partial class SeasonViewModel : ObservableObject
 
     public void SaveChanges()
     {
+        if (Model is null) return;
+
         Model.Name = Name;
 
         Model.RemovedOnUpdateId = RemovedOnUpdateId;
@@ -60,28 +74,20 @@ public partial class SeasonViewModel : ObservableObject
     }
 
     [RelayCommand]
-    public void OpenAddedOnUpdateList()
+    public async Task OpenAddedOnUpdateList()
     {
-        UpdateListViewModel vm = new();
-        UpdateListView list = new(vm);
-
-        if (list.ShowDialog() is true)
+        if (await UpdateManager.ShowPickerDialog.Handle(null) is { } upd)
         {
-            using EOToolsDbContext db = new();
-            AddedOnUpdateId = vm.PickedUpdate?.Id;
+            AddedOnUpdateId = upd.Id;
         }
     }
 
     [RelayCommand]
-    public void OpenRemovedOnUpdateList()
+    public async Task OpenRemovedOnUpdateList()
     {
-        UpdateListViewModel vm = new();
-        UpdateListView list = new(vm);
-
-        if (list.ShowDialog() is true)
+        if (await UpdateManager.ShowPickerDialog.Handle(null) is { } upd)
         {
-            using EOToolsDbContext db = new();
-            RemovedOnUpdateId = vm.PickedUpdate?.Id;
+            RemovedOnUpdateId = upd.Id;
         }
     }
 

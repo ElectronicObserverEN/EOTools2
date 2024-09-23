@@ -8,6 +8,7 @@ using EOToolsWeb.ViewModels.EquipmentUpgrades;
 using EOToolsWeb.ViewModels.Events;
 using EOToolsWeb.ViewModels.FitBonus;
 using EOToolsWeb.ViewModels.Login;
+using EOToolsWeb.ViewModels.Seasons;
 using EOToolsWeb.ViewModels.Settings;
 using EOToolsWeb.ViewModels.ShipLocks;
 using EOToolsWeb.ViewModels.Ships;
@@ -46,6 +47,8 @@ public partial class MainViewModel : ViewModelBase
 
     public FitBonusCheckerViewModel FitBonusChecker { get; }
 
+    public SeasonManagerViewModel SeasonManager { get; }
+
     public SettingsViewModel Settings { get; }
 
     [ObservableProperty]
@@ -69,6 +72,7 @@ public partial class MainViewModel : ViewModelBase
         SettingsViewModel settings,
         TranslationManagerViewModel translations,
         FitBonusCheckerViewModel fitBonusChecker,
+        SeasonManagerViewModel seasonManager,
         MapTranslationManager mapTranslationManager)
     {
         Login = login;
@@ -89,6 +93,7 @@ public partial class MainViewModel : ViewModelBase
         MapTranslationManager = mapTranslationManager;
         Settings = settings;
         FitBonusChecker = fitBonusChecker;
+        SeasonManager = seasonManager;
 
         PropertyChanging += ViewModelChanging;
         PropertyChanged += ViewModelChanged;
@@ -159,6 +164,13 @@ public partial class MainViewModel : ViewModelBase
     {
         CurrentViewModel = TranslationManager;
         await TranslationManager.LoadTranslations();
+    }
+
+    [RelayCommand]
+    private async Task OpenSeasonManager()
+    {
+        CurrentViewModel = SeasonManager;
+        await SeasonManager.LoadSeasonList();
     }
 
     [RelayCommand]

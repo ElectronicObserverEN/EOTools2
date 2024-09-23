@@ -41,8 +41,6 @@ public partial class EventViewModel : ObservableObject
 
     private UpdateManagerViewModel Updates { get; }
 
-    public Interaction<object?, UpdateModel?> ShowUpdatePickerDialog { get; } = new();
-
     public EventViewModel(UpdateManagerViewModel updates)
     {
         Updates = updates;
@@ -77,7 +75,7 @@ public partial class EventViewModel : ObservableObject
     [RelayCommand]
     public async Task OpenAddedOnUpdateList()
     {
-        if (await ShowUpdatePickerDialog.Handle(null) is { } upd)
+        if (await Updates.ShowPickerDialog.Handle(null) is { } upd)
         {
             StartOnUpdateId = upd.Id;
         }
@@ -86,7 +84,7 @@ public partial class EventViewModel : ObservableObject
     [RelayCommand]
     public async Task OpenRemovedOnUpdateList()
     {
-        if (await ShowUpdatePickerDialog.Handle(null) is { } upd)
+        if (await Updates.ShowPickerDialog.Handle(null) is { } upd)
         {
             EndOnUpdateId = upd.Id;
         }

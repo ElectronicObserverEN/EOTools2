@@ -63,6 +63,15 @@
     <Compile Update="Views\FitBonus\FitBonusCheckerView.axaml.cs">
       <DependentUpon>FitBonusCheckerView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\Seasons\SeasonEditView.axaml.cs">
+      <DependentUpon>SeasonEditView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Seasons\SeasonListView.axaml.cs">
+      <DependentUpon>SeasonListView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Seasons\SeasonManagerView.axaml.cs">
+      <DependentUpon>SeasonManagerView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Settings\SettingsView.axaml.cs">
       <DependentUpon>%(Filename)</DependentUpon>
     </Compile>
