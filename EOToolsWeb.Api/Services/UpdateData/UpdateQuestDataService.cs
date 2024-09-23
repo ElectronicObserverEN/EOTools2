@@ -170,7 +170,7 @@ public class UpdateQuestDataService(IGitManagerService git, EoToolsDbContext db,
 
         if (updateJson?["QuestTrackers"] is null) return;
 
-        string version = (int.Parse(updateJson["QuestTrackers"].GetValue<string>()) + 1).ToString();
+        int version = updateJson["QuestTrackers"].GetValue<int>() + 1;
 
         JsonArray toSerialize = new();
 
@@ -188,7 +188,11 @@ public class UpdateQuestDataService(IGitManagerService git, EoToolsDbContext db,
 
         await DatabaseSyncService.StageDatabaseChangesToGit();
 
-        await File.WriteAllTextAsync(TrackersFilePath, JsonSerializer.Serialize(toSerialize, SerializationOptions), Encoding.UTF8);
+        await File.WriteAllTextAsync(TrackersFilePath, JsonSerializer.Serialize(toSerialize, new JsonSerializerOptions(SerializationOptions)
+        {
+            WriteIndented = false,
+        }), Encoding.UTF8);
+
         await File.WriteAllTextAsync(UpdateDataFilePath, JsonSerializer.Serialize(updateJson, SerializationOptions), Encoding.UTF8);
 
         await GitManager.Push($"Quest trackers - {version}");
