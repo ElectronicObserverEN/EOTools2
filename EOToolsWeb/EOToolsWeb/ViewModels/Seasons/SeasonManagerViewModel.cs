@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using EOToolsWeb.Models.ShipLocks;
 using EOToolsWeb.Shared.Equipments;
 using EOToolsWeb.Shared.Seasons;
+using EOToolsWeb.Shared.Updates;
 using EOToolsWeb.ViewModels.ShipLocks;
 using ReactiveUI;
 using System;
@@ -30,6 +31,7 @@ public partial class SeasonManagerViewModel : ViewModelBase
     private SeasonViewModel SeasonViewModel { get; }
 
     public Interaction<SeasonViewModel, bool> ShowEditDialog { get; } = new();
+    public Interaction<object?, SeasonModel?> ShowPickerDialog { get; } = new();
 
     public SeasonManagerViewModel(HttpClient client, SeasonViewModel viewModel)
     {

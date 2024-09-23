@@ -24,8 +24,12 @@ using EOToolsWeb.Views.ShipLocks;
 using EOToolsWeb.Views.Ships;
 using System.Linq;
 using System.Collections.Generic;
+using Avalonia.Controls;
+using EOToolsWeb.Shared.Seasons;
+using EOToolsWeb.ViewModels.Quests;
 using EOToolsWeb.ViewModels.Seasons;
 using EOToolsWeb.ViewModels.Translations;
+using EOToolsWeb.Views.Quests;
 using EOToolsWeb.Views.Seasons;
 using EOToolsWeb.Views.Translations;
 
@@ -61,6 +65,12 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         this.WhenActivated(d => d(ViewModel!.TranslationManager.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
 
         this.WhenActivated(d => d(ViewModel!.SeasonManager!.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
+        this.WhenActivated(d => d(ViewModel!.SeasonManager.ShowPickerDialog.RegisterHandler(DoShowPickerDialogAsync)));
+
+        this.WhenActivated(d => d(ViewModel!.QuestManager!.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
+        this.WhenActivated(d => d(ViewModel!.QuestManager.ReadClipboard.RegisterHandler(ReadClipboard)));
+
+        this.WhenActivated(d => d(ViewModel!.ShowDialogService!.ShowDialog.RegisterHandler(DoShowDialog)));
 
         this.WhenActivated(d => d(ViewModel!.ShowDialogService!.ShowDialog.RegisterHandler(DoShowDialog)));
     }
@@ -121,6 +131,19 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         dialog.DataContext = MainViewModel.UpdateList;
 
         UpdateModel? result = await dialog.ShowDialog<UpdateModel?>(this);
+        interaction.SetOutput(result);
+    }
+
+    private async Task DoShowPickerDialogAsync(IInteractionContext<object?, SeasonModel?> interaction)
+    {
+        if (MainViewModel?.SeasonList is null) return;
+
+        await MainViewModel.SeasonList.Initialize();
+
+        SeasonListView dialog = new();
+        dialog.DataContext = MainViewModel.SeasonList;
+
+        SeasonModel? result = await dialog.ShowDialog<SeasonModel?>(this);
         interaction.SetOutput(result);
     }
 
@@ -264,6 +287,26 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         await message.ShowDialog(this);
         interaction.SetOutput(null);
     }
+
+    private async Task ReadClipboard(IInteractionContext<object?, string?> interaction)
+    {
+        TopLevel? topLevel = GetTopLevel(this);
+
+        if (topLevel is null) return;
+        if (topLevel.Clipboard is null) return;
+
+        interaction.SetOutput(await topLevel.Clipboard.GetTextAsync());
+    }
+
+    private async Task DoShowEditDialogAsync(IInteractionContext<QuestViewModel, bool> interaction)
+    {
+        QuestEditView dialog = new();
+        dialog.DataContext = interaction.Input;
+
+        bool result = await dialog.ShowDialog<bool?>(this) is true;
+        interaction.SetOutput(result);
+    }
+
 
     protected override async void OnClosed(EventArgs e)
     {

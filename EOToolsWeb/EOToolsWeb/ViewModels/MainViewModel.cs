@@ -8,6 +8,7 @@ using EOToolsWeb.ViewModels.EquipmentUpgrades;
 using EOToolsWeb.ViewModels.Events;
 using EOToolsWeb.ViewModels.FitBonus;
 using EOToolsWeb.ViewModels.Login;
+using EOToolsWeb.ViewModels.Quests;
 using EOToolsWeb.ViewModels.Seasons;
 using EOToolsWeb.ViewModels.Settings;
 using EOToolsWeb.ViewModels.ShipLocks;
@@ -47,7 +48,10 @@ public partial class MainViewModel : ViewModelBase
 
     public FitBonusCheckerViewModel FitBonusChecker { get; }
 
+    public QuestManagerViewModel QuestManager { get; }
+
     public SeasonManagerViewModel SeasonManager { get; }
+    public SeasonListViewModel SeasonList { get; }
 
     public SettingsViewModel Settings { get; }
 
@@ -73,6 +77,8 @@ public partial class MainViewModel : ViewModelBase
         TranslationManagerViewModel translations,
         FitBonusCheckerViewModel fitBonusChecker,
         SeasonManagerViewModel seasonManager,
+        SeasonListViewModel seasonList,
+        QuestManagerViewModel quests,
         MapTranslationManager mapTranslationManager)
     {
         Login = login;
@@ -94,6 +100,8 @@ public partial class MainViewModel : ViewModelBase
         Settings = settings;
         FitBonusChecker = fitBonusChecker;
         SeasonManager = seasonManager;
+        SeasonList = seasonList;
+        QuestManager = quests;
 
         PropertyChanging += ViewModelChanging;
         PropertyChanged += ViewModelChanged;
@@ -180,6 +188,13 @@ public partial class MainViewModel : ViewModelBase
         CurrentViewModel = FitBonusChecker;
     }
 
+    [RelayCommand]
+    private async Task OpenQuestManager()
+    {
+        await QuestManager.LoadQuests();
+        CurrentViewModel = QuestManager;
+    }
+    
     [RelayCommand]
     private void OpenSettings()
     {

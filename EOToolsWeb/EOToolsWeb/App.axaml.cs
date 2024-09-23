@@ -22,6 +22,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using EOToolsWeb.Services;
 using EOToolsWeb.ViewModels.FitBonus;
+using EOToolsWeb.ViewModels.Quests;
 using EOToolsWeb.ViewModels.Seasons;
 
 namespace EOToolsWeb
@@ -89,7 +90,12 @@ namespace EOToolsWeb
 
             // Seasons
             collection.AddScoped<SeasonManagerViewModel>();
+            collection.AddScoped<SeasonListViewModel>();
             collection.AddScoped<SeasonViewModel>();
+
+            // Quests
+            collection.AddScoped<QuestManagerViewModel>();
+            collection.AddScoped<QuestViewModel>();
 
             // Settings
             collection.AddScoped<SettingsModel>();

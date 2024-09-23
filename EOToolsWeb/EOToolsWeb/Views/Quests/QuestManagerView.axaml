@@ -1,0 +1,84 @@
+<UserControl
+	x:Class="EOToolsWeb.Views.Quests.QuestManagerView"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:quests="clr-namespace:EOToolsWeb.ViewModels.Quests"
+	xmlns:quests1="clr-namespace:EOToolsWeb.Views.Quests"
+	d:DesignHeight="450"
+	d:DesignWidth="800"
+	x:DataType="quests:QuestManagerViewModel"
+	mc:Ignorable="d">
+	<Design.DataContext>
+		<!--
+			This only sets the DataContext for the previewer in an IDE,
+			to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
+		-->
+		<quests:QuestManagerViewModel />
+	</Design.DataContext>
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+
+		<StackPanel
+			Grid.Row="0"
+			Margin="5"
+			Orientation="Vertical">
+
+			<StackPanel Orientation="Horizontal">
+				<Button
+					Margin="5"
+					Command="{Binding AddQuestCommand}"
+					Content="Add" />
+				<Button
+					Margin="5"
+					Command="{Binding AddQuestFromClipboardCommand}"
+					Content="Add from clipboard" />
+			</StackPanel>
+
+			<StackPanel Orientation="Horizontal">
+				<Button
+					Margin="5"
+					Command="{Binding UpdateTranslationsCommand}"
+					Content="Update quest translations" />
+			</StackPanel>
+
+			<TextBox Text="{Binding Filter}" />
+		</StackPanel>
+
+		<DataGrid
+			Grid.Row="1"
+			AutoGenerateColumns="False"
+			IsReadOnly="True"
+			ItemsSource="{Binding QuestListFiltered}"
+			VerticalScrollBarVisibility="Visible">
+			<DataGrid.Columns>
+				<DataGridTemplateColumn>
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<StackPanel Orientation="Horizontal">
+								<Button
+									Command="{Binding ViewModel.RemoveQuestCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=quests1:QuestManagerView}}"
+									CommandParameter="{Binding}"
+									Content="Delete" />
+								<Button
+									Margin="5,0,5,0"
+									Command="{Binding ViewModel.EditQuestCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=quests1:QuestManagerView}}"
+									CommandParameter="{Binding}"
+									Content="Edit" />
+							</StackPanel>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+
+				<DataGridTextColumn Binding="{Binding ApiId}" Header="API Id" />
+				<DataGridTextColumn Binding="{Binding Code}" Header="Code" />
+				<DataGridTextColumn Binding="{Binding NameEN}" Header="Name" />
+			</DataGrid.Columns>
+		</DataGrid>
+	</Grid>
+</UserControl>

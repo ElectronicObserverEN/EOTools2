@@ -63,6 +63,12 @@
     <Compile Update="Views\FitBonus\FitBonusCheckerView.axaml.cs">
       <DependentUpon>FitBonusCheckerView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\Quests\QuestEditView.axaml.cs">
+      <DependentUpon>QuestEditView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Quests\QuestManagerView.axaml.cs">
+      <DependentUpon>QuestManagerView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Seasons\SeasonEditView.axaml.cs">
       <DependentUpon>SeasonEditView.axaml</DependentUpon>
     </Compile>
