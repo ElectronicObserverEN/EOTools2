@@ -3,6 +3,7 @@ using System;
 using EOToolsWeb.Api.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EOToolsWeb.Api.Migrations
 {
     [DbContext(typeof(EoToolsDbContext))]
-    partial class EoToolsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240923045400_Quests")]
+    partial class Quests
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.7");
@@ -370,56 +373,39 @@ namespace EOToolsWeb.Api.Migrations
                         .HasColumnType("INTEGER")
                         .HasAnnotation("Relational:JsonPropertyName", "id");
 
-                    b.Property<int?>("AddedOnUpdateId")
-                        .HasColumnType("INTEGER")
-                        .HasAnnotation("Relational:JsonPropertyName", "added_update_id");
-
-                    b.Property<int>("ApiId")
-                        .HasColumnType("INTEGER")
-                        .HasAnnotation("Relational:JsonPropertyName", "api_id");
-
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasColumnType("TEXT")
                         .HasAnnotation("Relational:JsonPropertyName", "code");
 
-                    b.Property<string>("DescEN")
+                    b.Property<string>("DescEn")
                         .IsRequired()
                         .HasColumnType("TEXT")
-                        .HasAnnotation("Relational:JsonPropertyName", "desc_en");
+                        .HasAnnotation("Relational:JsonPropertyName", "desc");
 
-                    b.Property<string>("DescJP")
+                    b.Property<string>("DescJp")
                         .IsRequired()
                         .HasColumnType("TEXT")
                         .HasAnnotation("Relational:JsonPropertyName", "desc_jp");
 
-                    b.Property<string>("NameEN")
+                    b.Property<string>("NameEn")
                         .IsRequired()
                         .HasColumnType("TEXT")
-                        .HasAnnotation("Relational:JsonPropertyName", "name_en");
+                        .HasAnnotation("Relational:JsonPropertyName", "name");
 
-                    b.Property<string>("NameJP")
+                    b.Property<string>("NameJp")
                         .IsRequired()
                         .HasColumnType("TEXT")
                         .HasAnnotation("Relational:JsonPropertyName", "name_jp");
 
-                    b.Property<int?>("RemovedOnUpdateId")
-                        .HasColumnType("INTEGER")
-                        .HasAnnotation("Relational:JsonPropertyName", "removed_update_id");
+                    b.Property<int>("QuestId")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<int?>("SeasonId")
-                        .HasColumnType("INTEGER")
-                        .HasAnnotation("Relational:JsonPropertyName", "season_id");
-
-                    b.Property<string>("Tracker")
+                    b.Property<string>("TrackerData")
                         .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasAnnotation("Relational:JsonPropertyName", "tracker");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Code", "ApiId")
-                        .IsUnique();
 
                     b.ToTable("Quests");
                 });

@@ -3,6 +3,8 @@ using EOToolsWeb.Shared.Equipments;
 using EOToolsWeb.Shared.EquipmentUpgrades;
 using EOToolsWeb.Shared.Events;
 using EOToolsWeb.Shared.Maps;
+using EOToolsWeb.Shared.Quests;
+using EOToolsWeb.Shared.Seasons;
 using EOToolsWeb.Shared.ShipLocks;
 using EOToolsWeb.Shared.Ships;
 using EOToolsWeb.Shared.Updates;
@@ -17,6 +19,9 @@ namespace EOToolsWeb.Api.Database
         public DbSet<UserConnection> UserConnections { get; set; }
         public DbSet<EventModel> Events { get; set; }
         public DbSet<UpdateModel> Updates { get; set; }
+        public DbSet<SeasonModel> Seasons { get; set; }
+
+        public DbSet<QuestModel> Quests { get; set; }
 
         public DbSet<ShipModel> Ships { get; set; }
         public DbSet<ShipNameTranslationModel> ShipTranslations { get; set; }
