@@ -106,6 +106,11 @@ public class UpdateMaintenanceDataService(IGitManagerService git, EoToolsDbConte
 
         if (eventEnd != null)
         {
+            if (update.UpdateInProgress())
+            {
+                return new(update, (int)MaintenanceState.Regular);
+            }
+
             return new(update, (int)MaintenanceState.EventEnd);
         }
 
