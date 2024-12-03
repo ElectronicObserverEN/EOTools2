@@ -16,7 +16,7 @@ public partial class EquipmentUpgradeImprovmentViewModel(ShipManagerViewModel sh
 {
     public EquipmentUpgradeImprovmentModel Model { get; set; } = new();
 
-    private EquipmentUpgradeConversionViewModel ConversionViewModel { get; } = new(equipmentManager);
+    public EquipmentUpgradeConversionViewModel ConversionViewModel { get; } = new(equipmentManager);
 
     public EquipmentUpgradeImprovmentCostViewModel CostViewModel { get; set; } = new(equipmentManager, useItemManager);
 
