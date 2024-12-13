@@ -76,7 +76,7 @@ public partial class LoginViewModel : ObservableObject
             LoginMessage = "";
 
             ClientApi.BaseAddress = new Uri(url);
-            ClientApi.DefaultRequestHeaders.Authorization = new("Basic", token);
+            ClientApi.DefaultRequestHeaders.Add("X-TOKEN-EO-TOOLS-WEB-X", token);
 
             LoginMessage = "Loading settings ...";
             await Settings.Initialize();
