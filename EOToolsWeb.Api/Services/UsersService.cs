@@ -1,6 +1,7 @@
 ﻿using EOToolsWeb.Api.Models;
 using System.Security.Cryptography;
 using EOToolsWeb.Api.Database;
+using EOToolsWeb.Shared.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace EOToolsWeb.Api.Services;

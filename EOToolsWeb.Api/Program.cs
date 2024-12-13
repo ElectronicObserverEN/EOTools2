@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using System.Runtime.InteropServices;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using EOToolsWeb.Api.Services.Permissions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -98,6 +99,7 @@ builder.Services.AddScoped<UpdateShipLockDataService>();
 builder.Services.AddScoped<UpdateEquipmentUpgradeDataService>(); 
 builder.Services.AddScoped<FitBonusUpdaterService>();
 builder.Services.AddScoped<OperationUpdateService>();
+builder.Services.AddScoped<IPermissionsService, PermissionsService>();
 
 builder.Services.AddSingleton(_ => new JsonSerializerOptions()
 {
