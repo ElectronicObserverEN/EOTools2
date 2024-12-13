@@ -1,14 +1,14 @@
 using EOToolsWeb.Api.Database;
 using EOToolsWeb.Shared.EquipmentUpgrades;
+using EOToolsWeb.Shared.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 
 namespace EOToolsWeb.Api.Controllers;
 
 [ApiController]
-[Authorize(AuthenticationSchemes = "TokenAuthentication")]
+[Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]
 [Route("[controller]")]
 public class EquipmentUpgradeImprovmentModelController(EoToolsDbContext db) : ControllerBase
 {

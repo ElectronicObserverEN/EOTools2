@@ -1,13 +1,14 @@
 using EOToolsWeb.Api.Database;
 using EOToolsWeb.Api.Services.UpdateData;
 using EOToolsWeb.Shared.Updates;
+using EOToolsWeb.Shared.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EOToolsWeb.Api.Controllers;
 
 [ApiController]
-[Authorize(AuthenticationSchemes = "TokenAuthentication")]
+[Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]
 [Route("[controller]")]
 public class UpdateController(EoToolsDbContext db, UpdateMaintenanceDataService updateService) : ControllerBase
 {

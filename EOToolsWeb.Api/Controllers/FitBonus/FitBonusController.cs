@@ -1,11 +1,12 @@
 using EOToolsWeb.Api.Services.UpdateData;
+using EOToolsWeb.Shared.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EOToolsWeb.Api.Controllers.FitBonus;
 
 [ApiController]
-[Authorize(AuthenticationSchemes = "TokenAuthentication")]
+[Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]
 [Route("[controller]")]
 public class FitBonusController(FitBonusUpdaterService dataUpdateService) : ControllerBase
 {

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace EOToolsWeb.Api.Controllers.Users;
 
 [ApiController]
-[Authorize(AuthenticationSchemes = "TokenAuthentication")]
+[Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]
 [Route("[controller]")]
 public class UsersController(EoToolsDbContext db) : ControllerBase
 {

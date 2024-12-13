@@ -1,14 +1,15 @@
 ﻿using EOToolsWeb.Api.Database;
 using EOToolsWeb.Api.Services.UpdateData;
 using EOToolsWeb.Shared.Quests;
+using EOToolsWeb.Shared.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EOToolsWeb.Api.Controllers.Quest;
 
 [ApiController]
-[Authorize(AuthenticationSchemes = "TokenAuthentication")]
 [Route("[controller]")]
+[Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]
 public class QuestController(EoToolsDbContext db, UpdateQuestDataService updateService) : ControllerBase
 {
     private EoToolsDbContext Database { get; } = db;

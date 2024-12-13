@@ -2,6 +2,7 @@ using EOToolsWeb.Api.Database;
 using EOToolsWeb.Api.Services.UpdateData;
 using EOToolsWeb.Shared.Ships;
 using EOToolsWeb.Shared.Translations;
+using EOToolsWeb.Shared.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -64,6 +65,7 @@ public class ShipNameTranslationsController(EoToolsDbContext db, UpdateShipDataS
     }
 
     [HttpPut("pushTranslations")]
+    [Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]
     public async Task<IActionResult> UpdateData()
     {
         await DataUpdateService.UpdateShipTranslations();
@@ -72,6 +74,7 @@ public class ShipNameTranslationsController(EoToolsDbContext db, UpdateShipDataS
     }
 
     [HttpPost]
+    [Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]
     public async Task<IActionResult> Post(ShipNameTranslationModel newData)
     {
         foreach (TranslationModel newTranslation in newData.Translations)
@@ -86,6 +89,7 @@ public class ShipNameTranslationsController(EoToolsDbContext db, UpdateShipDataS
     }
 
     [HttpDelete("{id}")]
+    [Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]
     public async Task<IActionResult> Delete(int id)
     {
         ShipNameTranslationModel? data = await Database.ShipTranslations

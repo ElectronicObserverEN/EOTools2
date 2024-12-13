@@ -1,5 +1,6 @@
 using EOToolsWeb.Api.Database;
 using EOToolsWeb.Shared.Ships;
+using EOToolsWeb.Shared.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -39,6 +40,7 @@ public class ShipClassesController(EoToolsDbContext db) : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]
     public async Task<IActionResult> PostShipClass(ShipClassModel shipClass)
     {
         await Database.ShipClasses.AddAsync(shipClass);
@@ -48,6 +50,7 @@ public class ShipClassesController(EoToolsDbContext db) : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]
     public async Task<IActionResult> DeleteClass(int id)
     {
         ShipClassModel? actualClass = await Database.ShipClasses.FindAsync(id);

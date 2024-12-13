@@ -1,12 +1,13 @@
 ﻿using EOToolsWeb.Api.Database;
 using EOToolsWeb.Shared.ShipLocks;
+using EOToolsWeb.Shared.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EOToolsWeb.Api.Controllers;
 
 [ApiController]
-[Authorize(AuthenticationSchemes = "TokenAuthentication")]
+[Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]
 [Route("[controller]")]
 public class ShipLockPhaseController(EoToolsDbContext db) : ControllerBase
 {
