@@ -3,7 +3,6 @@ using EOToolsWeb.Shared.Equipments;
 using EOToolsWeb.Shared.EquipmentUpgrades;
 using EOToolsWeb.Shared.Events;
 using EOToolsWeb.Shared.Maps;
-using EOToolsWeb.Shared.Permissions;
 using EOToolsWeb.Shared.Quests;
 using EOToolsWeb.Shared.Seasons;
 using EOToolsWeb.Shared.ShipLocks;
@@ -18,7 +17,6 @@ namespace EOToolsWeb.Api.Database
     public class EoToolsDbContext : DbContext
     {
         public DbSet<UserModel> Users { get; set; }
-        public DbSet<PermissionsPerUserModel> Permissions { get; set; }
         public DbSet<UserConnection> UserConnections { get; set; }
 
         public DbSet<EventModel> Events { get; set; }

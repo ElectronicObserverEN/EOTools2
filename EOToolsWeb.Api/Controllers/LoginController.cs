@@ -19,12 +19,4 @@ public class LoginController(UsersService users) : ControllerBase
         
         return new LoginResponse(autorization);
     }
-
-#if DEBUG
-    [HttpGet("make")]
-    public string MakePassword(string password)
-    {
-        return users.GetPasswordHashed(password);
-    }
-#endif
 }
