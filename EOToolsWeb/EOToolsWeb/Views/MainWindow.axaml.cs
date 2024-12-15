@@ -1,37 +1,37 @@
-using System;
-using EOToolsWeb.ViewModels;
-using EOToolsWeb.ViewModels.Login;
-using EOToolsWeb.ViewModels.Updates;
-using EOToolsWeb.Views.Login;
-using EOToolsWeb.Views.Updates;
+using Avalonia.Controls;
 using Avalonia.ReactiveUI;
-using ReactiveUI;
-using System.Threading.Tasks;
 using EOToolsWeb.Shared.Equipments;
 using EOToolsWeb.Shared.EquipmentUpgrades;
+using EOToolsWeb.Shared.Seasons;
 using EOToolsWeb.Shared.Ships;
 using EOToolsWeb.Shared.Updates;
 using EOToolsWeb.Shared.UseItem;
+using EOToolsWeb.ViewModels;
 using EOToolsWeb.ViewModels.Equipments;
 using EOToolsWeb.ViewModels.EquipmentUpgrades;
 using EOToolsWeb.ViewModels.Events;
+using EOToolsWeb.ViewModels.Login;
+using EOToolsWeb.ViewModels.Quests;
+using EOToolsWeb.ViewModels.Seasons;
 using EOToolsWeb.ViewModels.ShipLocks;
 using EOToolsWeb.ViewModels.Ships;
+using EOToolsWeb.ViewModels.Translations;
+using EOToolsWeb.ViewModels.Updates;
 using EOToolsWeb.Views.Equipments;
 using EOToolsWeb.Views.EquipmentUpgrades;
 using EOToolsWeb.Views.Events;
-using EOToolsWeb.Views.ShipLocks;
-using EOToolsWeb.Views.Ships;
-using System.Linq;
-using System.Collections.Generic;
-using Avalonia.Controls;
-using EOToolsWeb.Shared.Seasons;
-using EOToolsWeb.ViewModels.Quests;
-using EOToolsWeb.ViewModels.Seasons;
-using EOToolsWeb.ViewModels.Translations;
+using EOToolsWeb.Views.Login;
 using EOToolsWeb.Views.Quests;
 using EOToolsWeb.Views.Seasons;
+using EOToolsWeb.Views.ShipLocks;
+using EOToolsWeb.Views.Ships;
 using EOToolsWeb.Views.Translations;
+using EOToolsWeb.Views.Updates;
+using ReactiveUI;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace EOToolsWeb.Views;
 
@@ -69,15 +69,14 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
 
         this.WhenActivated(d => d(ViewModel!.QuestManager!.ShowEditDialog.RegisterHandler(DoShowEditDialogAsync)));
         this.WhenActivated(d => d(ViewModel!.QuestManager.ReadClipboard.RegisterHandler(ReadClipboard)));
-
-        this.WhenActivated(d => d(ViewModel!.ShowDialogService!.ShowDialog.RegisterHandler(DoShowDialog)));
-
-        this.WhenActivated(d => d(ViewModel!.ShowDialogService!.ShowDialog.RegisterHandler(DoShowDialog)));
     }
 
     protected override async void OnOpened(EventArgs e)
     {
         base.OnOpened(e);
+
+        ViewModel!.ShowDialogService!.ShowDialog = DoShowDialog;
+        ViewModel!.ShowDialogService!.ShowWindow = DoShowWindow;
 
         if (LoginViewModel is null || MainViewModel is null)
         {
@@ -279,13 +278,12 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         interaction.SetOutput(result);
     }
 
-    private async Task DoShowDialog(IInteractionContext<MessageViewModel, object?> interaction)
+    private async Task DoShowDialog(MessageViewModel messageVm)
     {
         MessageWindow message = new();
-        message.DataContext = interaction.Input;
+        message.DataContext = messageVm;
 
         await message.ShowDialog(this);
-        interaction.SetOutput(null);
     }
 
     private async Task ReadClipboard(IInteractionContext<object?, string?> interaction)
@@ -307,6 +305,10 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         interaction.SetOutput(result);
     }
 
+    private async Task<bool> DoShowWindow(Window window)
+    {
+        return await window.ShowDialog<bool?>(this) is true;
+    }
 
     protected override async void OnClosed(EventArgs e)
     {

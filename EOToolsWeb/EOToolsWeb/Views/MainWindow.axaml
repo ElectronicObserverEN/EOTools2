@@ -30,6 +30,7 @@
 			<MenuItem Command="{Binding OpenEquipmentsCommand}" Header="Equipments" />
 			<MenuItem Command="{Binding OpenTranslationsManagerCommand}" Header="Translations" />
 			<MenuItem Command="{Binding OpenFitBonusCheckerCommand}" Header="Fit bonus" />
+			<MenuItem Command="{Binding OpenUsersCommand}" Header="Users" />
 			<MenuItem Command="{Binding OpenSettingsCommand}" Header="Settings" />
 
 			<MenuItem Header="Actions">

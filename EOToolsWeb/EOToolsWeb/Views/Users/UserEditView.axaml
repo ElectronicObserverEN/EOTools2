@@ -1,0 +1,86 @@
+<Window
+	x:Class="EOToolsWeb.Views.Users.UserEditView"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:users="clr-namespace:EOToolsWeb.ViewModels.Users"
+	Title="Edit user data"
+	d:DesignHeight="450"
+	d:DesignWidth="800"
+	x:DataType="users:UserViewModel"
+	SizeToContent="WidthAndHeight"
+	mc:Ignorable="d">
+	<Design.DataContext>
+		<!--
+			This only sets the DataContext for the previewer in an IDE,
+			to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
+		-->
+		<users:UserViewModel />
+	</Design.DataContext>
+
+	<StackPanel Margin="5">
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="auto" />
+				<ColumnDefinition />
+			</Grid.ColumnDefinitions>
+
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*" />
+				<RowDefinition Height="*" />
+				<RowDefinition />
+			</Grid.RowDefinitions>
+
+			<TextBlock
+				Grid.Row="0"
+				Grid.Column="0"
+				Margin="5"
+				Text="Username" />
+
+			<TextBox
+				Grid.Row="0"
+				Grid.Column="1"
+				Margin="5"
+				Text="{Binding Username}" />
+
+			<TextBlock
+				Grid.Row="1"
+				Grid.Column="0"
+				Margin="5"
+				Text="Password" />
+
+			<TextBox
+				Grid.Row="1"
+				Grid.Column="1"
+				Margin="5"
+				PasswordChar="*"
+				Text="{Binding Password}" />
+
+			<TextBlock
+				Grid.Row="2"
+				Grid.Column="0"
+				Margin="5"
+				Text="User kind" />
+
+			<ComboBox
+				Grid.Row="2"
+				Grid.Column="1"
+				ItemsSource="{Binding UserKinds}"
+				SelectedItem="{Binding UserKind}" />
+
+		</Grid>
+
+		<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+			<Button
+				Margin="5"
+				Click="OnConfirmClick"
+				Content="Ok" />
+			<Button
+				Margin="5"
+				Click="OnCancelClick"
+				Content="Cancel" />
+		</StackPanel>
+	</StackPanel>
+
+</Window>

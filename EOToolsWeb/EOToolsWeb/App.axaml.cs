@@ -24,6 +24,8 @@ using EOToolsWeb.Services;
 using EOToolsWeb.ViewModels.FitBonus;
 using EOToolsWeb.ViewModels.Quests;
 using EOToolsWeb.ViewModels.Seasons;
+using EOToolsWeb.ViewModels.Users;
+using Avalonia.Controls;
 
 namespace EOToolsWeb
 {
@@ -101,7 +103,11 @@ namespace EOToolsWeb
             collection.AddScoped<SettingsModel>();
             collection.AddScoped<SettingsViewModel>();
 
-            collection.AddScoped<ShowDialogService>();
+            // Users
+            collection.AddScoped<UsersManagerViewModel>();
+            collection.AddScoped<UserViewModel>();
+
+            collection.AddScoped<IAvaloniaShowDialogService, ShowDialogService>();
 
             collection.AddSingleton<HttpClient>();
 
@@ -115,7 +121,7 @@ namespace EOToolsWeb
             var services = collection.BuildServiceProvider();
 
             var vm = services.GetRequiredService<MainViewModel>();
-            var messages = services.GetRequiredService<ShowDialogService>();
+            var messages = services.GetRequiredService<IAvaloniaShowDialogService>();
 
             vm.ShowDialogService = messages;
 

@@ -16,6 +16,8 @@ using EOToolsWeb.ViewModels.Ships;
 using EOToolsWeb.ViewModels.Translations;
 using EOToolsWeb.ViewModels.Updates;
 using EOToolsWeb.ViewModels.UseItem;
+using EOToolsWeb.ViewModels.Users;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EOToolsWeb.ViewModels;
 
@@ -54,6 +56,8 @@ public partial class MainViewModel : ViewModelBase
     public SeasonListViewModel SeasonList { get; }
 
     public SettingsViewModel Settings { get; }
+    
+    private IServiceProvider ServiceProvider { get; }
 
     [ObservableProperty]
     private ViewModelBase? _currentViewModel;
@@ -79,7 +83,8 @@ public partial class MainViewModel : ViewModelBase
         SeasonManagerViewModel seasonManager,
         SeasonListViewModel seasonList,
         QuestManagerViewModel quests,
-        MapTranslationManager mapTranslationManager)
+        MapTranslationManager mapTranslationManager,
+        IServiceProvider provider)
     {
         Login = login;
         Updates = updates;
@@ -102,6 +107,8 @@ public partial class MainViewModel : ViewModelBase
         SeasonManager = seasonManager;
         SeasonList = seasonList;
         QuestManager = quests;
+
+        ServiceProvider = provider;
 
         PropertyChanging += ViewModelChanging;
         PropertyChanged += ViewModelChanged;
@@ -199,6 +206,15 @@ public partial class MainViewModel : ViewModelBase
     private void OpenSettings()
     {
         CurrentViewModel = Settings;
+    }
+
+    [RelayCommand]
+    private async Task OpenUsers()
+    {
+        UsersManagerViewModel vm = ServiceProvider.GetRequiredService<UsersManagerViewModel>();
+        await vm.LoadAllUsers();
+
+        CurrentViewModel = vm;
     }
 
     [RelayCommand]

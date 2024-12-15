@@ -16,7 +16,7 @@ namespace EOToolsWeb.ViewModels
             return Task.CompletedTask;
         }
 
-        public ShowDialogService? ShowDialogService { get; set; }
+        public IAvaloniaShowDialogService? ShowDialogService { get; set; }
 
         /// <summary>
         /// Show an error message when an exception is thrown

@@ -2,10 +2,10 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>preview</LangVersion>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-    <AssemblyVersion>2.0.0</AssemblyVersion>
-    <FileVersion>2.0.0</FileVersion>
+    <AssemblyVersion>2.0.1</AssemblyVersion>
+    <FileVersion>2.0.1</FileVersion>
   </PropertyGroup>
   
   <ItemGroup>
@@ -110,6 +110,12 @@
     </Compile>
     <Compile Update="Views\MessageWindow.axaml.cs">
       <DependentUpon>MessageWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Users\UsersManagerView.axaml.cs">
+      <DependentUpon>UsersManagerView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Users\UserEditView.axaml.cs">
+      <DependentUpon>UserEditView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
 </Project>

@@ -1,14 +1,12 @@
-﻿using EOToolsWeb.ViewModels;
-using ReactiveUI;
-using System.Reactive.Linq;
+﻿using Avalonia.Controls;
+using EOToolsWeb.ViewModels;
+using System;
 using System.Threading.Tasks;
 
 namespace EOToolsWeb.Services
 {
-    public class ShowDialogService
+    public class ShowDialogService : IAvaloniaShowDialogService
     {
-        public Interaction<MessageViewModel, object?> ShowDialog { get; } = new();
-        
         public async Task ShowMessage(string title, string message)
         {
             MessageViewModel vm = new()
@@ -17,7 +15,17 @@ namespace EOToolsWeb.Services
                 Message = message,
             };
 
-            await ShowDialog.Handle(vm);
+            await ShowDialog(vm);
         }
+
+        public Func<Window, Task<bool>> ShowWindow { get; set; } = _ =>
+        {
+            TaskCompletionSource<bool> result = new();
+            result.SetResult(false);
+
+            return result.Task;
+        };
+
+        public Func<MessageViewModel, Task> ShowDialog { get; set; } = _ => Task.CompletedTask;
     }
 }
