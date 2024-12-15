@@ -70,7 +70,7 @@ public partial class MainViewModel : ViewModelBase
     public partial ViewModelBase? CurrentViewModel { get; set; }
 
     public Action CloseApplication = () => {};
-
+    
     /// <inheritdoc/>
     public MainViewModel(IServiceProvider provider)
     {

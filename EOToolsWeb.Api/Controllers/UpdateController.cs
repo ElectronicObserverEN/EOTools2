@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace EOToolsWeb.Api.Controllers;
 
 [ApiController]
-[Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]
+[Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = $"{nameof(UserKind.Admin)},{nameof(UserKind.UpdateUpdator)}")]
 [Route("[controller]")]
 public class UpdateController(EoToolsDbContext db, UpdateMaintenanceDataService updateService) : ControllerBase
 {

@@ -4,4 +4,5 @@ public enum UserKind
 {
     Contributor,
     Admin,
+    UpdateUpdator,
 }

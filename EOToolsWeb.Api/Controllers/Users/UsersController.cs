@@ -1,6 +1,5 @@
 using System.Security.Cryptography;
 using EOToolsWeb.Api.Database;
-using EOToolsWeb.Api.Models;
 using EOToolsWeb.Shared.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,13 +8,13 @@ using Microsoft.EntityFrameworkCore;
 namespace EOToolsWeb.Api.Controllers.Users;
 
 [ApiController]
-[Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]
 [Route("[controller]")]
 public class UsersController(EoToolsDbContext db) : ControllerBase
 {
     private EoToolsDbContext Database { get; } = db;
 
     [HttpGet]
+    [Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]
     public async Task<ActionResult> Get()
     {
         List<UserModel> users = await Database.Users
@@ -28,6 +27,7 @@ public class UsersController(EoToolsDbContext db) : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]
     public async Task<IActionResult> Put(UserModel user)
     {
         UserModel? savedUser = await Database.Users.FindAsync(user.Id);
@@ -41,6 +41,7 @@ public class UsersController(EoToolsDbContext db) : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]
     public async Task<IActionResult> Post(UserModel user)
     {
         TryValidateModel(user);
@@ -57,6 +58,7 @@ public class UsersController(EoToolsDbContext db) : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]
     public async Task<IActionResult> Delete(int id)
     {
         UserModel? savedUser = await Database.Users.FindAsync(id);

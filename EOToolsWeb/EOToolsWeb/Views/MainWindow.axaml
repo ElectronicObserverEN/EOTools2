@@ -20,22 +20,52 @@
 		</Grid.RowDefinitions>
 
 		<Menu>
-			<MenuItem Command="{Binding OpenEventsCommand}" Header="Events" />
-			<MenuItem Command="{Binding OpenShipLockManagerCommand}" Header="Ship locks" />
-			<MenuItem Command="{Binding OpenSeasonManagerCommand}" Header="Seasons" />
-			<MenuItem Command="{Binding OpenUpdatesCommand}" Header="Updates" />
-			<MenuItem Command="{Binding OpenShipClassesCommand}" Header="Ship classes" />
-			<MenuItem Command="{Binding OpenShipsCommand}" Header="Ships" />
-			<MenuItem Command="{Binding OpenQuestManagerCommand}" Header="Quests" />
-			<MenuItem Command="{Binding OpenEquipmentsCommand}" Header="Equipments" />
-			<MenuItem Command="{Binding OpenTranslationsManagerCommand}" Header="Translations" />
-			<MenuItem Command="{Binding OpenFitBonusCheckerCommand}" Header="Fit bonus" />
-			<MenuItem Command="{Binding OpenUsersCommand}" Header="Users" />
+			<MenuItem
+				Command="{Binding OpenEventsCommand}"
+				Header="Events"
+				IsVisible="{Binding CurrentSession.User.Kind, Converter={StaticResource IsAdminConverter}}" />
+			<MenuItem
+				Command="{Binding OpenShipLockManagerCommand}"
+				Header="Ship locks"
+				IsVisible="{Binding CurrentSession.User.Kind, Converter={StaticResource IsAdminConverter}}" />
+			<MenuItem
+				Command="{Binding OpenSeasonManagerCommand}"
+				Header="Seasons"
+				IsVisible="{Binding CurrentSession.User.Kind, Converter={StaticResource IsAdminConverter}}" />
+			<MenuItem
+				Command="{Binding OpenUpdatesCommand}"
+				Header="Updates"
+				IsVisible="{Binding CurrentSession.User.Kind, Converter={StaticResource IsUpdateUpdatorConverter}}" />
+			<MenuItem
+				Command="{Binding OpenShipClassesCommand}"
+				Header="Ship classes"
+				IsVisible="{Binding CurrentSession.User.Kind, Converter={StaticResource IsAdminConverter}}" />
+			<MenuItem
+				Command="{Binding OpenShipsCommand}"
+				Header="Ships"
+				IsVisible="{Binding CurrentSession.User.Kind, Converter={StaticResource IsAdminConverter}}" />
+			<MenuItem
+				Command="{Binding OpenQuestManagerCommand}"
+				Header="Quests"
+				IsVisible="{Binding CurrentSession.User.Kind, Converter={StaticResource IsAdminConverter}}" />
+			<MenuItem
+				Command="{Binding OpenEquipmentsCommand}"
+				Header="Equipments"
+				IsVisible="{Binding CurrentSession.User.Kind, Converter={StaticResource IsAdminConverter}}" />
 
-			<MenuItem Header="Actions">
-				<Menu>
-					<MenuItem Command="{Binding UpdateMapsTranslationCommand}" Header="Get missing map data and create translations" />
-				</Menu>
+			<MenuItem Command="{Binding OpenTranslationsManagerCommand}" Header="Translations" />
+
+			<MenuItem
+				Command="{Binding OpenFitBonusCheckerCommand}"
+				Header="Fit bonus"
+				IsVisible="{Binding CurrentSession.User.Kind, Converter={StaticResource IsAdminConverter}}" />
+			<MenuItem
+				Command="{Binding OpenUsersCommand}"
+				Header="Users"
+				IsVisible="{Binding CurrentSession.User.Kind, Converter={StaticResource IsAdminConverter}}" />
+
+			<MenuItem Header="Actions" IsVisible="{Binding CurrentSession.User.Kind, Converter={StaticResource IsAdminConverter}}">
+				<MenuItem Command="{Binding UpdateMapsTranslationCommand}" Header="Get missing map data and create translations" />
 			</MenuItem>
 
 			<MenuItem Header="Account">

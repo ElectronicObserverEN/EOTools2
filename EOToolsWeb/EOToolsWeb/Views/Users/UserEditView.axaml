@@ -68,6 +68,7 @@
 			<ComboBox
 				Grid.Row="2"
 				Grid.Column="1"
+				DisplayMemberBinding="{Binding Converter={StaticResource UserKindConverter}}"
 				IsEnabled="{Binding CanEditKind}"
 				ItemsSource="{Binding UserKinds}"
 				SelectedItem="{Binding UserKind}" />
