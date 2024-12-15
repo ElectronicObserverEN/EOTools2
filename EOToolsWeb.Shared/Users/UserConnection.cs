@@ -1,6 +1,4 @@
-﻿using EOToolsWeb.Shared.Users;
-
-namespace EOToolsWeb.Api.Models
+﻿namespace EOToolsWeb.Shared.Users
 {
     public record UserConnection
     {

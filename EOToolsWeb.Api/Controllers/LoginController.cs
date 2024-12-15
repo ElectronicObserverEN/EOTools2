@@ -1,5 +1,4 @@
 using EOToolsWeb.Api.Models;
-using EOToolsWeb.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,7 +6,7 @@ namespace EOToolsWeb.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class LoginController(UsersService users) : ControllerBase
+public class LoginController() : ControllerBase
 {
     [HttpGet]
     [Authorize(AuthenticationSchemes = "ApiAuthentication")]

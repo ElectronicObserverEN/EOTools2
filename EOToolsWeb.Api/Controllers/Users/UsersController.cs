@@ -105,4 +105,55 @@ public class UsersController(EoToolsDbContext db) : ControllerBase
 
         return Convert.ToBase64String(hashBytes);
     }
+
+    [HttpGet("currentUser")]
+    [Authorize(AuthenticationSchemes = "TokenAuthentication")]
+    public async Task<IActionResult> GetCurrentUserInformation()
+    {
+        string token = Request.Headers["X-TOKEN-EO-TOOLS-WEB-X"].ToString();
+
+        UserConnection? connection = await Database.UserConnections
+            .Include(nameof(UserConnection.User))
+            .AsNoTracking()
+            .FirstOrDefaultAsync(con => con.Token == token);
+
+        if (connection is null)
+        {
+            return Unauthorized();
+        }
+
+        return Ok(connection.User with
+        {
+            Password = "",
+        });
+    }
+
+    [HttpPut("passwordChange")]
+    [Authorize(AuthenticationSchemes = "TokenAuthentication")]
+    public async Task<IActionResult> ChangePassword(string password)
+    {
+        string token = Request.Headers["X-TOKEN-EO-TOOLS-WEB-X"].ToString();
+
+        UserConnection? connection = await Database.UserConnections
+            .Include(nameof(UserConnection.User))
+            .FirstOrDefaultAsync(con => con.Token == token);
+
+        if (connection is null)
+        {
+            return Unauthorized();
+        }
+
+        connection.User.Password = GetPasswordHashed(password);
+
+        List<UserConnection> otherConnections = await Database.UserConnections.Where(con => con.Token != token && con.User.Id == connection.User.Id).ToListAsync();
+        Database.UserConnections.RemoveRange(otherConnections);
+
+        Database.Users.Update(connection.User);
+        await Database.SaveChangesAsync();
+
+        return Ok(connection.User with
+        {
+            Password = "",
+        });
+    }
 }

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
+using EOToolsWeb.Shared.Users;
 
 public class ApiLoginHandler(
     IOptionsMonitor<AuthenticationSchemeOptions> options,

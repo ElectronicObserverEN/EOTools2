@@ -106,6 +106,7 @@ namespace EOToolsWeb
             // Users
             collection.AddScoped<UsersManagerViewModel>();
             collection.AddScoped<UserViewModel>();
+            collection.AddScoped<ICurrentSession, CurrentSession>();
 
             collection.AddScoped<IAvaloniaShowDialogService, ShowDialogService>();
 
