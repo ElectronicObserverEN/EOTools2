@@ -4,5 +4,5 @@ namespace EOToolsWeb.Services;
 
 public class CurrentSession : ICurrentSession
 {
-    public UserKind UserKind { get; set; }
+    public UserModel? User { get; set; }
 }

@@ -37,26 +37,7 @@ public class UsersController(EoToolsDbContext db) : ControllerBase
             return NotFound();
         }
 
-        if (!string.IsNullOrEmpty(user.Password))
-        {
-            savedUser.Password = GetPasswordHashed(user.Password);
-
-            string token = Request.Headers["X-TOKEN-EO-TOOLS-WEB-X"].ToString();
-
-            List<UserConnection> connections = await Database.UserConnections.Where(con => con.Token != token && con.User.Id == user.Id).ToListAsync();
-            Database.UserConnections.RemoveRange(connections);
-        }
-
-        savedUser.Kind = user.Kind;
-        savedUser.Username = user.Username;
-
-        Database.Users.Update(savedUser);
-        await Database.SaveChangesAsync();
-
-        return Ok(savedUser with
-        {
-            Password = "",
-        });
+        return await EditAnUser(user, savedUser);
     }
 
     [HttpPost]
@@ -128,9 +109,9 @@ public class UsersController(EoToolsDbContext db) : ControllerBase
         });
     }
 
-    [HttpPut("passwordChange")]
+    [HttpPut("currentUser")]
     [Authorize(AuthenticationSchemes = "TokenAuthentication")]
-    public async Task<IActionResult> ChangePassword(string password)
+    public async Task<IActionResult> EditCurrentUser(UserModel user)
     {
         string token = Request.Headers["X-TOKEN-EO-TOOLS-WEB-X"].ToString();
 
@@ -140,18 +121,34 @@ public class UsersController(EoToolsDbContext db) : ControllerBase
 
         if (connection is null)
         {
-            return Unauthorized();
+            return NotFound();
         }
 
-        connection.User.Password = GetPasswordHashed(password);
+        // user can't change its own role
+        user.Kind = connection.User.Kind;
 
-        List<UserConnection> otherConnections = await Database.UserConnections.Where(con => con.Token != token && con.User.Id == connection.User.Id).ToListAsync();
-        Database.UserConnections.RemoveRange(otherConnections);
+        return await EditAnUser(user, connection.User);
+    }
 
-        Database.Users.Update(connection.User);
+    private async Task<IActionResult> EditAnUser(UserModel user, UserModel savedUser)
+    {
+        if (!string.IsNullOrEmpty(user.Password))
+        {
+            savedUser.Password = GetPasswordHashed(user.Password);
+
+            string token = Request.Headers["X-TOKEN-EO-TOOLS-WEB-X"].ToString();
+
+            List<UserConnection> connections = await Database.UserConnections.Where(con => con.Token != token && con.User.Id == user.Id).ToListAsync();
+            Database.UserConnections.RemoveRange(connections);
+        }
+
+        savedUser.Kind = user.Kind;
+        savedUser.Username = user.Username;
+
+        Database.Users.Update(savedUser);
         await Database.SaveChangesAsync();
 
-        return Ok(connection.User with
+        return Ok(savedUser with
         {
             Password = "",
         });

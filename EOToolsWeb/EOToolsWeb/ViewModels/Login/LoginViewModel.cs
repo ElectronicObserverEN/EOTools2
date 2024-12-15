@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -76,7 +75,7 @@ public partial class LoginViewModel : ObservableObject
                 return;
             }
 
-            Session.UserKind = user.Kind;
+            Session.User = user;
 
             await Settings.Initialize();
 
@@ -147,7 +146,7 @@ public partial class LoginViewModel : ObservableObject
                 return;
             }
 
-            Session.UserKind = user.Kind;
+            Session.User = user;
 
             await SaveTokenForNextLogin(token);
 

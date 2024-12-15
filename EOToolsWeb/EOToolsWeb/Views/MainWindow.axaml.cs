@@ -84,13 +84,8 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
             return;
         }
 
-        LoginView login = new(LoginViewModel);
-
-        if (await login.ShowDialog<bool?>(this) is not true)
-        {
-            Close();
-            return;
-        }
+        ViewModel.CloseApplication = Close;
+        await ViewModel.ShowLogInDialog();
 
         MainViewModel.PropertyChanged += MainViewModel_PropertyChanged;
     }

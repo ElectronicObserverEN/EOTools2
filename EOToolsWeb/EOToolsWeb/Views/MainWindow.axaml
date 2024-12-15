@@ -31,12 +31,17 @@
 			<MenuItem Command="{Binding OpenTranslationsManagerCommand}" Header="Translations" />
 			<MenuItem Command="{Binding OpenFitBonusCheckerCommand}" Header="Fit bonus" />
 			<MenuItem Command="{Binding OpenUsersCommand}" Header="Users" />
-			<MenuItem Command="{Binding OpenSettingsCommand}" Header="Settings" />
 
 			<MenuItem Header="Actions">
 				<Menu>
 					<MenuItem Command="{Binding UpdateMapsTranslationCommand}" Header="Get missing map data and create translations" />
 				</Menu>
+			</MenuItem>
+
+			<MenuItem Header="Account">
+				<MenuItem Command="{Binding OpenSettingsCommand}" Header="My settings" />
+				<MenuItem Command="{Binding OpenUserSettingsCommand}" Header="My user" />
+				<MenuItem Command="{Binding LogOutCommand}" Header="Log out" />
 			</MenuItem>
 		</Menu>
 

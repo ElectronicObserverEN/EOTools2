@@ -18,13 +18,15 @@ public partial class UserViewModel : ObservableObject
     public partial UserKind UserKind { get; set; }
 
     public List<UserKind> UserKinds => Enum.GetValues<UserKind>().ToList();
-    
+
+    public bool CanEditKind { get; set; } = false;
+
     public UserModel Model { get; set; } = new();
 
     public void LoadFromModel()
     {
         Username = Model.Username;
-        Password = Password;
+        Password = Model.Password;
         UserKind = Model.Kind;
     }
 

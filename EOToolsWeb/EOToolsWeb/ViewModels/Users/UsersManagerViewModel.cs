@@ -10,11 +10,13 @@ using EOToolsWeb.Views.Users;
 
 namespace EOToolsWeb.ViewModels.Users;
 
-public partial class UsersManagerViewModel(HttpClient client, IAvaloniaShowDialogService dialogService) : ViewModelBase
+public partial class UsersManagerViewModel(HttpClient client, IAvaloniaShowDialogService dialogService, ICurrentSession session) : ViewModelBase
 {
     public ObservableCollection<UserModel> UserList { get; set; } = new();
     
     private HttpClient HttpClient { get; } = client;
+    private ICurrentSession CurrentSession { get; } = session;
+    private IAvaloniaShowDialogService DialogService { get; } = dialogService;
 
     public async Task LoadAllUsers()
     {
@@ -28,13 +30,14 @@ public partial class UsersManagerViewModel(HttpClient client, IAvaloniaShowDialo
     {
         UserModel model = new();
         UserViewModel vm = new();
+        vm.CanEditKind = true;
         vm.Model = model;
         vm.LoadFromModel();
 
         UserEditView dialog = new();
         dialog.DataContext = vm;
 
-        if (await dialogService.ShowWindow(dialog))
+        if (await DialogService.ShowWindow(dialog))
         {
             vm.SaveChanges();
 
@@ -55,17 +58,36 @@ public partial class UsersManagerViewModel(HttpClient client, IAvaloniaShowDialo
     public async Task EditUser(UserModel vm)
     {
         UserViewModel vmEdit = new();
+        vmEdit.CanEditKind = true;
         vmEdit.Model = vm;
         vmEdit.LoadFromModel();
 
         UserEditView dialog = new();
         dialog.DataContext = vmEdit;
 
-        if (await dialogService.ShowWindow(dialog))
+        if (await DialogService.ShowWindow(dialog))
         {
             vmEdit.SaveChanges();
 
             await HttpClient.PutAsJsonAsync("Users", vm);
+        }
+    }
+
+    public async Task EditCurrentUser()
+    {
+        UserViewModel vmEdit = new();
+        vmEdit.CanEditKind = false;
+        vmEdit.Model = session.User ?? new();
+        vmEdit.LoadFromModel();
+
+        UserEditView dialog = new();
+        dialog.DataContext = vmEdit;
+
+        if (await DialogService.ShowWindow(dialog))
+        {
+            vmEdit.SaveChanges();
+
+            await HttpClient.PutAsJsonAsync("Users/currentUser", session.User);
         }
     }
 

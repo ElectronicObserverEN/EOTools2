@@ -1,4 +1,3 @@
-using System;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
@@ -25,7 +24,6 @@ using EOToolsWeb.ViewModels.FitBonus;
 using EOToolsWeb.ViewModels.Quests;
 using EOToolsWeb.ViewModels.Seasons;
 using EOToolsWeb.ViewModels.Users;
-using Avalonia.Controls;
 
 namespace EOToolsWeb
 {
@@ -108,9 +106,9 @@ namespace EOToolsWeb
             collection.AddScoped<UserViewModel>();
             collection.AddScoped<ICurrentSession, CurrentSession>();
 
-            collection.AddScoped<IAvaloniaShowDialogService, ShowDialogService>();
-
             collection.AddSingleton<HttpClient>();
+
+            collection.AddScoped<IAvaloniaShowDialogService, ShowDialogService>();
 
             collection.AddSingleton(_ => new JsonSerializerOptions()
             {

@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using EOToolsWeb.Services;
 using EOToolsWeb.ViewModels.Equipments;
 using EOToolsWeb.ViewModels.EquipmentUpgrades;
 using EOToolsWeb.ViewModels.Events;
@@ -17,6 +22,7 @@ using EOToolsWeb.ViewModels.Translations;
 using EOToolsWeb.ViewModels.Updates;
 using EOToolsWeb.ViewModels.UseItem;
 using EOToolsWeb.ViewModels.Users;
+using EOToolsWeb.Views.Login;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EOToolsWeb.ViewModels;
@@ -57,58 +63,40 @@ public partial class MainViewModel : ViewModelBase
 
     public SettingsViewModel Settings { get; }
     
-    private IServiceProvider ServiceProvider { get; }
+    private UsersManagerViewModel UsersManager { get; }
+    private ICurrentSession CurrentSession { get; }
 
     [ObservableProperty]
-    private ViewModelBase? _currentViewModel;
+    public partial ViewModelBase? CurrentViewModel { get; set; }
+
+    public Action CloseApplication = () => {};
 
     /// <inheritdoc/>
-    public MainViewModel(LoginViewModel login, 
-        UpdateManagerViewModel updates, 
-        EventManagerViewModel events, 
-        UpdateListViewModel updateList, 
-        EventViewModel eventViewModel, 
-        ShipClassManagerViewModel shipClassManager, 
-        ShipManagerViewModel shipManager, 
-        ShipClassListViewModel shipClassList, 
-        EquipmentManagerViewModel equipmentManager,
-        EquipmentViewModel equipmentViewModel,
-        EquipmentUpgradeImprovmentViewModel equipmentUpgradeViewModel,
-        EquipmentPickerViewModel equipmentPicker,
-        UseItemManagerViewModel useItemManager,
-        ShipLocksManagerViewModel shipLockManager,
-        SettingsViewModel settings,
-        TranslationManagerViewModel translations,
-        FitBonusCheckerViewModel fitBonusChecker,
-        SeasonManagerViewModel seasonManager,
-        SeasonListViewModel seasonList,
-        QuestManagerViewModel quests,
-        MapTranslationManager mapTranslationManager,
-        IServiceProvider provider)
+    public MainViewModel(IServiceProvider provider)
     {
-        Login = login;
-        Updates = updates;
-        UpdateList = updateList;
-        Events = events;
-        EventViewModel = eventViewModel;
-        ShipClassManager = shipClassManager;
-        ShipClassList = shipClassList;
-        ShipManager = shipManager;
-        EquipmentManager = equipmentManager;
-        EquipmentViewModel = equipmentViewModel;
-        EquipmentUpgradeImprovmentViewModel = equipmentUpgradeViewModel;
-        UseItemManager = useItemManager;
-        EquipmentPicker = equipmentPicker;
-        ShipLocksManager = shipLockManager;
-        TranslationManager = translations;
-        MapTranslationManager = mapTranslationManager;
-        Settings = settings;
-        FitBonusChecker = fitBonusChecker;
-        SeasonManager = seasonManager;
-        SeasonList = seasonList;
-        QuestManager = quests;
-
-        ServiceProvider = provider;
+        Login = provider.GetRequiredService<LoginViewModel>(); 
+        Updates = provider.GetRequiredService<UpdateManagerViewModel>(); 
+        UpdateList = provider.GetRequiredService<UpdateListViewModel>(); 
+        Events = provider.GetRequiredService<EventManagerViewModel>(); 
+        EventViewModel = provider.GetRequiredService<EventViewModel>(); 
+        ShipClassManager = provider.GetRequiredService<ShipClassManagerViewModel>(); 
+        ShipClassList = provider.GetRequiredService<ShipClassListViewModel>();
+        ShipManager = provider.GetRequiredService<ShipManagerViewModel>(); 
+        EquipmentManager = provider.GetRequiredService<EquipmentManagerViewModel>();
+        EquipmentViewModel = provider.GetRequiredService<EquipmentViewModel>();
+        EquipmentUpgradeImprovmentViewModel = provider.GetRequiredService<EquipmentUpgradeImprovmentViewModel>();
+        UseItemManager = provider.GetRequiredService<UseItemManagerViewModel>();
+        EquipmentPicker = provider.GetRequiredService<EquipmentPickerViewModel>();
+        ShipLocksManager = provider.GetRequiredService<ShipLocksManagerViewModel>();
+        Settings = provider.GetRequiredService<SettingsViewModel>();
+        TranslationManager = provider.GetRequiredService<TranslationManagerViewModel>();
+        FitBonusChecker = provider.GetRequiredService<FitBonusCheckerViewModel>();
+        SeasonManager = provider.GetRequiredService<SeasonManagerViewModel>();
+        SeasonList = provider.GetRequiredService<SeasonListViewModel>();
+        QuestManager = provider.GetRequiredService<QuestManagerViewModel>();
+        MapTranslationManager = provider.GetRequiredService<MapTranslationManager>();
+        UsersManager = provider.GetRequiredService<UsersManagerViewModel>();
+        CurrentSession = provider.GetRequiredService<ICurrentSession>();
 
         PropertyChanging += ViewModelChanging;
         PropertyChanged += ViewModelChanged;
@@ -211,10 +199,9 @@ public partial class MainViewModel : ViewModelBase
     [RelayCommand]
     private async Task OpenUsers()
     {
-        UsersManagerViewModel vm = ServiceProvider.GetRequiredService<UsersManagerViewModel>();
-        await vm.LoadAllUsers();
+        await UsersManager.LoadAllUsers();
 
-        CurrentViewModel = vm;
+        CurrentViewModel = UsersManager;
     }
 
     [RelayCommand]
@@ -222,5 +209,53 @@ public partial class MainViewModel : ViewModelBase
     {
         await MapTranslationManager.Initialize();
         await MapTranslationManager.GetNonTranslatedDataAndPushItToTheApi();
+    }
+
+    [RelayCommand]
+    private async Task OpenUserSettings()
+    {
+        await UsersManager.EditCurrentUser();
+    }
+
+    public async Task ShowLogInDialog()
+    {
+        CurrentSession.User = null;
+
+        LoginView login = new(Login);
+
+        if (ShowDialogService is null) return;
+
+        if (await ShowDialogService.ShowWindow(login) is not true)
+        {
+            CloseApplication();
+        }
+    }
+
+    [RelayCommand]
+    public async Task LogOut()
+    {
+        // Remove auto login
+        Dictionary<string, object> json = [];
+
+        if (File.Exists("../UpdaterConfig.json"))
+        {
+            json = JsonSerializer.Deserialize<Dictionary<string, object>>(await File.ReadAllTextAsync("../UpdaterConfig.json")) ?? [];
+        }
+
+        json.Remove("token");
+
+        await File.WriteAllTextAsync("../UpdaterConfig.json", JsonSerializer.Serialize(json));
+
+        // Restart app 
+        // https://github.com/AvaloniaUI/Avalonia/discussions/15363
+        string exePath = Process.GetCurrentProcess()!.MainModule!.FileName; 
+
+        Process.Start(new ProcessStartInfo(exePath)
+        {
+            UseShellExecute = true,
+
+        }); 
+
+        Environment.Exit(0);
     }
 }
