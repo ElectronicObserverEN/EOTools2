@@ -11,6 +11,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using EOToolsWeb.Models.Translations;
+using EOToolsWeb.Services;
 using EOToolsWeb.Shared.Maps;
 using EOToolsWeb.Shared.Ships;
 using ReactiveUI;
@@ -32,10 +33,13 @@ public partial class TranslationManagerViewModel : ViewModelBase
 
     public Interaction<TranslationViewModel, bool> ShowEditDialog { get; } = new();
 
-    public TranslationManagerViewModel(HttpClient httpClient, TranslationViewModel viewModel)
+    public ICurrentSession Session { get; private set; }
+
+    public TranslationManagerViewModel(HttpClient httpClient, TranslationViewModel viewModel, ICurrentSession session)
     {
         HttpClient = httpClient;
         TranslationViewModel = viewModel;
+        Session = session;
 
         PropertyChanged += AfterTranslationKindChanged;
     }

@@ -13,8 +13,14 @@
 	<Grid RowDefinitions="Auto, *">
 		<StackPanel Orientation="Horizontal">
 			<ComboBox ItemsSource="{Binding TranslationKinds}" SelectedItem="{Binding SelectedTranslationKind}" />
-			<Button Command="{Binding AddTranslationCommand}" Content="Add translation" />
-			<Button Command="{Binding PushTranslationsCommand}" Content="Update translations" />
+			<Button
+				Command="{Binding AddTranslationCommand}"
+				Content="Add translation"
+				IsVisible="{Binding Session.User.Kind, Converter={StaticResource IsAdminConverter}, FallbackValue={x:False}}" />
+			<Button
+				Command="{Binding PushTranslationsCommand}"
+				Content="Update translations"
+				IsVisible="{Binding Session.User.Kind, Converter={StaticResource IsAdminConverter}, FallbackValue={x:False}}" />
 		</StackPanel>
 		<DataGrid
 			Grid.Row="1"

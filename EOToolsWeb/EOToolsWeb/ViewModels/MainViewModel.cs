@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EOToolsWeb.Services;
+using EOToolsWeb.Shared.Users;
 using EOToolsWeb.ViewModels.Equipments;
 using EOToolsWeb.ViewModels.EquipmentUpgrades;
 using EOToolsWeb.ViewModels.Events;
@@ -65,6 +66,8 @@ public partial class MainViewModel : ViewModelBase
     
     private UsersManagerViewModel UsersManager { get; }
     private ICurrentSession CurrentSession { get; }
+
+    public UserKind CurrentUserKind => CurrentSession.User?.Kind ?? UserKind.Contributor;
 
     [ObservableProperty]
     public partial ViewModelBase? CurrentViewModel { get; set; }
@@ -229,6 +232,8 @@ public partial class MainViewModel : ViewModelBase
         {
             CloseApplication();
         }
+
+        OnPropertyChanged(nameof(CurrentUserKind));
     }
 
     [RelayCommand]
