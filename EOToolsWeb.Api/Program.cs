@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using System.Runtime.InteropServices;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using EOToolsWeb.Shared.Sessions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,9 +73,10 @@ builder.Services.AddScoped<UsersService>();
 
 builder.Services.AddAuthentication("TokenAuthentication")
     .AddScheme<AuthenticationSchemeOptions, ApiLoginHandler>("ApiAuthentication", null)
-    .AddScheme<AuthenticationSchemeOptions, ApiTokenHandler>("TokenAuthentication", null); 
+    .AddScheme<AuthenticationSchemeOptions, ApiTokenHandler>("TokenAuthentication", null);
 
-using EoToolsDbContext db = new();
+
+await using EoToolsDbContext db = new EoToolsDbContext(new CurrentSession());
 db.Database.Migrate();
 
 builder.Services.AddDbContext<EoToolsDbContext>();
@@ -98,6 +100,8 @@ builder.Services.AddScoped<UpdateShipLockDataService>();
 builder.Services.AddScoped<UpdateEquipmentUpgradeDataService>(); 
 builder.Services.AddScoped<FitBonusUpdaterService>();
 builder.Services.AddScoped<OperationUpdateService>();
+
+builder.Services.AddScoped<ICurrentSession, CurrentSession>();
 
 builder.Services.AddSingleton(_ => new JsonSerializerOptions()
 {

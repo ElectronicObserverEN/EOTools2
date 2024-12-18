@@ -59,7 +59,7 @@ public class MapNamesTranslationsController(EoToolsDbContext db, OperationUpdate
         }
 
         Database.Maps.Update(savedData);
-        await Database.SaveChangesAsync();
+        await Database.TrackAndSaveChanges();
 
         return Ok(savedData);
     }

@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using EOToolsWeb.Services;
+using EOToolsWeb.Shared.Sessions;
 using EOToolsWeb.Views.Users;
 
 namespace EOToolsWeb.ViewModels.Users;

@@ -20,6 +20,7 @@ using EOToolsWeb.ViewModels.Translations;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using EOToolsWeb.Services;
+using EOToolsWeb.Shared.Sessions;
 using EOToolsWeb.ViewModels.FitBonus;
 using EOToolsWeb.ViewModels.Quests;
 using EOToolsWeb.ViewModels.Seasons;

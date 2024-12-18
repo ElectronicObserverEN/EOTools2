@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EOToolsWeb.Services;
+using EOToolsWeb.Shared.Sessions;
 using EOToolsWeb.Shared.Users;
 using EOToolsWeb.ViewModels.Equipments;
 using EOToolsWeb.ViewModels.EquipmentUpgrades;

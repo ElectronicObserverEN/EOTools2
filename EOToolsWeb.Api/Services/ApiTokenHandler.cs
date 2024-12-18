@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
+using EOToolsWeb.Shared.Sessions;
 using EOToolsWeb.Shared.Users;
 
 public class ApiTokenHandler(
@@ -11,7 +12,8 @@ public class ApiTokenHandler(
     ILoggerFactory logger,
     UrlEncoder encoder,
     ISystemClock clock,
-    UsersService users)
+    UsersService users,
+    ICurrentSession session)
     : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder, clock)
 {
     private UsersService Users => users;
@@ -33,6 +35,8 @@ public class ApiTokenHandler(
         {
             return AuthenticateResult.Fail("Authentification has failed");
         }
+
+        session.User = connection.User;
 
         Claim[] claims = [new(ClaimTypes.Role, connection.User.Kind.ToString())];
         ClaimsIdentity identity = new(claims, Scheme.Name);

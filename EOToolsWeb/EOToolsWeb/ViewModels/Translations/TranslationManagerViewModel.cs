@@ -13,6 +13,7 @@ using CommunityToolkit.Mvvm.Input;
 using EOToolsWeb.Models.Translations;
 using EOToolsWeb.Services;
 using EOToolsWeb.Shared.Maps;
+using EOToolsWeb.Shared.Sessions;
 using EOToolsWeb.Shared.Ships;
 using ReactiveUI;
 

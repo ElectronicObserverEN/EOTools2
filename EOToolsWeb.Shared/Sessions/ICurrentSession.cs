@@ -1,6 +1,6 @@
 ﻿using EOToolsWeb.Shared.Users;
 
-namespace EOToolsWeb.Services;
+namespace EOToolsWeb.Shared.Sessions;
 
 public interface ICurrentSession
 {
