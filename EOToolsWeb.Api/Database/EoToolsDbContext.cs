@@ -50,9 +50,11 @@ namespace EOToolsWeb.Api.Database
         private ICurrentSession Session { get; }
 
         
-        public EoToolsDbContext()
+        /*
+         public EoToolsDbContext()
         {
         }
+        */
         
 
         public EoToolsDbContext(ICurrentSession session)

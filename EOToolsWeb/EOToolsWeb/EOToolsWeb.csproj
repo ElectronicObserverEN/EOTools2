@@ -4,8 +4,8 @@
     <Nullable>enable</Nullable>
     <LangVersion>preview</LangVersion>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-    <AssemblyVersion>2.1.0</AssemblyVersion>
-    <FileVersion>2.1.0</FileVersion>
+    <AssemblyVersion>2.2.1</AssemblyVersion>
+    <FileVersion>2.2.1</FileVersion>
   </PropertyGroup>
   
   <ItemGroup>
@@ -44,6 +44,9 @@
   <ItemGroup>
     <Compile Update="Control\Grid\PaginationControl.axaml.cs">
       <DependentUpon>PaginationControl.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ApplicationLog\ApplicationLogsView.axaml.cs">
+      <DependentUpon>ApplicationLogsView.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\Equipments\EquipmentEditView.axaml.cs">
       <DependentUpon>EquipmentEditView.axaml</DependentUpon>

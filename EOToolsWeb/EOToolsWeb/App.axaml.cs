@@ -21,6 +21,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using EOToolsWeb.Services;
 using EOToolsWeb.Shared.Sessions;
+using EOToolsWeb.ViewModels.ApplicationLog;
 using EOToolsWeb.ViewModels.FitBonus;
 using EOToolsWeb.ViewModels.Quests;
 using EOToolsWeb.ViewModels.Seasons;
@@ -106,6 +107,9 @@ namespace EOToolsWeb
             collection.AddScoped<UsersManagerViewModel>();
             collection.AddScoped<UserViewModel>();
             collection.AddScoped<ICurrentSession, CurrentSession>();
+
+            // Logs
+            collection.AddScoped<ApplicationLogsManagerViewModel>();
 
             collection.AddSingleton<HttpClient>();
 

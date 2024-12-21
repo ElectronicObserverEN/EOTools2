@@ -8,7 +8,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using EOToolsWeb.Services;
 using EOToolsWeb.Shared.Sessions;
 using EOToolsWeb.Shared.Users;
 using EOToolsWeb.ViewModels.Settings;
@@ -63,18 +62,22 @@ public partial class LoginViewModel : ObservableObject
 
             string url = config?["serverUrl"] ?? "";
 
-            ClientApi.BaseAddress = new Uri(url);
-            ClientApi.DefaultRequestHeaders.Add("X-TOKEN-EO-TOOLS-WEB-X", token);
+            HttpClient apiClient = new();
+            apiClient.BaseAddress = new Uri(url);
+            apiClient.DefaultRequestHeaders.Add("X-TOKEN-EO-TOOLS-WEB-X", token);
 
             LoginMessage = "Loading settings ...";
 
-            UserModel? user = await GetCurrentUser();
+            UserModel? user = await GetCurrentUser(apiClient);
 
             if (user is null)
             {
                 LoginMessage = "Error while loading user data";
                 return;
             }
+
+            ClientApi.BaseAddress = new Uri(url);
+            ClientApi.DefaultRequestHeaders.Add("X-TOKEN-EO-TOOLS-WEB-X", token);
 
             Session.User = user;
 
@@ -92,7 +95,7 @@ public partial class LoginViewModel : ObservableObject
         }
     }
 
-    private async Task<UserModel?> GetCurrentUser() => await ClientApi.GetFromJsonAsync<UserModel>("Users/currentUser");
+    private async Task<UserModel?> GetCurrentUser(HttpClient client) => await client.GetFromJsonAsync<UserModel>("Users/currentUser");
 
     private async Task SaveTokenForNextLogin(string token)
     {
@@ -139,7 +142,7 @@ public partial class LoginViewModel : ObservableObject
 
             LoginMessage = "Loading settings ...";
 
-            UserModel? user = await GetCurrentUser();
+            UserModel? user = await GetCurrentUser(ClientApi);
 
             if (user is null)
             {

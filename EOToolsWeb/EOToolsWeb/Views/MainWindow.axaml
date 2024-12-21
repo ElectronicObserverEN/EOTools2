@@ -64,12 +64,20 @@
 				Header="Users"
 				IsVisible="{Binding CurrentUserKind, Converter={StaticResource IsAdminConverter}, FallbackValue={x:False}}" />
 
+			<MenuItem
+				Command="{Binding OpenLogViewCommand}"
+				Header="Logs"
+				IsVisible="{Binding CurrentUserKind, Converter={StaticResource IsAdminConverter}, FallbackValue={x:False}}" />
+
 			<MenuItem Header="Actions" IsVisible="{Binding CurrentUserKind, Converter={StaticResource IsAdminConverter}, FallbackValue={x:False}}">
 				<MenuItem Command="{Binding UpdateMapsTranslationCommand}" Header="Get missing map data and create translations" />
 			</MenuItem>
 
 			<MenuItem Header="Account">
-				<MenuItem Command="{Binding OpenSettingsCommand}" Header="My settings" />
+				<MenuItem
+					Command="{Binding OpenSettingsCommand}"
+					Header="My settings"
+					IsVisible="{Binding CurrentUserKind, Converter={StaticResource IsAdminConverter}, FallbackValue={x:False}}" />
 				<MenuItem Command="{Binding OpenUserSettingsCommand}" Header="My user" />
 				<MenuItem Command="{Binding LogOutCommand}" Header="Log out" />
 			</MenuItem>

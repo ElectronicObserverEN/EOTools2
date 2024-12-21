@@ -31,4 +31,23 @@ public class LogsController(EoToolsDbContext db) : ControllerBase
 
         return Ok(logs);
     }
+
+    [HttpGet]
+    [Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]
+    public async Task<ActionResult> GetLogs(int take, int skip)
+    {
+        List<DataChangedLogModel> logs = await Database.DataChangeLogs
+            .AsNoTracking()
+            .Skip(skip)
+            .Take(take)
+            .Include(nameof(DataChangedLogModel.User))
+            .ToListAsync();
+
+        foreach (DataChangedLogModel log in logs)
+        {
+            log.User.Password = "";
+        }
+
+        return Ok(logs);
+    }
 }

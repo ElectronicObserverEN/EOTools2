@@ -10,6 +10,7 @@ using CommunityToolkit.Mvvm.Input;
 using EOToolsWeb.Services;
 using EOToolsWeb.Shared.Sessions;
 using EOToolsWeb.Shared.Users;
+using EOToolsWeb.ViewModels.ApplicationLog;
 using EOToolsWeb.ViewModels.Equipments;
 using EOToolsWeb.ViewModels.EquipmentUpgrades;
 using EOToolsWeb.ViewModels.Events;
@@ -68,6 +69,8 @@ public partial class MainViewModel : ViewModelBase
     private UsersManagerViewModel UsersManager { get; }
     private ICurrentSession CurrentSession { get; }
 
+    private IServiceProvider ServiceProvider { get; }
+
     public UserKind CurrentUserKind => CurrentSession.User?.Kind ?? UserKind.Contributor;
 
     [ObservableProperty]
@@ -101,6 +104,7 @@ public partial class MainViewModel : ViewModelBase
         MapTranslationManager = provider.GetRequiredService<MapTranslationManager>();
         UsersManager = provider.GetRequiredService<UsersManagerViewModel>();
         CurrentSession = provider.GetRequiredService<ICurrentSession>();
+        ServiceProvider = provider;
 
         PropertyChanging += ViewModelChanging;
         PropertyChanged += ViewModelChanged;
@@ -220,6 +224,16 @@ public partial class MainViewModel : ViewModelBase
     {
         await UsersManager.EditCurrentUser();
     }
+
+    [RelayCommand]
+    private async Task OpenLogView()
+    {
+        ApplicationLogsManagerViewModel logs = ServiceProvider.GetRequiredService<ApplicationLogsManagerViewModel>();
+
+        await logs.LoadAllLogs();
+        CurrentViewModel = logs;
+    }
+
 
     public async Task ShowLogInDialog()
     {
