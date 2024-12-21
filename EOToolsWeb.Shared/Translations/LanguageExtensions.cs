@@ -7,6 +7,7 @@ public static class LanguageExtensions
         Language.Japanese => "ja-JP",
         Language.English => "en-US",
         Language.Korean => "ko-KR",
+        Language.SimplifiedChinese => "zh-CN",
         _ => "",
     };
 }

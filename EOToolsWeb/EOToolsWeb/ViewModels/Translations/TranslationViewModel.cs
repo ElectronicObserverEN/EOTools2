@@ -8,6 +8,7 @@ public class TranslationViewModel : ViewModelBase
     public string Japanese { get; set; } = "";
     public string English { get; set; } = "";
     public string Korean { get; set; } = "";
+    public string SimplifiedChinese { get; set; } = "";
 
     public TranslationBaseModel? Model { get; set; }
 
@@ -16,6 +17,7 @@ public class TranslationViewModel : ViewModelBase
         Japanese = Model?.Translations.FirstOrDefault(t => t.Language is Language.Japanese)?.Translation ?? "";
         English = Model?.Translations.FirstOrDefault(t => t.Language is Language.English)?.Translation ?? "";
         Korean = Model?.Translations.FirstOrDefault(t => t.Language is Language.Korean)?.Translation ?? "";
+        SimplifiedChinese = Model?.Translations.FirstOrDefault(t => t.Language is Language.SimplifiedChinese)?.Translation ?? "";
     }
 
     public void SaveChanges()
@@ -25,6 +27,7 @@ public class TranslationViewModel : ViewModelBase
         SaveTranslation(Japanese, Language.Japanese);
         SaveTranslation(English, Language.English);
         SaveTranslation(Korean, Language.Korean);
+        SaveTranslation(SimplifiedChinese, Language.SimplifiedChinese);
     }
 
     private void SaveTranslation(string translation, Language language)

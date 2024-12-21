@@ -11,7 +11,7 @@
 	x:DataType="translations:TranslationViewModel"
 	mc:Ignorable="d">
 	<Grid Margin="10" RowDefinitions="*, Auto">
-		<Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto">
+		<Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto, Auto">
 			<TextBlock
 				Grid.Row="0"
 				Grid.Column="0"
@@ -44,6 +44,17 @@
 				Grid.Row="2"
 				Grid.Column="1"
 				Text="{Binding Korean}" />
+
+			<TextBlock
+				Grid.Row="3"
+				Grid.Column="0"
+				Margin="0,0,10,0"
+				Text="Korean :" />
+
+			<TextBox
+				Grid.Row="3"
+				Grid.Column="1"
+				Text="{Binding SimplifiedChinese}" />
 		</Grid>
 
 		<StackPanel
