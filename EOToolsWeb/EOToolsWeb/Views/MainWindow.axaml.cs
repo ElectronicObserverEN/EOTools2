@@ -264,7 +264,7 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         interaction.SetOutput(result);
     }
 
-    private async Task DoShowEditDialogAsync(IInteractionContext<TranslationViewModel, bool> interaction)
+    private async Task DoShowEditDialogAsync(IInteractionContext<TranslationViewModelOld, bool> interaction)
     {
         TranslationEditView dialog = new();
         dialog.DataContext = interaction.Input;

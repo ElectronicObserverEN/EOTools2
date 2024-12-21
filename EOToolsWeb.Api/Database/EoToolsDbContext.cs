@@ -16,7 +16,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 namespace EOToolsWeb.Api.Database
 {
     // dotnet ef migrations add <name> --context EOToolsDbContext
-    public class EoToolsDbContext(ICurrentSession session) : DbContext
+    public class EoToolsDbContext : DbContext
     {
         public DbSet<UserModel> Users { get; set; }
         public DbSet<UserConnection> UserConnections { get; set; }
@@ -46,7 +46,18 @@ namespace EOToolsWeb.Api.Database
 
         public DbSet<DataChangedLogModel> DataChangeLogs { get; set; }
 
-        private ICurrentSession Session { get; } = session;
+        private ICurrentSession Session { get; }
+
+        /*
+        public EoToolsDbContext()
+        {
+        }
+        */
+
+        public EoToolsDbContext(ICurrentSession session)
+        {
+            Session = session;
+        }
 
         public string DbPath => Path.Combine("Data", "EOTools.db");
 

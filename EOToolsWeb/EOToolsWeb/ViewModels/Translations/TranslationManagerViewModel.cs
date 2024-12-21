@@ -11,7 +11,6 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using EOToolsWeb.Models.Translations;
-using EOToolsWeb.Services;
 using EOToolsWeb.Shared.Maps;
 using EOToolsWeb.Shared.Sessions;
 using EOToolsWeb.Shared.Ships;
@@ -22,27 +21,81 @@ namespace EOToolsWeb.ViewModels.Translations;
 public partial class TranslationManagerViewModel : ViewModelBase
 {
     [ObservableProperty]
-    private ObservableCollection<TranslationBaseModelRow> _translations = [];
+    public partial ObservableCollection<TranslationBaseModelRow> Translations { get; set; } = [];
+
+    [ObservableProperty]
+    public partial TranslationKind SelectedTranslationKind { get; set; }
 
     [ObservableProperty] 
-    private TranslationKind _selectedTranslationKind;
+    public partial Language SelectedLanguage { get; set; }
 
     public TranslationKind[] TranslationKinds { get; } = Enum.GetValues<TranslationKind>();
+    public Language[] Languages { get; } = Enum.GetValues<Language>();
+
+    [ObservableProperty]
+    public partial TranslationBaseModelRow? SelectedRow { get; set; }
 
     private HttpClient HttpClient { get; }
-    private TranslationViewModel TranslationViewModel { get; }
+    private TranslationViewModelOld TranslationViewModelOld { get; }
 
-    public Interaction<TranslationViewModel, bool> ShowEditDialog { get; } = new();
+    public Interaction<TranslationViewModelOld, bool> ShowEditDialog { get; } = new();
 
     public ICurrentSession Session { get; private set; }
 
-    public TranslationManagerViewModel(HttpClient httpClient, TranslationViewModel viewModel, ICurrentSession session)
+    public TranslationManagerViewModel(HttpClient httpClient, TranslationViewModelOld viewModelOld, ICurrentSession session)
     {
         HttpClient = httpClient;
-        TranslationViewModel = viewModel;
+        TranslationViewModelOld = viewModelOld;
         Session = session;
 
         PropertyChanged += AfterTranslationKindChanged;
+        PropertyChanged += AfterLanguageChanged;
+
+        PropertyChanging += OnRowChanging;
+        PropertyChanged += OnRowChanged;
+    }
+
+    private void OnRowChanging(object? sender, PropertyChangingEventArgs e)
+    {
+        if (e.PropertyName is not nameof(SelectedRow)) return;
+        if (SelectedRow is null) return;
+
+        SelectedRow.TranslationDestination.PropertyChanged -= OnTranslationChanged;
+    }
+
+    private void OnRowChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is not nameof(SelectedRow)) return;
+        if (SelectedRow is null) return;
+
+        SelectedRow.TranslationDestination.PropertyChanged += OnTranslationChanged;
+    }
+
+    private void OnTranslationChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is not nameof(SelectedRow.TranslationDestination.Translation)) return;
+        if (SelectedRow is null) return;
+
+        TranslationModel model = new()
+        {
+            Id = SelectedRow.Id,
+            Language = SelectedLanguage,
+            Translation = SelectedRow.TranslationDestination.Translation,
+        };
+
+        Task.Run<Task>(async () =>
+        {
+            HttpResponseMessage response = await HttpClient.PutAsJsonAsync($"{SelectedTranslationKind.GetApiRoute()}/updateTranslation", model);
+
+            response.EnsureSuccessStatusCode();
+        });
+    }
+
+    private async void AfterLanguageChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is not nameof(SelectedLanguage)) return;
+
+        await LoadTranslations();
     }
 
     private async void AfterTranslationKindChanged(object? sender, PropertyChangedEventArgs e)
@@ -59,7 +112,14 @@ public partial class TranslationManagerViewModel : ViewModelBase
 
     public async Task<List<TranslationBaseModelRow>> LoadTranslations(TranslationKind kind)
     {
-        return await HttpClient.GetFromJsonAsync<List<TranslationBaseModelRow>>(kind.GetApiRoute()) ?? [];
+        List<TranslationBaseModelRow> tls = await HttpClient.GetFromJsonAsync<List<TranslationBaseModelRow>>(kind.GetApiRoute()) ?? [];
+
+        foreach (TranslationBaseModelRow tl in tls)
+        {
+            tl.TranslationDestination.Translation = tl.GetTranslation(SelectedLanguage)?.Translation ?? "";
+        }
+
+        return tls;
     }
 
     public TranslationBaseModel CreateModel() => SelectedTranslationKind switch
@@ -78,12 +138,12 @@ public partial class TranslationManagerViewModel : ViewModelBase
         {
             TranslationBaseModel model = CreateModel();
 
-            TranslationViewModel.Model = model;
-            TranslationViewModel.LoadFromModel();
+            TranslationViewModelOld.Model = model;
+            TranslationViewModelOld.LoadFromModel();
 
-            if (await ShowEditDialog.Handle(TranslationViewModel))
+            if (await ShowEditDialog.Handle(TranslationViewModelOld))
             {
-                TranslationViewModel.SaveChanges();
+                TranslationViewModelOld.SaveChanges();
 
                 HttpResponseMessage response = await HttpClient.PostAsJsonAsync(SelectedTranslationKind.GetApiRoute(), model);
 
@@ -108,12 +168,12 @@ public partial class TranslationManagerViewModel : ViewModelBase
     {
         try
         {
-            TranslationViewModel.Model = vm;
-            TranslationViewModel.LoadFromModel();
+            TranslationViewModelOld.Model = vm;
+            TranslationViewModelOld.LoadFromModel();
 
-            if (await ShowEditDialog.Handle(TranslationViewModel))
+            if (await ShowEditDialog.Handle(TranslationViewModelOld))
             {
-                TranslationViewModel.SaveChanges();
+                TranslationViewModelOld.SaveChanges();
 
                 HttpResponseMessage response = await HttpClient.PutAsJsonAsync(SelectedTranslationKind.GetApiRoute(), vm);
 

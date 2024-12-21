@@ -68,9 +68,9 @@ public class ShipNameTranslationsController(EoToolsDbContext db, UpdateShipDataS
 
     [HttpPut("updateTranslation")]
     [Authorize(AuthenticationSchemes = "TokenAuthentication")]
-    public async Task<IActionResult> Put(TranslationModel newData, Language lang)
+    public async Task<IActionResult> Put(TranslationModel newData)
     {
-        if (lang is Language.English or Language.Japanese)
+        if (newData.Language is Language.English or Language.Japanese)
         {
             return Unauthorized();
         }
@@ -84,7 +84,7 @@ public class ShipNameTranslationsController(EoToolsDbContext db, UpdateShipDataS
             return NotFound();
         }
 
-        TranslationModel? savedTranslation = savedData.Translations.Find(tl => tl.Language == lang);
+        TranslationModel? savedTranslation = savedData.Translations.Find(tl => tl.Language == newData.Language);
 
         if (savedTranslation is null)
         {
