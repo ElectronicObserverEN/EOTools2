@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 namespace EOToolsWeb.Api.Controllers.Maps;
 
 [ApiController]
-[Authorize(AuthenticationSchemes = "TokenAuthentication")]
 [Route("[controller]")]
 public class MapNamesTranslationsController(EoToolsDbContext db, OperationUpdateService dataUpdateService) : ControllerBase
 {
@@ -18,6 +17,7 @@ public class MapNamesTranslationsController(EoToolsDbContext db, OperationUpdate
     private OperationUpdateService DataUpdateService { get; } = dataUpdateService;
 
     [HttpGet]
+    [Authorize(AuthenticationSchemes = "TokenAuthentication")]
     public List<MapNameTranslationModel> Get()
     {
         return Database.Maps
@@ -25,7 +25,50 @@ public class MapNamesTranslationsController(EoToolsDbContext db, OperationUpdate
             .ToList();
     }
 
+    [HttpPut("updateTranslation")]
+    [Authorize(AuthenticationSchemes = "TokenAuthentication")]
+    public async Task<IActionResult> Put(TranslationModel newData, Language lang)
+    {
+        if (lang is Language.English or Language.Japanese)
+        {
+            return Unauthorized();
+        }
+
+        MapNameTranslationModel? savedData = Database.Maps
+            .Include(nameof(MapNameTranslationModel.Translations))
+            .FirstOrDefault(tl => tl.Id == newData.Id);
+
+        if (savedData is null)
+        {
+            return NotFound();
+        }
+
+        TranslationModel? savedTranslation = savedData.Translations.Find(tl => tl.Language == lang);
+
+        if (savedTranslation is null)
+        {
+            savedTranslation = new()
+            {
+                Translation = newData.Translation,
+                Language = newData.Language,
+            };
+
+            savedData.Translations.Add(savedTranslation);
+            Database.Add(savedTranslation);
+        }
+        else
+        {
+            savedTranslation.Translation = newData.Translation;
+        }
+
+        Database.Maps.Update(savedData);
+        await Database.TrackAndSaveChanges();
+
+        return Ok(savedData);
+    }
+
     [HttpPut]
+    [Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]
     public async Task<IActionResult> Put(MapNameTranslationModel newData)
     {
         MapNameTranslationModel? savedData = Database.Maps

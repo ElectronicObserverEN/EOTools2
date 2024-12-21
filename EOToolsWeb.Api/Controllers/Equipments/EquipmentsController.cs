@@ -5,11 +5,11 @@ using EOToolsWeb.Shared.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EOToolsWeb.Api.Controllers;
+namespace EOToolsWeb.Api.Controllers.Equipments;
 
 [ApiController]
-[Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]
 [Route("[controller]")]
+[Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]
 public class EquipmentsController(EoToolsDbContext db, UpdateEquipmentDataService updateService) : ControllerBase
 {
     private EoToolsDbContext Database { get; } = db;
@@ -66,7 +66,7 @@ public class EquipmentsController(EoToolsDbContext db, UpdateEquipmentDataServic
 
         return Ok();
     }
-
+    
     [HttpPut("pushEquipments")]
     public async Task<IActionResult> UpdateEquipments()
     {

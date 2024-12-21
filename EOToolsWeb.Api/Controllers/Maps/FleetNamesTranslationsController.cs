@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 namespace EOToolsWeb.Api.Controllers.Maps;
 
 [ApiController]
-[Authorize(AuthenticationSchemes = "TokenAuthentication")]
 [Route("[controller]")]
 public class FleetNamesTranslationsController(EoToolsDbContext db, OperationUpdateService dataUpdateService) : ControllerBase
 {
@@ -18,6 +17,7 @@ public class FleetNamesTranslationsController(EoToolsDbContext db, OperationUpda
     private OperationUpdateService DataUpdateService { get; } = dataUpdateService;
 
     [HttpGet]
+    [Authorize(AuthenticationSchemes = "TokenAuthentication")]
     public List<FleetNameTranslationModel> Get()
     {
         return Database.Fleets
@@ -26,6 +26,7 @@ public class FleetNamesTranslationsController(EoToolsDbContext db, OperationUpda
     }
 
     [HttpPut]
+    [Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]
     public async Task<IActionResult> Put(FleetNameTranslationModel newData)
     {
         FleetNameTranslationModel? savedData = Database.Fleets
@@ -60,6 +61,48 @@ public class FleetNamesTranslationsController(EoToolsDbContext db, OperationUpda
 
         Database.Fleets.Update(savedData);
         await Database.SaveChangesAsync();
+
+        return Ok(savedData);
+    }
+
+    [HttpPut("updateTranslation")]
+    [Authorize(AuthenticationSchemes = "TokenAuthentication")]
+    public async Task<IActionResult> Put(TranslationModel newData, Language lang)
+    {
+        if (lang is Language.English or Language.Japanese)
+        {
+            return Unauthorized();
+        }
+
+        FleetNameTranslationModel? savedData = Database.Fleets
+            .Include(nameof(FleetNameTranslationModel.Translations))
+            .FirstOrDefault(tl => tl.Id == newData.Id);
+
+        if (savedData is null)
+        {
+            return NotFound();
+        }
+
+        TranslationModel? savedTranslation = savedData.Translations.Find(tl => tl.Language == lang);
+
+        if (savedTranslation is null)
+        {
+            savedTranslation = new()
+            {
+                Translation = newData.Translation,
+                Language = newData.Language,
+            };
+
+            savedData.Translations.Add(savedTranslation);
+            Database.Add(savedTranslation);
+        }
+        else
+        {
+            savedTranslation.Translation = newData.Translation;
+        }
+
+        Database.Fleets.Update(savedData);
+        await Database.TrackAndSaveChanges();
 
         return Ok(savedData);
     }

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace EOToolsWeb.Api.Controllers;
+namespace EOToolsWeb.Api.Controllers.Equipments;
 
 [ApiController]
 [Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]

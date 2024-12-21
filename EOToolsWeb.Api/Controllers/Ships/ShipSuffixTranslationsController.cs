@@ -1,5 +1,6 @@
 using EOToolsWeb.Api.Database;
 using EOToolsWeb.Api.Services.UpdateData;
+using EOToolsWeb.Shared.Maps;
 using EOToolsWeb.Shared.Ships;
 using EOToolsWeb.Shared.Translations;
 using EOToolsWeb.Shared.Users;
@@ -10,7 +11,6 @@ using Microsoft.EntityFrameworkCore;
 namespace EOToolsWeb.Api.Controllers.Ships;
 
 [ApiController]
-[Authorize(AuthenticationSchemes = "TokenAuthentication")]
 [Route("[controller]")]
 public class ShipSuffixTranslationsController(EoToolsDbContext db, UpdateShipDataService dataUpdateService) : ControllerBase
 {
@@ -18,6 +18,7 @@ public class ShipSuffixTranslationsController(EoToolsDbContext db, UpdateShipDat
     private UpdateShipDataService DataUpdateService { get; } = dataUpdateService;
 
     [HttpGet]
+    [Authorize(AuthenticationSchemes = "TokenAuthentication")]
     public List<ShipSuffixTranslationModel> Get()
     {
         return Database.ShipSuffixTranslations
@@ -26,6 +27,7 @@ public class ShipSuffixTranslationsController(EoToolsDbContext db, UpdateShipDat
     }
 
     [HttpPut]
+    [Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]
     public async Task<IActionResult> Put(ShipSuffixTranslationModel newData)
     {
         ShipSuffixTranslationModel? savedData = Database.ShipSuffixTranslations
@@ -60,6 +62,49 @@ public class ShipSuffixTranslationsController(EoToolsDbContext db, UpdateShipDat
 
         Database.ShipSuffixTranslations.Update(savedData);
         await Database.SaveChangesAsync();
+
+        return Ok(savedData);
+    }
+
+
+    [HttpPut("updateTranslation")]
+    [Authorize(AuthenticationSchemes = "TokenAuthentication")]
+    public async Task<IActionResult> Put(TranslationModel newData, Language lang)
+    {
+        if (lang is Language.English or Language.Japanese)
+        {
+            return Unauthorized();
+        }
+
+        ShipSuffixTranslationModel? savedData = Database.ShipSuffixTranslations
+            .Include(nameof(ShipSuffixTranslationModel.Translations))
+            .FirstOrDefault(tl => tl.Id == newData.Id);
+
+        if (savedData is null)
+        {
+            return NotFound();
+        }
+
+        TranslationModel? savedTranslation = savedData.Translations.Find(tl => tl.Language == lang);
+
+        if (savedTranslation is null)
+        {
+            savedTranslation = new()
+            {
+                Translation = newData.Translation,
+                Language = newData.Language,
+            };
+
+            savedData.Translations.Add(savedTranslation);
+            Database.Add(savedTranslation);
+        }
+        else
+        {
+            savedTranslation.Translation = newData.Translation;
+        }
+
+        Database.ShipSuffixTranslations.Update(savedData);
+        await Database.TrackAndSaveChanges();
 
         return Ok(savedData);
     }

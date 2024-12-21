@@ -26,6 +26,7 @@ namespace EOToolsWeb.Api.Database
         public DbSet<SeasonModel> Seasons { get; set; }
 
         public DbSet<QuestModel> Quests { get; set; }
+        public DbSet<QuestTranslationModel> QuestTranslations { get; set; }
 
         public DbSet<ShipModel> Ships { get; set; }
         public DbSet<ShipNameTranslationModel> ShipTranslations { get; set; }
@@ -36,10 +37,12 @@ namespace EOToolsWeb.Api.Database
         public DbSet<FleetNameTranslationModel> Fleets { get; set; }
 
         public DbSet<EquipmentModel> Equipments { get; set; }
-        public DbSet<ShipLockModel> Locks { get; set; }
-        public DbSet<ShipLockPhaseModel> LockPhases { get; set; }
+        public DbSet<EquipmentTranslationModel> EquipmentTranslations { get; set; }
         public DbSet<EquipmentUpgradeModel> EquipmentUpgrades { get; set; }
         public DbSet<EquipmentUpgradeImprovmentModel> Improvments { get; set; }
+
+        public DbSet<ShipLockModel> Locks { get; set; }
+        public DbSet<ShipLockPhaseModel> LockPhases { get; set; }
 
         public DbSet<DataChangedLogModel> DataChangeLogs { get; set; }
 
