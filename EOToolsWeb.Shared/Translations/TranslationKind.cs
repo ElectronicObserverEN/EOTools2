@@ -6,4 +6,7 @@ public enum TranslationKind
     ShipsSuffixes,
     MapName,
     FleetName,
+    Equipments,
+    QuestsTitle,
+    QuestsDescription,
 }

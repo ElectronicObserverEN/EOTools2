@@ -21,5 +21,6 @@
 		<converters:IsAdminConverter x:Key="IsAdminConverter" />
 		<converters:IsUpdateUpdatorConverter x:Key="IsUpdateUpdatorConverter" />
 		<converters:UserKindConverter x:Key="UserKindConverter" />
+		<converters:TranslationKindConverter x:Key="TranslationKindConverter" />
 	</Application.Resources>
 </Application>

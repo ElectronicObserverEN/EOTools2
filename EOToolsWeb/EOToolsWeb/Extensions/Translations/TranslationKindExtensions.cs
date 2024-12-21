@@ -10,6 +10,9 @@ public static class TranslationKindExtensions
         TranslationKind.ShipsSuffixes => "ShipSuffixTranslations",
         TranslationKind.MapName => "MapNamesTranslations",
         TranslationKind.FleetName => "FleetNamesTranslations",
+        TranslationKind.Equipments => "EquipmentTranslations",
+        TranslationKind.QuestsTitle => "QuestTitleTranslations",
+        TranslationKind.QuestsDescription => "QuestDescriptionTranslations",
         _ => "",
     };
 
@@ -19,6 +22,9 @@ public static class TranslationKindExtensions
         TranslationKind.ShipsSuffixes => "Ship suffixes",
         TranslationKind.MapName => "Map names",
         TranslationKind.FleetName => "Fleet names",
+        TranslationKind.Equipments => "Equipments",
+        TranslationKind.QuestsTitle => "Quest title",
+        TranslationKind.QuestsDescription => "Quest description",
         _ => "",
     };
 }

@@ -12,7 +12,10 @@
 	mc:Ignorable="d">
 	<Grid RowDefinitions="Auto, *">
 		<StackPanel Orientation="Horizontal">
-			<ComboBox ItemsSource="{Binding TranslationKinds}" SelectedItem="{Binding SelectedTranslationKind}" />
+			<ComboBox
+				DisplayMemberBinding="{Binding Converter={StaticResource TranslationKindConverter}}"
+				ItemsSource="{Binding TranslationKinds}"
+				SelectedItem="{Binding SelectedTranslationKind}" />
 			<ComboBox ItemsSource="{Binding Languages}" SelectedItem="{Binding SelectedLanguage}" />
 			<Button
 				Command="{Binding AddTranslationCommand}"
@@ -26,6 +29,7 @@
 		<DataGrid
 			Grid.Row="1"
 			AutoGenerateColumns="False"
+			CanUserResizeColumns="True"
 			ItemsSource="{Binding Translations}"
 			SelectedItem="{Binding SelectedRow}">
 

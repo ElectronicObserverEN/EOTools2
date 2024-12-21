@@ -3,6 +3,7 @@ using System;
 using EOToolsWeb.Api.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EOToolsWeb.Api.Migrations
 {
     [DbContext(typeof(EoToolsDbContext))]
-    partial class EoToolsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241221085004_Translations3")]
+    partial class Translations3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
@@ -365,20 +368,6 @@ namespace EOToolsWeb.Api.Migrations
                     b.ToTable("Maps");
                 });
 
-            modelBuilder.Entity("EOToolsWeb.Shared.Quests.QuestDescriptionTranslationModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("QuestId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("QuestDescriptionTranslations");
-                });
-
             modelBuilder.Entity("EOToolsWeb.Shared.Quests.QuestModel", b =>
                 {
                     b.Property<int>("Id")
@@ -440,7 +429,7 @@ namespace EOToolsWeb.Api.Migrations
                     b.ToTable("Quests");
                 });
 
-            modelBuilder.Entity("EOToolsWeb.Shared.Quests.QuestTitleTranslationModel", b =>
+            modelBuilder.Entity("EOToolsWeb.Shared.Quests.QuestTranslationModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -451,7 +440,7 @@ namespace EOToolsWeb.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("QuestTitleTranslations");
+                    b.ToTable("QuestTranslationModel");
                 });
 
             modelBuilder.Entity("EOToolsWeb.Shared.Seasons.SeasonModel", b =>
@@ -635,10 +624,7 @@ namespace EOToolsWeb.Api.Migrations
                     b.Property<int?>("MapNameTranslationModelId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("QuestDescriptionTranslationModelId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("QuestTitleTranslationModelId")
+                    b.Property<int?>("QuestTranslationModelId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("ShipNameTranslationModelId")
@@ -659,9 +645,7 @@ namespace EOToolsWeb.Api.Migrations
 
                     b.HasIndex("MapNameTranslationModelId");
 
-                    b.HasIndex("QuestDescriptionTranslationModelId");
-
-                    b.HasIndex("QuestTitleTranslationModelId");
+                    b.HasIndex("QuestTranslationModelId");
 
                     b.HasIndex("ShipNameTranslationModelId");
 
@@ -884,13 +868,9 @@ namespace EOToolsWeb.Api.Migrations
                         .WithMany("Translations")
                         .HasForeignKey("MapNameTranslationModelId");
 
-                    b.HasOne("EOToolsWeb.Shared.Quests.QuestDescriptionTranslationModel", null)
+                    b.HasOne("EOToolsWeb.Shared.Quests.QuestTranslationModel", null)
                         .WithMany("Translations")
-                        .HasForeignKey("QuestDescriptionTranslationModelId");
-
-                    b.HasOne("EOToolsWeb.Shared.Quests.QuestTitleTranslationModel", null)
-                        .WithMany("Translations")
-                        .HasForeignKey("QuestTitleTranslationModelId");
+                        .HasForeignKey("QuestTranslationModelId");
 
                     b.HasOne("EOToolsWeb.Shared.Ships.ShipNameTranslationModel", null)
                         .WithMany("Translations")
@@ -953,12 +933,7 @@ namespace EOToolsWeb.Api.Migrations
                     b.Navigation("Translations");
                 });
 
-            modelBuilder.Entity("EOToolsWeb.Shared.Quests.QuestDescriptionTranslationModel", b =>
-                {
-                    b.Navigation("Translations");
-                });
-
-            modelBuilder.Entity("EOToolsWeb.Shared.Quests.QuestTitleTranslationModel", b =>
+            modelBuilder.Entity("EOToolsWeb.Shared.Quests.QuestTranslationModel", b =>
                 {
                     b.Navigation("Translations");
                 });

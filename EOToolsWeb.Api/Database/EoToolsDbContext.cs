@@ -26,7 +26,8 @@ namespace EOToolsWeb.Api.Database
         public DbSet<SeasonModel> Seasons { get; set; }
 
         public DbSet<QuestModel> Quests { get; set; }
-        public DbSet<QuestTranslationModel> QuestTranslations { get; set; }
+        public DbSet<QuestTitleTranslationModel> QuestTitleTranslations { get; set; }
+        public DbSet<QuestDescriptionTranslationModel> QuestDescriptionTranslations { get; set; }
 
         public DbSet<ShipModel> Ships { get; set; }
         public DbSet<ShipNameTranslationModel> ShipTranslations { get; set; }
@@ -48,11 +49,11 @@ namespace EOToolsWeb.Api.Database
 
         private ICurrentSession Session { get; }
 
-        /*
+        
         public EoToolsDbContext()
         {
         }
-        */
+        
 
         public EoToolsDbContext(ICurrentSession session)
         {

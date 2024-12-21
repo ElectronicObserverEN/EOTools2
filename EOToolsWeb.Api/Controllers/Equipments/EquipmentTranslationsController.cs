@@ -1,8 +1,6 @@
 using EOToolsWeb.Api.Database;
 using EOToolsWeb.Api.Services.UpdateData;
 using EOToolsWeb.Shared.Equipments;
-using EOToolsWeb.Shared.Maps;
-using EOToolsWeb.Shared.Ships;
 using EOToolsWeb.Shared.Translations;
 using EOToolsWeb.Shared.Users;
 using Microsoft.AspNetCore.Authorization;
@@ -22,57 +20,7 @@ public class EquipmentTranslationsController(EoToolsDbContext db, UpdateEquipmen
     [Authorize(AuthenticationSchemes = "TokenAuthentication")]
     public async Task<List<EquipmentTranslationModel>> Get()
     {
-        List<EquipmentModel> equipments = await Database.Equipments
-            .Include(nameof(EquipmentTranslationModel.Translations))
-            .ToListAsync();
-
-        List<EquipmentTranslationModel> tls = await Database.EquipmentTranslations
-            .Include(nameof(EquipmentTranslationModel.Translations))
-            .ToListAsync();
-
-        foreach (EquipmentModel eq in equipments)
-        {
-            EquipmentTranslationModel? equipmentTranslation = tls.Find(e => e.EquipmentId == eq.Id);
-
-            if (equipmentTranslation is null)
-            {
-                equipmentTranslation = new()
-                {
-                    EquipmentId = eq.Id,
-                    Translations = new(),
-                };
-
-                Database.EquipmentTranslations.Add(equipmentTranslation);
-            }
-        }
-
-        await Database.SaveChangesAsync();
-
-        tls = await Database.EquipmentTranslations
-            .Include(nameof(EquipmentTranslationModel.Translations))
-            .ToListAsync();
-
-        foreach (EquipmentModel eq in equipments)
-        {
-            EquipmentTranslationModel? equipmentTranslation = tls.Find(e => e.EquipmentId == eq.Id);
-
-            if (equipmentTranslation is not null)
-            {
-                equipmentTranslation.Translations.Add(new()
-                {
-                    Language = Language.English,
-                    Translation = eq.NameEN,
-                });
-
-                equipmentTranslation.Translations.Add(new()
-                {
-                    Language = Language.Japanese,
-                    Translation = eq.NameJP,
-                });
-            }
-        }
-
-        return tls;
+        return await UpdateEquipmentDataService.GetAllEquipmentTranslations();
     }
 
     [HttpPut("updateTranslation")]

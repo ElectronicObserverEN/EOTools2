@@ -11,26 +11,25 @@ namespace EOToolsWeb.Api.Controllers.Quest;
 
 [ApiController]
 [Route("[controller]")]
-public class QuestTranslationsController(EoToolsDbContext db, UpdateQuestDataService updateService) : ControllerBase
+public class QuestDescriptionTranslationsController(EoToolsDbContext db, UpdateQuestDataService updateService) : ControllerBase
 {
     private EoToolsDbContext Database { get; } = db;
     private UpdateQuestDataService UpdateQuestDataService { get; } = updateService;
 
     [HttpGet]
     [Authorize(AuthenticationSchemes = "TokenAuthentication")]
-    public async Task<List<QuestTranslationModel>> Get()
+    public async Task<List<QuestDescriptionTranslationModel>> Get()
     {
         List<QuestModel> quests = await Database.Quests
-            .Include(nameof(QuestTranslationModel.Translations))
             .ToListAsync();
 
-        List<QuestTranslationModel> tls = await Database.QuestTranslations
-            .Include(nameof(QuestTranslationModel.Translations))
+        List<QuestDescriptionTranslationModel> tls = await Database.QuestDescriptionTranslations
+            .Include(nameof(QuestDescriptionTranslationModel.Translations))
             .ToListAsync();
 
         foreach (QuestModel eq in quests)
         {
-            QuestTranslationModel? questTranslation = tls.Find(e => e.QuestId == eq.Id);
+            QuestDescriptionTranslationModel? questTranslation = tls.Find(e => e.QuestId == eq.Id);
 
             if (questTranslation is null)
             {
@@ -40,32 +39,32 @@ public class QuestTranslationsController(EoToolsDbContext db, UpdateQuestDataSer
                     Translations = new(),
                 };
 
-                Database.QuestTranslations.Add(questTranslation);
+                Database.QuestDescriptionTranslations.Add(questTranslation);
             }
         }
 
         await Database.SaveChangesAsync();
 
-        tls = await Database.QuestTranslations
-            .Include(nameof(QuestTranslationModel.Translations))
+        tls = await Database.QuestDescriptionTranslations
+            .Include(nameof(QuestDescriptionTranslationModel.Translations))
             .ToListAsync();
 
         foreach (QuestModel eq in quests)
         {
-            QuestTranslationModel? questTranslation = tls.Find(e => e.QuestId == eq.Id);
+            QuestDescriptionTranslationModel? questTranslation = tls.Find(e => e.QuestId == eq.Id);
 
             if (questTranslation is not null)
             {
                 questTranslation.Translations.Add(new()
                 {
                     Language = Language.English,
-                    Translation = eq.NameEN,
+                    Translation = eq.DescEN,
                 });
 
                 questTranslation.Translations.Add(new()
                 {
                     Language = Language.Japanese,
-                    Translation = eq.NameJP,
+                    Translation = eq.DescJP,
                 });
             }
         }
@@ -82,8 +81,8 @@ public class QuestTranslationsController(EoToolsDbContext db, UpdateQuestDataSer
             return Unauthorized();
         }
 
-        QuestTranslationModel? savedData = Database.QuestTranslations
-            .Include(nameof(QuestTranslationModel.Translations))
+        QuestDescriptionTranslationModel? savedData = Database.QuestDescriptionTranslations
+            .Include(nameof(QuestDescriptionTranslationModel.Translations))
             .FirstOrDefault(tl => tl.Id == newData.Id);
 
         if (savedData is null)
@@ -109,7 +108,7 @@ public class QuestTranslationsController(EoToolsDbContext db, UpdateQuestDataSer
             savedTranslation.Translation = newData.Translation;
         }
 
-        Database.QuestTranslations.Update(savedData);
+        Database.QuestDescriptionTranslations.Update(savedData);
         await Database.TrackAndSaveChanges();
 
         return Ok(savedData);

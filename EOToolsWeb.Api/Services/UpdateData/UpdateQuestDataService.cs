@@ -3,9 +3,11 @@ using EOToolsWeb.Api.Database;
 using EOToolsWeb.Api.Services.GitManager;
 using EOToolsWeb.Shared.Quests;
 using EOToolsWeb.Shared.Updates;
+using Microsoft.EntityFrameworkCore;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using EOToolsWeb.Shared.Translations;
 
 namespace EOToolsWeb.Api.Services.UpdateData;
 
@@ -58,7 +60,7 @@ public class UpdateQuestDataService(IGitManagerService git, EoToolsDbContext db,
             });
         }
         
-        foreach (string lang in OtherLanguages)
+        foreach (Language lang in OtherLanguagesTyped)
         {
             await UpdateOtherLanguage(lang);
         }
@@ -90,10 +92,10 @@ public class UpdateQuestDataService(IGitManagerService git, EoToolsDbContext db,
         return !update.UpdateIsComing() || update.UpdateInProgress();
     }
 
-    private async Task UpdateOtherLanguage(string language)
+    private async Task UpdateOtherLanguage(Language language)
     {
-        string updatePath = UpdateFilePath.Replace("en-US", language);
-        string questPath = QuestsTranslationsFilePath.Replace("en-US", language);
+        string updatePath = UpdateFilePath.Replace("en-US", language.GetCulture());
+        string questPath = QuestsTranslationsFilePath.Replace("en-US", language.GetCulture());
 
         JsonObject? updateJson = JsonSerializer.Deserialize<JsonObject>(await File.ReadAllTextAsync(updatePath));
 
@@ -113,32 +115,92 @@ public class UpdateQuestDataService(IGitManagerService git, EoToolsDbContext db,
             .Where(quest => !HasQuestEnded(quest))
             .OrderBy(quest => quest.ApiId)
             .ToList();
+        
+        List<QuestTitleTranslationModel> titles = await Database.QuestTitleTranslations
+            .Include(nameof(QuestTitleTranslationModel.Translations))
+            .ToListAsync();
 
-        List<QuestData>? translations = await GetDataFromQuestsTranslations(questPath);
+        List<QuestDescriptionTranslationModel> descriptions = await Database.QuestDescriptionTranslations
+            .Include(nameof(QuestDescriptionTranslationModel.Translations))
+            .ToListAsync();
+
+        await UpdateMissingTranslations(language, questPath);
 
         foreach (QuestModel quest in questlist)
         {
-            QuestData? data = translations.Find(q => q.Code == quest.Code);
+            QuestTitleTranslationModel? title = titles.Find(q => q.QuestId == quest.Id);
+            QuestDescriptionTranslationModel? desc = descriptions.Find(q => q.QuestId == quest.Id);
 
-            if (data is null)
+            toSerialize.Add(quest.ApiId.ToString(), new QuestData(quest.ApiId)
             {
-                toSerialize.Add(quest.ApiId.ToString(), new QuestData(quest.ApiId)
-                {
-                    Code = quest.Code,
-                    DescEN = quest.DescEN,
-                    DescJP = quest.DescJP,
-                    NameEN = quest.NameEN,
-                    NameJP = quest.NameJP,
-                });
-            }
-            else
-            {
-                toSerialize.Add(quest.ApiId.ToString(), data);
-            }
+                Code = quest.Code,
+                DescEN = desc?.Translations.Find(t => t.Language == language)?.Translation ?? "",
+                DescJP = quest.DescJP,
+                NameEN = title?.Translations.Find(t => t.Language == language)?.Translation ?? "",
+                NameJP = quest.NameJP,
+            });
         }
 
         await File.WriteAllTextAsync(questPath, JsonSerializer.Serialize(toSerialize, SerializationOptions), Encoding.UTF8);
         await File.WriteAllTextAsync(updatePath, JsonSerializer.Serialize(updateJson, SerializationOptions), Encoding.UTF8);
+    }
+
+    private async Task UpdateMissingTranslations(Language lang, string questPath)
+    {
+        List<QuestData> translations = await GetDataFromQuestsTranslations(questPath) ?? [];
+
+        List<QuestTitleTranslationModel> titles = await Database.QuestTitleTranslations
+            .Include(nameof(QuestTitleTranslationModel.Translations))
+            .ToListAsync();
+
+        List<QuestDescriptionTranslationModel> descriptions = await Database.QuestDescriptionTranslations
+            .Include(nameof(QuestDescriptionTranslationModel.Translations))
+            .ToListAsync();
+
+        List<QuestModel> questlist = Database.Quests
+            .AsEnumerable()
+            .Where(quest => !HasQuestEnded(quest))
+            .OrderBy(quest => quest.ApiId)
+            .ToList();
+
+        foreach (QuestModel quest in questlist)
+        {
+            QuestTitleTranslationModel? title = titles.Find(q => q.QuestId == quest.Id);
+            QuestDescriptionTranslationModel? desc = descriptions.Find(q => q.QuestId == quest.Id);
+
+            if (title is not null && desc is not null)
+            {
+                if (title.Translations.All(t => t.Language != lang))
+                {
+                    TranslationModel questTranslation = new()
+                    {
+                        Language = lang,
+                        Translation = translations.Find(q => q.Code == quest.Code)?.NameEN ?? "",
+                    };
+
+                    title.Translations.Add(questTranslation);
+
+                    Database.Update(title);
+                    Database.Add(questTranslation);
+                }
+
+                if (desc.Translations.All(t => t.Language != lang))
+                {
+                    TranslationModel questTranslation = new()
+                    {
+                        Language = lang,
+                        Translation = translations.Find(q => q.Code == quest.Code)?.DescEN ?? "",
+                    };
+
+                    desc.Translations.Add(questTranslation);
+
+                    Database.Update(desc);
+                    Database.Add(questTranslation);
+                }
+            }
+        }
+
+        await Database.SaveChangesAsync();
     }
 
     private async Task<List<QuestData>?> GetDataFromQuestsTranslations(string path)
