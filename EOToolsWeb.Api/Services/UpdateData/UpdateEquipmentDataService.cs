@@ -163,7 +163,7 @@ public class UpdateEquipmentDataService(IGitManagerService git, EoToolsDbContext
                 {
                     if (!translations.TryGetValue(equipment.NameJP, out string? oldValue))
                     {
-                        oldValue = "";
+                        oldValue = tl.Translations.Find(t => t.Language == Language.English)?.Translation ?? "";
                     }
 
                     TranslationModel questTranslation = new()
