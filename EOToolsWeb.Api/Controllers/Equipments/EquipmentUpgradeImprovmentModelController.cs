@@ -27,7 +27,6 @@ public class EquipmentUpgradeImprovmentModelController(EoToolsDbContext db) : Co
             .Include("Costs.Cost6To9.EquipmentDetail")
             .Include("Costs.CostMax.ConsumableDetail")
             .Include("Costs.CostMax.EquipmentDetail")
-            .ToList()
             .FirstOrDefault(upg => upg.Id == upgradeId);
 
         if (result is null)
@@ -105,7 +104,6 @@ public class EquipmentUpgradeImprovmentModelController(EoToolsDbContext db) : Co
             .Include("Costs.Cost6To9.EquipmentDetail")
             .Include("Costs.CostMax.ConsumableDetail")
             .Include("Costs.CostMax.EquipmentDetail")
-            .ToList()
             .FirstOrDefault(upg => upg.Id == equipmentUpgrade.Id);
 
         if (model is null)
