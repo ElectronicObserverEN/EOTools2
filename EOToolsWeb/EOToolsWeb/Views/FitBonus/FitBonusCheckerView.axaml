@@ -3,7 +3,6 @@
 	xmlns="https://github.com/avaloniaui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:generic11="clr-namespace:EOToolsWeb.Models.FitBonus"
 	xmlns:grid="clr-namespace:EOToolsWeb.Control.Grid"
 	xmlns:local="clr-namespace:EOToolsWeb.ViewModels.FitBonus"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -14,11 +13,18 @@
 
 	<Grid>
 		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 
+		<StackPanel Orientation="Horizontal">
+			<TextBlock>Version</TextBlock>
+			<TextBox Text="{Binding Fetcher.SoftwareVersionFilter}" />
+		</StackPanel>
+
 		<DataGrid
+			Grid.Row="1"
 			AutoGenerateColumns="False"
 			ItemsSource="{Binding Pagination.DisplayedData}"
 			VerticalScrollBarVisibility="Visible">
@@ -185,7 +191,7 @@
 		</DataGrid>
 
 		<grid:PaginationControl
-			Grid.Row="1"
+			Grid.Row="2"
 			Margin="20,10"
 			HorizontalAlignment="Right"
 			DataContext="{Binding Pagination}" />

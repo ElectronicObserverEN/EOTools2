@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using EOToolsWeb.Control.Grid;
 using EOToolsWeb.Models.FitBonus;
 using EOToolsWeb.ViewModels.Equipments;
@@ -13,7 +14,7 @@ using EOToolsWeb.ViewModels.Ships;
 
 namespace EOToolsWeb.ViewModels.FitBonus;
 
-public class FitBonusIssuesFetcher(SettingsViewModel settings, EquipmentManagerViewModel equipments, ShipManagerViewModel ships) : IDataFetcher
+public partial class FitBonusIssuesFetcher(SettingsViewModel settings, EquipmentManagerViewModel equipments, ShipManagerViewModel ships) : ObservableObject, IDataFetcher
 {
     private HttpClient Client { get; } = new();
     private bool Initialized { get; set; } = false;
@@ -21,6 +22,15 @@ public class FitBonusIssuesFetcher(SettingsViewModel settings, EquipmentManagerV
     private SettingsViewModel Settings { get; } = settings;
     private EquipmentManagerViewModel EquipmentManagerViewModel { get; } = equipments;
     private ShipManagerViewModel ShipManagerViewModel { get; } = ships;
+
+    [ObservableProperty]
+    public partial string SoftwareVersionFilter { get; set; } = "5.3.10.0";
+
+    public string Url => SoftwareVersionFilter switch
+    {
+        { Length: >0 } => $"FitBonusIssues?issueState=1&softwareVersion={SoftwareVersionFilter}",
+        _ => "FitBonusIssues?issueState=1",
+    };
 
     public async Task<PaginatedResultModel<IGridRowFetched>?> LoadData(int skip, int take)
     {
@@ -44,8 +54,7 @@ public class FitBonusIssuesFetcher(SettingsViewModel settings, EquipmentManagerV
         {
 
             PaginatedResultModel<FitBonusIssueModel>? result =
-                await Client.GetFromJsonAsync<PaginatedResultModel<FitBonusIssueModel>>(
-                    $"FitBonusIssues?issueState=1&skip={skip}&take={take}");
+                await Client.GetFromJsonAsync<PaginatedResultModel<FitBonusIssueModel>>($"{Url}&skip={skip}&take={take}");
 
             if (result is null) return null;
 
