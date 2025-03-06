@@ -13,7 +13,10 @@ using System.Reactive.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
+using EOToolsWeb.Extensions.Translations;
 using EOToolsWeb.ViewModels.Translations;
+using EOToolsWeb.Models.Translations;
+using EOToolsWeb.Shared.Translations;
 
 namespace EOToolsWeb.ViewModels.Ships;
 
@@ -207,5 +210,48 @@ public partial class ShipManagerViewModel : ViewModelBase
         }
 
         ReloadShipList();
+    }
+
+    public bool IsDebug =>
+#if DEBUG
+        true;
+#else
+        false;
+#endif
+
+    [RelayCommand(CanExecute = nameof(IsDebug))]
+    public async Task ImportTranslationsFromFile()
+    {
+        string _path = "";
+
+        await Translation.Initialize();
+
+        string text = await File.ReadAllTextAsync(_path);
+        JsonObject? data = JsonSerializer.Deserialize<JsonObject>(text);
+
+        if (data is null) return;
+
+        List<TranslationBaseModelRow> tls = await HttpClient.GetFromJsonAsync<List<TranslationBaseModelRow>>(TranslationKind.ShipsName.GetApiRoute()) ?? [];
+        
+        foreach (KeyValuePair<string, JsonNode> shipJson in data["ship"].AsObject())
+        {
+            string nameJp = shipJson.Key;
+            string nameTl = shipJson.Value.GetValue<string>();
+
+            TranslationBaseModelRow? model = tls.Find(tl => tl.TranslationJapanese == nameJp);
+
+            if (model != null)
+            {
+                model.Translations.Add(new TranslationModel()
+                {
+                    Language = Language.Spanish,
+                    Translation = nameTl,
+                });
+
+                HttpResponseMessage response = await HttpClient.PutAsJsonAsync("ShipNameTranslations", model);
+
+                response.EnsureSuccessStatusCode();
+            }
+        }
     }
 }

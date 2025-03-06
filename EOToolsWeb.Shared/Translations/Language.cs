@@ -6,4 +6,5 @@ public enum Language
     English,
     Korean,
     SimplifiedChinese,
+    Spanish,
 }
