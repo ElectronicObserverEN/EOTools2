@@ -29,7 +29,7 @@ public class MapNamesTranslationsController(EoToolsDbContext db, OperationUpdate
     [Authorize(AuthenticationSchemes = "TokenAuthentication")]
     public async Task<IActionResult> Put(TranslationModel newData)
     {
-        if (newData.Language is Language.English or Language.Japanese)
+        if (newData.Language is Language.English or Language.Japanese && !HttpContext.User.IsInRole(nameof(UserKind.Admin)))
         {
             return Unauthorized();
         }

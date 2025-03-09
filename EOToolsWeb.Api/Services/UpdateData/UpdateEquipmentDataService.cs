@@ -29,20 +29,30 @@ public class UpdateEquipmentDataService(IGitManagerService git, EoToolsDbContext
         // Get version
         JsonObject? updateJson = JsonSerializer.Deserialize<JsonObject>(await File.ReadAllTextAsync(UpdateFilePath));
         string version = (int.Parse(updateJson["equipment"].GetValue<string>()) + 1).ToString();
-        
-        await UpdateOtherLanguage(Language.English);
+
+        List<EquipmentTranslationModel> tls = await GetAllEquipmentTranslations(true);
+
+        await UpdateOtherLanguage(Language.English, tls);
 
         foreach (Language lang in OtherLanguagesTyped)
         {
-            await UpdateOtherLanguage(lang);
+            await UpdateOtherLanguage(lang, tls);
         }
 
         await DatabaseSyncService.StageDatabaseChangesToGit();
 
         await GitManager.Push($"Equipments - {version}");
+
+        foreach (TranslationModel tlWithChange in tls.SelectMany(tl => tl.Translations.Where(tlModel => tlModel.IsPendingChange)))
+        {
+            tlWithChange.IsPendingChange = false;
+            Database.Update(tlWithChange);
+        }
+
+        await Database.SaveChangesAsync();
     }
 
-    private async Task UpdateOtherLanguage(Language language)
+    private async Task UpdateOtherLanguage(Language language, List<EquipmentTranslationModel> tls)
     {
         string updatePath = UpdateFilePath.Replace("en-US", language.GetCulture());
         string translationPath = EquipmentTranslationsFilePath.Replace("en-US", language.GetCulture());
@@ -56,78 +66,49 @@ public class UpdateEquipmentDataService(IGitManagerService git, EoToolsDbContext
         };
 
         updateJson["equipment"] = version;
-
-        List<EquipmentModel> equipments = Database.Equipments
-            .AsEnumerable()
-            .OrderBy(eq => eq.ApiId)
-            .ToList();
-
-        await UpdateMissingTranslations(language, translationPath);
-
-        List<EquipmentTranslationModel> tls = await GetAllEquipmentTranslations();
-
+        
         JsonObject? prevTranslations = JsonSerializer.Deserialize<JsonObject>(await File.ReadAllTextAsync(translationPath));
         toSerialize.Add("equiptype", prevTranslations["equiptype"]);
-        Dictionary<string, string> equipmentsToSerialize = [];
-        toSerialize.Add("equipment", equipmentsToSerialize);
+        toSerialize.Add("equipment", prevTranslations["equipment"]);
 
         foreach (EquipmentTranslationModel model in tls)
         {
             string jp = model.Translations.Find(t => t.Language == Language.Japanese)?.Translation ?? "";
             string tl = model.Translations.Find(t => t.Language == language)?.Translation ?? "";
 
-            if (!equipmentsToSerialize.ContainsKey(jp))
-            {
-                equipmentsToSerialize.Add(jp, tl);
-            }
+            prevTranslations["equipment"][jp] = tl;
         }
 
         await File.WriteAllTextAsync(translationPath, JsonSerializer.Serialize(toSerialize, SerializationOptions), Encoding.UTF8);
         await File.WriteAllTextAsync(updatePath, JsonSerializer.Serialize(updateJson, SerializationOptions), Encoding.UTF8);
     }
 
-    public async Task<List<EquipmentTranslationModel>> GetAllEquipmentTranslations()
+    public async Task<List<EquipmentTranslationModel>> GetAllEquipmentTranslations() => await GetAllEquipmentTranslations(false);
+
+    public async Task<List<EquipmentTranslationModel>> GetAllEquipmentTranslations(bool onlyWithPendingChanges)
     {
         List<EquipmentModel> equipments = await Database.Equipments
             .ToListAsync();
 
         List<EquipmentTranslationModel> tls = await Database.EquipmentTranslations
             .Include(nameof(EquipmentTranslationModel.Translations))
+            .Where(tl => !onlyWithPendingChanges || tl.Translations.Any(tlModel => tlModel.IsPendingChange))
             .ToListAsync();
 
-        foreach (EquipmentModel eq in equipments)
+        foreach (EquipmentTranslationModel equipmentTranslation in tls)
         {
-            EquipmentTranslationModel? equipmentTranslation = tls.Find(e => e.EquipmentId == eq.Id);
+            EquipmentModel? eq = equipments.Find(e => e.ApiId == equipmentTranslation.EquipmentId);
 
-            if (equipmentTranslation is null)
+            if (eq is not null)
             {
-                equipmentTranslation = new()
+                if (equipmentTranslation.Translations.All(tl => tl.Language != Language.English))
                 {
-                    EquipmentId = eq.Id,
-                    Translations = new(),
-                };
-
-                Database.EquipmentTranslations.Add(equipmentTranslation);
-            }
-        }
-
-        await Database.SaveChangesAsync();
-
-        tls = await Database.EquipmentTranslations
-            .Include(nameof(EquipmentTranslationModel.Translations))
-            .ToListAsync();
-
-        foreach (EquipmentModel eq in equipments)
-        {
-            EquipmentTranslationModel? equipmentTranslation = tls.Find(e => e.EquipmentId == eq.Id);
-
-            if (equipmentTranslation is not null)
-            {
-                equipmentTranslation.Translations.Add(new()
-                {
-                    Language = Language.English,
-                    Translation = eq.NameEN,
-                });
+                    equipmentTranslation.Translations.Add(new()
+                    {
+                        Language = Language.English,
+                        Translation = eq.NameEN,
+                    });
+                }
 
                 equipmentTranslation.Translations.Add(new()
                 {
@@ -140,67 +121,44 @@ public class UpdateEquipmentDataService(IGitManagerService git, EoToolsDbContext
         return tls;
     }
 
-    private async Task UpdateMissingTranslations(Language lang, string translationPath)
+    public async Task AddTranslation(EquipmentModel eq)
     {
-        Dictionary<string, string> translations = await LoadEquipmentTranslations(translationPath);
-
-        List<EquipmentTranslationModel> tls = await Database.EquipmentTranslations
-            .Include(nameof(EquipmentTranslationModel.Translations))
-            .ToListAsync();
-
-        List<EquipmentModel> equipments = Database.Equipments
-            .AsEnumerable()
-            .OrderBy(eq => eq.ApiId)
-            .ToList();
-
-        foreach (EquipmentModel equipment in equipments)
+        EquipmentTranslationModel tl = new()
         {
-            EquipmentTranslationModel? tl = tls.Find(q => q.EquipmentId == equipment.Id);
-
-            if (tl is not null)
-            {
-                if (tl.Translations.All(t => t.Language != lang))
+            EquipmentId = eq.ApiId,
+            Translations = AllLanguagesTyped
+                .Select(lang => new TranslationModel()
                 {
-                    if (!translations.TryGetValue(equipment.NameJP, out string? oldValue))
-                    {
-                        oldValue = tl.Translations.Find(t => t.Language == Language.English)?.Translation ?? "";
-                    }
+                    Language = lang,
+                    Translation = eq.NameEN,
+                })
+                .ToList(),
+        };
 
-                    TranslationModel questTranslation = new()
-                    {
-                        Language = lang,
-                        Translation = oldValue,
-                    };
-
-                    tl.Translations.Add(questTranslation);
-
-                    Database.Update(tl);
-                    Database.Add(questTranslation);
-                }
-            }
-        }
-
+        await Database.AddAsync(tl);
         await Database.SaveChangesAsync();
     }
 
-    private async Task<Dictionary<string, string>> LoadEquipmentTranslations(string path)
+    public async Task EditTranslation(EquipmentModel eq, string nameBefore)
     {
-        JsonObject? translationsJson = JsonSerializer.Deserialize<JsonObject>(await File.ReadAllTextAsync(path));
-        JsonObject? jsonEquipList = translationsJson?["equipment"] as JsonObject;
+        EquipmentTranslationModel? tlFound = await Database.EquipmentTranslations
+            .Include(tl => tl.Translations)
+            .FirstOrDefaultAsync(tl => tl.EquipmentId == eq.ApiId);
 
-        Dictionary<string, string> results = new();
-
-        if (jsonEquipList is null) return results;
-
-        // --- Equips
-        foreach (KeyValuePair<string, JsonNode>? equip in jsonEquipList)
+        if (tlFound is null)
         {
-            string? nameEN = equip?.Key;
-            string? nameJP = equip?.Value?.ToString();
-
-            results.Add(nameEN ?? "", nameJP ?? "");
+            await AddTranslation(eq);
+            return;
         }
 
-        return results;
+        foreach (TranslationModel tlModel in tlFound.Translations.Where(tl => tl.Translation == nameBefore))
+        {
+            tlModel.Translation = eq.NameEN;
+            tlModel.IsPendingChange = true;
+
+            Database.Update(tlModel);
+        }
+
+        await Database.SaveChangesAsync();
     }
 }

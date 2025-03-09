@@ -3,6 +3,7 @@ using System;
 using EOToolsWeb.Api.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EOToolsWeb.Api.Migrations
 {
     [DbContext(typeof(EoToolsDbContext))]
-    partial class EoToolsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250309074134_TranslationsChanges2")]
+    partial class TranslationsChanges2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
@@ -627,9 +630,6 @@ namespace EOToolsWeb.Api.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("FleetNameTranslationModelId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsPendingChange")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Language")

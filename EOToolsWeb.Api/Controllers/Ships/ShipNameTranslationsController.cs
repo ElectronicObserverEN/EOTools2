@@ -70,7 +70,7 @@ public class ShipNameTranslationsController(EoToolsDbContext db, UpdateShipDataS
     [Authorize(AuthenticationSchemes = "TokenAuthentication")]
     public async Task<IActionResult> Put(TranslationModel newData)
     {
-        if (newData.Language is Language.English or Language.Japanese)
+        if (newData.Language is Language.English or Language.Japanese && !HttpContext.User.IsInRole(nameof(UserKind.Admin)))
         {
             return Unauthorized();
         }
@@ -100,6 +100,7 @@ public class ShipNameTranslationsController(EoToolsDbContext db, UpdateShipDataS
         else
         {
             savedTranslation.Translation = newData.Translation;
+            savedTranslation.IsPendingChange = true;
         }
 
         Database.ShipTranslations.Update(savedData);

@@ -21,6 +21,7 @@ public class LogsController(EoToolsDbContext db) : ControllerBase
             .AsNoTracking()
             .Where(l => l.EntityId == entityId)
             .Where(l => l.EntityName == entityName)
+            .OrderByDescending(l => l.Id)
             .Include(nameof(DataChangedLogModel.User))
             .ToListAsync();
 
@@ -38,6 +39,7 @@ public class LogsController(EoToolsDbContext db) : ControllerBase
     {
         List<DataChangedLogModel> logs = await Database.DataChangeLogs
             .AsNoTracking()
+            .OrderByDescending(l => l.Id)
             .Skip(skip)
             .Take(take)
             .Include(nameof(DataChangedLogModel.User))

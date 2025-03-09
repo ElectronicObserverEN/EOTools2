@@ -31,6 +31,8 @@ public class EquipmentsController(EoToolsDbContext db, UpdateEquipmentDataServic
             return NotFound();
         }
 
+        string nameBefore = savedEquipment.NameEN;
+
         savedEquipment.NameEN = equipment.NameEN;
         savedEquipment.NameJP = equipment.NameJP;
         savedEquipment.CanBeCrafted = equipment.CanBeCrafted;
@@ -38,6 +40,8 @@ public class EquipmentsController(EoToolsDbContext db, UpdateEquipmentDataServic
 
         Database.Equipments.Update(savedEquipment);
         await Database.SaveChangesAsync();
+
+        await UpdateEquipmentDataService.EditTranslation(equipment, nameBefore);
 
         return Ok(savedEquipment);
     }
@@ -47,6 +51,8 @@ public class EquipmentsController(EoToolsDbContext db, UpdateEquipmentDataServic
     {
         await Database.Equipments.AddAsync(equipment);
         await Database.SaveChangesAsync();
+
+        await UpdateEquipmentDataService.AddTranslation(equipment);
 
         return Ok(equipment);
     }

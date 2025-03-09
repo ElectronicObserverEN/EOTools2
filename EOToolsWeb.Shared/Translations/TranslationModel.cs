@@ -1,4 +1,6 @@
-﻿namespace EOToolsWeb.Shared.Translations;
+﻿using System.ComponentModel;
+
+namespace EOToolsWeb.Shared.Translations;
 
 public class TranslationModel
 {
@@ -7,4 +9,6 @@ public class TranslationModel
     public string Translation { get; set; } = "";
 
     public required Language Language { get; set; }
+
+    public bool IsPendingChange { get; set; } = true;
 }
