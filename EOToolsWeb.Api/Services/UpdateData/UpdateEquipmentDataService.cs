@@ -131,6 +131,7 @@ public class UpdateEquipmentDataService(IGitManagerService git, EoToolsDbContext
                 {
                     Language = lang,
                     Translation = eq.NameEN,
+                    IsPendingChange = true,
                 })
                 .ToList(),
         };

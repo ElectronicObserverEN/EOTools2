@@ -34,6 +34,9 @@ public class QuestController(EoToolsDbContext db, UpdateQuestDataService updateS
         savedQuest.ApiId = quest.ApiId;
         savedQuest.Code = quest.Code;
 
+        string nameBefore = savedQuest.NameEN;
+        string descBefore = savedQuest.DescEN;
+
         savedQuest.NameEN = quest.NameEN;
         savedQuest.NameJP = quest.NameJP;
 
@@ -50,6 +53,8 @@ public class QuestController(EoToolsDbContext db, UpdateQuestDataService updateS
         Database.Quests.Update(savedQuest);
         await Database.SaveChangesAsync();
 
+        await UpdateDataService.EditTranslation(quest, nameBefore, descBefore);
+
         return Ok(savedQuest);
     }
 
@@ -58,6 +63,9 @@ public class QuestController(EoToolsDbContext db, UpdateQuestDataService updateS
     {
         await Database.Quests.AddAsync(quest);
         await Database.SaveChangesAsync();
+
+        await UpdateDataService.AddTitleTranslation(quest);
+        await UpdateDataService.AddDescTranslation(quest);
 
         return Ok(quest);
     }
