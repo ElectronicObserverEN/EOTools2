@@ -126,7 +126,7 @@ public class UpdateQuestDataService(IGitManagerService git, EoToolsDbContext db,
 
                     if (title is not null)
                     {
-                        questData["name"] = desc?.Translations.Find(t => t.Language == language)?.Translation ?? "";
+                        questData["name"] = title?.Translations.Find(t => t.Language == language)?.Translation ?? "";
                     }
 
                     if (desc is not null)
