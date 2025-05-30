@@ -4,8 +4,8 @@
     <Nullable>enable</Nullable>
     <LangVersion>preview</LangVersion>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-    <AssemblyVersion>2.2.3</AssemblyVersion>
-    <FileVersion>2.2.3</FileVersion>
+    <AssemblyVersion>2.3.0</AssemblyVersion>
+    <FileVersion>2.3.0</FileVersion>
   </PropertyGroup>
   
   <ItemGroup>
@@ -56,6 +56,9 @@
     </Compile>
     <Compile Update="Views\Equipments\EquipmentPickerView.axaml.cs">
       <DependentUpon>EquipmentPickerView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\EquipmentUpgrades\EquipmentUpgradeExtraCostEditView.axaml.cs">
+      <DependentUpon>EquipmentUpgradeExtraCostEditView.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\EquipmentUpgrades\EquipmentUpgradeEditView.axaml.cs">
       <DependentUpon>EquipmentUpgradeEditView.axaml</DependentUpon>

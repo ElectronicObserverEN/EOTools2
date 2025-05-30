@@ -36,5 +36,4 @@ public class EquipmentUpgradeImprovmentCostDetail
 
     [JsonPropertyName("consumable")]
     public List<EquipmentUpgradeImprovmentCostItemDetail> ConsumableDetail { get; set; } = new List<EquipmentUpgradeImprovmentCostItemDetail>();
-
 }

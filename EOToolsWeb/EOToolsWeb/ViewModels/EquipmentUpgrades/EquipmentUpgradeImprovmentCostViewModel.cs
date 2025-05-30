@@ -1,5 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using EOToolsWeb.Shared.EquipmentUpgrades;
 using EOToolsWeb.ViewModels.Equipments;
 using EOToolsWeb.ViewModels.UseItem;
@@ -25,6 +28,8 @@ public partial class EquipmentUpgradeImprovmentCostViewModel(EquipmentManagerVie
     public EquipmentUpgradeImprovmentCostDetailViewModel Cost6To9ViewModel { get; set; } = new(equipmentManager, useItemManager);
     public EquipmentUpgradeImprovmentCostDetailViewModel CostMaxViewModel { get; set; } = new(equipmentManager, useItemManager);
 
+    public ObservableCollection<EquipmentUpgradeImprovmentExtraCostViewModel> ExtraCostViewModel { get; set; } = [];
+
     public EquipmentUpgradeImprovmentCost Model { get; set; } = new();
 
     public async Task LoadFromModel()
@@ -42,6 +47,17 @@ public partial class EquipmentUpgradeImprovmentCostViewModel(EquipmentManagerVie
 
         CostMaxViewModel.Model = Model.CostMax ?? new();
         await CostMaxViewModel.LoadFromModel();
+
+        ExtraCostViewModel.Clear();
+
+        foreach (EquipmentUpgradeExtraCost equipmentUpgradeExtraCost in Model.ExtraCost)
+        {
+            EquipmentUpgradeImprovmentExtraCostViewModel extraCostViewModel = new(useItemManager);
+            extraCostViewModel.Model = equipmentUpgradeExtraCost;
+            extraCostViewModel.LoadFromModel();
+
+            ExtraCostViewModel.Add(extraCostViewModel);
+        }
     }
 
     public void SaveChanges()
@@ -67,5 +83,21 @@ public partial class EquipmentUpgradeImprovmentCostViewModel(EquipmentManagerVie
         {
             Model.CostMax = CostMaxViewModel.Model;
         }
+
+        Model.ExtraCost = [];
+
+        foreach (EquipmentUpgradeImprovmentExtraCostViewModel vm in ExtraCostViewModel)
+        {
+            vm.SaveChanges();
+
+            Model.ExtraCost.Add(vm.Model);
+        }
     }
+
+    [RelayCommand]
+    private void AddExtraCost()
+    {
+        ExtraCostViewModel.Add(new(useItemManager));
+    }
+
 }

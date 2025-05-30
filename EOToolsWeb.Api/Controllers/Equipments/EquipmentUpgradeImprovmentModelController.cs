@@ -27,6 +27,10 @@ public class EquipmentUpgradeImprovmentModelController(EoToolsDbContext db) : Co
             .Include("Costs.Cost6To9.EquipmentDetail")
             .Include("Costs.CostMax.ConsumableDetail")
             .Include("Costs.CostMax.EquipmentDetail")
+            .Include(cost => cost.Costs.ExtraCost)
+            .ThenInclude(extraCost => extraCost.Consumables)
+            .Include(cost => cost.Costs.ExtraCost)
+            .ThenInclude(extraCost => extraCost.Levels)
             .FirstOrDefault(upg => upg.Id == upgradeId);
 
         if (result is null)
@@ -68,6 +72,10 @@ public class EquipmentUpgradeImprovmentModelController(EoToolsDbContext db) : Co
         Database.AddRange(equipmentUpgrade.Costs.Cost6To9.ConsumableDetail);
         Database.AddRange(equipmentUpgrade.Costs.Cost6To9.EquipmentDetail);
 
+        Database.AddRange(equipmentUpgrade.Costs.ExtraCost);
+        Database.AddRange(equipmentUpgrade.Costs.ExtraCost.SelectMany(extra => extra.Consumables));
+        Database.AddRange(equipmentUpgrade.Costs.ExtraCost.SelectMany(extra => extra.Levels));
+
         if (equipmentUpgrade.Costs.CostMax is not null)
         {
             Database.AddRange(equipmentUpgrade.Costs.CostMax);
@@ -104,6 +112,10 @@ public class EquipmentUpgradeImprovmentModelController(EoToolsDbContext db) : Co
             .Include("Costs.Cost6To9.EquipmentDetail")
             .Include("Costs.CostMax.ConsumableDetail")
             .Include("Costs.CostMax.EquipmentDetail")
+            .Include(cost => cost.Costs.ExtraCost)
+            .ThenInclude(extraCost => extraCost.Consumables)
+            .Include(cost => cost.Costs.ExtraCost)
+            .ThenInclude(extraCost => extraCost.Levels)
             .FirstOrDefault(upg => upg.Id == equipmentUpgrade.Id);
 
         if (model is null)
@@ -170,6 +182,25 @@ public class EquipmentUpgradeImprovmentModelController(EoToolsDbContext db) : Co
         Database.AddRange(equipmentUpgrade.Costs.Cost6To9);
         Database.AddRange(equipmentUpgrade.Costs.Cost6To9.ConsumableDetail);
         Database.AddRange(equipmentUpgrade.Costs.Cost6To9.EquipmentDetail);
+
+        foreach (var extra in equipmentUpgrade.Costs.ExtraCost)
+        {
+            extra.Id = 0;
+
+            foreach (var lvl in extra.Levels)
+            {
+                lvl.Id = 0;
+            }
+
+            foreach (var consuamable in extra.Consumables)
+            {
+                consuamable.Id = 0;
+            }
+        }
+
+        Database.AddRange(equipmentUpgrade.Costs.ExtraCost);
+        Database.AddRange(equipmentUpgrade.Costs.ExtraCost.SelectMany(extra => extra.Consumables));
+        Database.AddRange(equipmentUpgrade.Costs.ExtraCost.SelectMany(extra => extra.Levels));
 
         if (equipmentUpgrade.Costs.CostMax is not null)
         {

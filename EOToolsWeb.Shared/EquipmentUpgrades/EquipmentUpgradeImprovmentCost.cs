@@ -37,4 +37,10 @@ public class EquipmentUpgradeImprovmentCost
     [JsonPropertyName("conv")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public EquipmentUpgradeImprovmentCostDetail? CostMax { get; set; } = null;
+
+    /// <summary>
+    /// Extra costs
+    /// </summary>
+    [JsonPropertyName("extra")]
+    public List<EquipmentUpgradeExtraCost> ExtraCost { get; set; } = [];
 }

@@ -355,11 +355,23 @@
 									IsReadOnly="False" />
 							</DataGrid.Columns>
 						</DataGrid>
+
+
+						<TextBlock Margin="5" Text="Extra Costs" />
+
+						<Button Command="{Binding AddExtraCostCommand}" Content="Add" />
+
+						<ListBox ItemsSource="{Binding ExtraCostViewModel}">
+							<ListBox.ItemTemplate>
+								<DataTemplate>
+									<equipmentUpgrades1:EquipmentUpgradeExtraCostEditView DataContext="{Binding}" />
+								</DataTemplate>
+							</ListBox.ItemTemplate>
+						</ListBox>
 					</StackPanel>
 				</StackPanel>
 
 				<StackPanel Orientation="Vertical">
-
 					<Button
 						Margin="5"
 						Command="{Binding AddHelpersCommand}"

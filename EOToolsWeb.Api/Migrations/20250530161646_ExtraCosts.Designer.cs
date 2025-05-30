@@ -3,6 +3,7 @@ using System;
 using EOToolsWeb.Api.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EOToolsWeb.Api.Migrations
 {
     [DbContext(typeof(EoToolsDbContext))]
-    partial class EoToolsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250530161646_ExtraCosts")]
+    partial class ExtraCosts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
@@ -95,6 +98,9 @@ namespace EOToolsWeb.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("CostId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int?>("EquipmentUpgradeExtraCostId")
                         .HasColumnType("INTEGER");
 
@@ -103,6 +109,8 @@ namespace EOToolsWeb.Api.Migrations
                         .HasAnnotation("Relational:JsonPropertyName", "level");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CostId");
 
                     b.HasIndex("EquipmentUpgradeExtraCostId");
 
@@ -241,7 +249,7 @@ namespace EOToolsWeb.Api.Migrations
 
                     b.ToTable("EquipmentUpgradeImprovmentCostDetail");
 
-                    b.HasAnnotation("Relational:JsonPropertyName", "conv");
+                    b.HasAnnotation("Relational:JsonPropertyName", "cost");
                 });
 
             modelBuilder.Entity("EOToolsWeb.Shared.EquipmentUpgrades.EquipmentUpgradeImprovmentCostItemDetail", b =>
@@ -842,9 +850,17 @@ namespace EOToolsWeb.Api.Migrations
 
             modelBuilder.Entity("EOToolsWeb.Shared.EquipmentUpgrades.EquipmentUpgradeExtraCostLevel", b =>
                 {
+                    b.HasOne("EOToolsWeb.Shared.EquipmentUpgrades.EquipmentUpgradeImprovmentCostDetail", "Cost")
+                        .WithMany()
+                        .HasForeignKey("CostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("EOToolsWeb.Shared.EquipmentUpgrades.EquipmentUpgradeExtraCost", null)
                         .WithMany("Levels")
                         .HasForeignKey("EquipmentUpgradeExtraCostId");
+
+                    b.Navigation("Cost");
                 });
 
             modelBuilder.Entity("EOToolsWeb.Shared.EquipmentUpgrades.EquipmentUpgradeHelpersDayModel", b =>
