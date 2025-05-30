@@ -12,6 +12,6 @@ namespace EOToolsWeb.Api.Models.EquipmentUpgrades
         public List<EquipmentUpgradeHelpersDataModel> Helpers { get; set; } = model.Helpers.Select(m => new EquipmentUpgradeHelpersDataModel(m)).ToList();
 
         [JsonPropertyName("costs")]
-        public EquipmentUpgradeImprovmentCost Costs { get; set; } = model.Costs;
+        public EquipmentUpgradeImprovmentCostDataModel Costs { get; set; } = new(model.Costs);
     }
 }

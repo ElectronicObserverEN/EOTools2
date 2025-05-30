@@ -67,6 +67,16 @@ public class UpdateEquipmentUpgradeDataService(IGitManagerService git, EoToolsDb
             .Include("Improvement.Costs.Cost6To9.EquipmentDetail")
             .Include("Improvement.Costs.CostMax.ConsumableDetail")
             .Include("Improvement.Costs.CostMax.EquipmentDetail")
+
+            // Extra Costs
+            .Include(eq => eq.Improvement)
+            .ThenInclude(cost => cost.Costs.ExtraCost)
+            .ThenInclude(extraCost => extraCost.Consumables)
+
+            .Include(eq => eq.Improvement)
+            .ThenInclude(cost => cost.Costs.ExtraCost)
+            .ThenInclude(extraCost => extraCost.Levels)
+
             .ToList();
     }
 
