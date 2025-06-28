@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EOToolsWeb.Api.Services;
 
-public class UsersService(EoToolsDbContext db)
+public class UsersService(EoToolsUsersDbContext db)
 {
-    private EoToolsDbContext Database => db;
+    private EoToolsUsersDbContext Database => db;
 
     public async Task<UserConnection> Login(string username, string password)
     {

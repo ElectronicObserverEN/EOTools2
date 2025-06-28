@@ -9,9 +9,9 @@ namespace EOToolsWeb.Api.Controllers.Users;
 
 [ApiController]
 [Route("[controller]")]
-public class UsersController(EoToolsDbContext db) : ControllerBase
+public class UsersController(EoToolsUsersDbContext db) : ControllerBase
 {
-    private EoToolsDbContext Database { get; } = db;
+    private EoToolsUsersDbContext Database { get; } = db;
 
     [HttpGet]
     [Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]

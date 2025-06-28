@@ -405,3 +405,6 @@ FodyWeavers.xsd
 /EOToolsWeb.Api/Data/EOTools.db-wal
 /EOToolsWeb.Api/Data/DataRepo/
 /EOToolsWeb.Api/Assets/EOTools.zip
+/EOToolsWeb.Api/Data/EOToolsUsers.db
+/EOToolsWeb.Api/Data/EOToolsUsers.db-shm
+/EOToolsWeb.Api/Data/EOToolsUsers.db-wal

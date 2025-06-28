@@ -9,7 +9,6 @@ using EOToolsWeb.Shared.Sessions;
 using EOToolsWeb.Shared.ShipLocks;
 using EOToolsWeb.Shared.Ships;
 using EOToolsWeb.Shared.Updates;
-using EOToolsWeb.Shared.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -18,9 +17,6 @@ namespace EOToolsWeb.Api.Database
     // dotnet ef migrations add <name> --context EOToolsDbContext
     public class EoToolsDbContext : DbContext
     {
-        public DbSet<UserModel> Users { get; set; }
-        public DbSet<UserConnection> UserConnections { get; set; }
-
         public DbSet<EventModel> Events { get; set; }
         public DbSet<UpdateModel> Updates { get; set; }
         public DbSet<SeasonModel> Seasons { get; set; }
@@ -45,21 +41,20 @@ namespace EOToolsWeb.Api.Database
         public DbSet<ShipLockModel> Locks { get; set; }
         public DbSet<ShipLockPhaseModel> LockPhases { get; set; }
 
-        public DbSet<DataChangedLogModel> DataChangeLogs { get; set; }
-
         private ICurrentSession Session { get; }
+        private EoToolsUsersDbContext UserDb { get; }
 
-        
-        /*
-         public EoToolsDbContext()
+
+        /* public EoToolsDbContext()
         {
         }
         */
         
 
-        public EoToolsDbContext(ICurrentSession session)
+        public EoToolsDbContext(ICurrentSession session, EoToolsUsersDbContext userDb)
         {
             Session = session;
+            UserDb = userDb;
         }
 
         public string DbPath => Path.Combine("Data", "EOTools.db");
@@ -104,11 +99,12 @@ namespace EOToolsWeb.Api.Database
                         Changes = changes,
                     };
 
-                    await ChangeTracker.Context.AddAsync(log);
+                    await UserDb.DataChangeLogs.AddAsync(log);
                 }
             }
 
             await SaveChangesAsync();
+            await UserDb.SaveChangesAsync();
         }
 
         private (Dictionary<string, string> before, Dictionary<string, string> after) GetChanges(EntityEntry entry)

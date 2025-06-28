@@ -9,9 +9,9 @@ namespace EOToolsWeb.Api.Controllers.ApplicationLogs;
 
 [ApiController]
 [Route("[controller]")]
-public class LogsController(EoToolsDbContext db) : ControllerBase
+public class LogsController(EoToolsUsersDbContext db) : ControllerBase
 {
-    private EoToolsDbContext Database { get; } = db;
+    private EoToolsUsersDbContext Database { get; } = db;
 
     [HttpGet("{entityName}/{entityId}")]
     [Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]

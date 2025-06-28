@@ -76,10 +76,13 @@ builder.Services.AddAuthentication("TokenAuthentication")
     .AddScheme<AuthenticationSchemeOptions, ApiTokenHandler>("TokenAuthentication", null);
 
 
-await using EoToolsDbContext db = new EoToolsDbContext(new CurrentSession());
+await using EoToolsUsersDbContext userDb = new();
+await using EoToolsDbContext db = new EoToolsDbContext(new CurrentSession(), userDb);
 db.Database.Migrate();
+userDb.Database.Migrate();
 
 builder.Services.AddDbContext<EoToolsDbContext>();
+builder.Services.AddDbContext<EoToolsUsersDbContext>();
 
 if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 {
