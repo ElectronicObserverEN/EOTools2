@@ -10,4 +10,7 @@ public class EquipmentUpgradeExtraCostDataModel(EquipmentUpgradeExtraCost extraC
 
     [JsonPropertyName("consumable")]
     public List<EquipmentUpgradeImprovmentCostItemDetail> Consumables => extraCost.Consumables;
+
+    [JsonPropertyName("equips")]
+    public List<EquipmentUpgradeImprovmentCostItemDetail> Equipments => extraCost.Equipments;
 }

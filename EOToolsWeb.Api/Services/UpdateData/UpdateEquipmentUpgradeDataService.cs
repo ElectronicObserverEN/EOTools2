@@ -75,6 +75,10 @@ public class UpdateEquipmentUpgradeDataService(IGitManagerService git, EoToolsDb
 
             .Include(eq => eq.Improvement)
             .ThenInclude(cost => cost.Costs.ExtraCost)
+            .ThenInclude(extraCost => extraCost.Equipments)
+
+            .Include(eq => eq.Improvement)
+            .ThenInclude(cost => cost.Costs.ExtraCost)
             .ThenInclude(extraCost => extraCost.Levels)
 
             .ToList();

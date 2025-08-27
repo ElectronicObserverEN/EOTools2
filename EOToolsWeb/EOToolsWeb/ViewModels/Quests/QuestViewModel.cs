@@ -1,4 +1,5 @@
-﻿using System.Reactive.Linq;
+﻿using System.Collections.Generic;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -67,8 +68,8 @@ public partial class QuestViewModel : ObservableObject
     public QuestModel? Model { get; set; }
 
     public QuestModel? SelectedTemplate { get; set; } = null;
-    public static QuestModel[] QuestTemplates => new[]
-    {
+
+    public static List<QuestModel> QuestTemplates => [
         new QuestModel
         {
             NameEN = "Battle model",
@@ -99,7 +100,7 @@ public partial class QuestViewModel : ObservableObject
             NameEN = "Expedition model",
             DescEN = "Complete expeditions XX and XX XXX times"
         },
-    };
+    ];
 
     private UpdateManagerViewModel UpdateManager { get; }
     private SeasonManagerViewModel SeasonManager { get; }

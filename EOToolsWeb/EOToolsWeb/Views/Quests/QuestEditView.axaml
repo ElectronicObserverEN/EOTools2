@@ -48,10 +48,14 @@
 				Grid.ColumnSpan="4"
 				Orientation="Horizontal">
 
-				<ComboBox
-					DisplayMemberBinding="{Binding NameEN}"
-					ItemsSource="{Binding QuestTemplates}"
-					SelectedItem="{Binding SelectedTemplate}" />
+				<ComboBox ItemsSource="{Binding QuestTemplates}" SelectedItem="{Binding SelectedTemplate}">
+
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding NameEN}" />
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
 
 				<Button Command="{Binding ApplyTemplateCommand}" Content="Apply template" />
 			</StackPanel>

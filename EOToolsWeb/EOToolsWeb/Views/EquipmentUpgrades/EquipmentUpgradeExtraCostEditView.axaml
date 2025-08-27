@@ -37,6 +37,30 @@
 
 		<Button
 			Margin="5"
+			Command="{Binding AddEquipmentRequirementCommand}"
+			Content="Add" />
+
+		<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding EquipmentsRequired}">
+			<DataGrid.Columns>
+				<DataGridTemplateColumn Header="Equipment">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<StackPanel>
+								<Button Command="{Binding OpenEquipmentPickerCommand}" Content="{Binding Equipment.NameEN}" />
+							</StackPanel>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+
+				<DataGridTextColumn
+					Binding="{Binding Count}"
+					Header="Count required"
+					IsReadOnly="False" />
+			</DataGrid.Columns>
+		</DataGrid>
+
+		<Button
+			Margin="5"
 			Command="{Binding AddUseItemRequirementCommand}"
 			Content="Add" />
 

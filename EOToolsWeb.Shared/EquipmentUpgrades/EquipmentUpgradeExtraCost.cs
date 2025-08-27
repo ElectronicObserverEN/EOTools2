@@ -12,4 +12,7 @@ public class EquipmentUpgradeExtraCost
 
     [JsonPropertyName("consumable")]
     public List<EquipmentUpgradeImprovmentCostItemDetail> Consumables { get; set; } = [];
+
+    [JsonPropertyName("equips")]
+    public List<EquipmentUpgradeImprovmentCostItemDetail> Equipments { get; set; } = [];
 }

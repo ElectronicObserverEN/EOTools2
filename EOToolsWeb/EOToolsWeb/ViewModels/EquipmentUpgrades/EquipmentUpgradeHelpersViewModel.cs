@@ -13,7 +13,7 @@ public partial class EquipmentUpgradeHelpersViewModel(ShipManagerViewModel shipM
 {
     public int ShipId { get; set; }
 
-    public DayOfWeek Day { get; set; }
+    public DayOfWeek Day { get; set; } = (DateTime.UtcNow + new TimeSpan(9, 0, 0)).DayOfWeek;
 
     public ObservableCollection<EquipmentUpgradeHelpersShipViewModel> Ships { get; set; } = new();
     public ObservableCollection<EquipmentUpgradeHelpersDayModel> CanHelpOnDays { get; set; } = new();

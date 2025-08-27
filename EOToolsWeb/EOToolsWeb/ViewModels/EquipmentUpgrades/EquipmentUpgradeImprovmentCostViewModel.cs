@@ -52,9 +52,9 @@ public partial class EquipmentUpgradeImprovmentCostViewModel(EquipmentManagerVie
 
         foreach (EquipmentUpgradeExtraCost equipmentUpgradeExtraCost in Model.ExtraCost)
         {
-            EquipmentUpgradeImprovmentExtraCostViewModel extraCostViewModel = new(useItemManager);
+            EquipmentUpgradeImprovmentExtraCostViewModel extraCostViewModel = new(useItemManager, equipmentManager);
             extraCostViewModel.Model = equipmentUpgradeExtraCost;
-            extraCostViewModel.LoadFromModel();
+            await extraCostViewModel.LoadFromModel();
 
             ExtraCostViewModel.Add(extraCostViewModel);
         }
@@ -97,7 +97,7 @@ public partial class EquipmentUpgradeImprovmentCostViewModel(EquipmentManagerVie
     [RelayCommand]
     private void AddExtraCost()
     {
-        ExtraCostViewModel.Add(new(useItemManager));
+        ExtraCostViewModel.Add(new(useItemManager, equipmentManager));
     }
 
 }

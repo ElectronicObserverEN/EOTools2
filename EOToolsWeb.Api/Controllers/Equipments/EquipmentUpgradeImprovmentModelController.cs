@@ -30,6 +30,8 @@ public class EquipmentUpgradeImprovmentModelController(EoToolsDbContext db) : Co
             .Include(cost => cost.Costs.ExtraCost)
             .ThenInclude(extraCost => extraCost.Consumables)
             .Include(cost => cost.Costs.ExtraCost)
+            .ThenInclude(extraCost => extraCost.Equipments)
+            .Include(cost => cost.Costs.ExtraCost)
             .ThenInclude(extraCost => extraCost.Levels)
             .FirstOrDefault(upg => upg.Id == upgradeId);
 
@@ -74,6 +76,7 @@ public class EquipmentUpgradeImprovmentModelController(EoToolsDbContext db) : Co
 
         Database.AddRange(equipmentUpgrade.Costs.ExtraCost);
         Database.AddRange(equipmentUpgrade.Costs.ExtraCost.SelectMany(extra => extra.Consumables));
+        Database.AddRange(equipmentUpgrade.Costs.ExtraCost.SelectMany(extra => extra.Equipments));
         Database.AddRange(equipmentUpgrade.Costs.ExtraCost.SelectMany(extra => extra.Levels));
 
         if (equipmentUpgrade.Costs.CostMax is not null)
@@ -114,6 +117,8 @@ public class EquipmentUpgradeImprovmentModelController(EoToolsDbContext db) : Co
             .Include("Costs.CostMax.EquipmentDetail")
             .Include(cost => cost.Costs.ExtraCost)
             .ThenInclude(extraCost => extraCost.Consumables)
+            .Include(cost => cost.Costs.ExtraCost)
+            .ThenInclude(extraCost => extraCost.Equipments)
             .Include(cost => cost.Costs.ExtraCost)
             .ThenInclude(extraCost => extraCost.Levels)
             .FirstOrDefault(upg => upg.Id == equipmentUpgrade.Id);
@@ -196,10 +201,16 @@ public class EquipmentUpgradeImprovmentModelController(EoToolsDbContext db) : Co
             {
                 consuamable.Id = 0;
             }
+
+            foreach (var eq in extra.Equipments)
+            {
+                eq.Id = 0;
+            }
         }
 
         Database.AddRange(equipmentUpgrade.Costs.ExtraCost);
         Database.AddRange(equipmentUpgrade.Costs.ExtraCost.SelectMany(extra => extra.Consumables));
+        Database.AddRange(equipmentUpgrade.Costs.ExtraCost.SelectMany(extra => extra.Equipments));
         Database.AddRange(equipmentUpgrade.Costs.ExtraCost.SelectMany(extra => extra.Levels));
 
         if (equipmentUpgrade.Costs.CostMax is not null)

@@ -6,12 +6,14 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using EOToolsWeb.Shared.Equipments;
 using EOToolsWeb.Shared.EquipmentUpgrades;
 using EOToolsWeb.Shared.UseItem;
+using EOToolsWeb.ViewModels.Equipments;
 using EOToolsWeb.ViewModels.UseItem;
 namespace EOToolsWeb.ViewModels.EquipmentUpgrades;
 
-public partial class EquipmentUpgradeImprovmentExtraCostViewModel(UseItemManagerViewModel useItemManager) : ObservableObject
+public partial class EquipmentUpgradeImprovmentExtraCostViewModel(UseItemManagerViewModel useItemManager, EquipmentManagerViewModel eqManager) : ObservableObject
 {
     public UpgradeLevel CurrentLevel { get; set; }
     public ObservableCollection<UpgradeLevel> Levels { get; set; } = new();
@@ -19,12 +21,14 @@ public partial class EquipmentUpgradeImprovmentExtraCostViewModel(UseItemManager
     public List<UpgradeLevel> UpgradeLevels { get; } = Enum.GetValues<UpgradeLevel>().ToList();
 
     public ObservableCollection<EquipmentUpgradeImprovmentCostUseItemRequirementViewModel> UseItemsRequired { get; set; } = new();
+    public ObservableCollection<EquipmentUpgradeImprovmentCostEquipmentRequirementViewModel> EquipmentsRequired { get; set; } = new();
 
     public EquipmentUpgradeExtraCost Model { get; set; } = new();
 
     private UseItemManagerViewModel UseItemManager { get; } = useItemManager;
+    private EquipmentManagerViewModel EquipmentManager { get; } = eqManager;
 
-    public void LoadFromModel()
+    public async Task LoadFromModel()
     {
         UseItemsRequired = [];
 
@@ -35,6 +39,15 @@ public partial class EquipmentUpgradeImprovmentExtraCostViewModel(UseItemManager
             vm.LoadFromModel();
 
             UseItemsRequired.Add(vm);
+        }
+
+        foreach (var eq in Model.Equipments)
+        {
+            EquipmentUpgradeImprovmentCostEquipmentRequirementViewModel vm = new(EquipmentManager);
+            vm.Model = eq;
+            await vm.LoadFromModel();
+
+            EquipmentsRequired.Add(vm);
         }
 
         Levels = [];
@@ -64,8 +77,21 @@ public partial class EquipmentUpgradeImprovmentExtraCostViewModel(UseItemManager
 
             Model.Consumables.Add(vm.Model);
         }
+
+        foreach (EquipmentUpgradeImprovmentCostEquipmentRequirementViewModel vm in EquipmentsRequired)
+        {
+            vm.SaveChanges();
+
+            Model.Equipments.Add(vm.Model);
+        }
     }
-    
+
+    [RelayCommand]
+    public void RemoveUseItemRequirement(EquipmentUpgradeImprovmentCostUseItemRequirementViewModel vm)
+    {
+        UseItemsRequired.Remove(vm);
+    }
+
     [RelayCommand]
     private async Task AddUseItemRequirement()
     {
@@ -88,6 +114,33 @@ public partial class EquipmentUpgradeImprovmentExtraCostViewModel(UseItemManager
     }
 
     [RelayCommand]
+    public void RemoveEquipmentRequirement(EquipmentUpgradeImprovmentCostEquipmentRequirementViewModel vm)
+    {
+        EquipmentsRequired.Remove(vm);
+    }
+
+    [RelayCommand]
+    private async Task AddEquipmentRequirement()
+    {
+        EquipmentModel? pickedEq = await EquipmentManager.ShowPicker.Handle(null);
+
+        if (pickedEq is { })
+        {
+            EquipmentUpgradeImprovmentCostEquipmentRequirementViewModel vm = new(EquipmentManager)
+            {
+                Model = new()
+                {
+                    ItemId = (int)pickedEq.ApiId,
+                },
+            };
+
+            await vm.LoadFromModel();
+
+            EquipmentsRequired.Add(vm);
+        }
+    }
+
+    [RelayCommand]
     private void AddLevel()
     {
         Levels.Add(CurrentLevel);
@@ -97,11 +150,5 @@ public partial class EquipmentUpgradeImprovmentExtraCostViewModel(UseItemManager
     private void RemoveLevel(UpgradeLevel lvl)
     {
         Levels.Remove(lvl);
-    }
-
-    [RelayCommand]
-    public void RemoveUseItemRequirement(EquipmentUpgradeImprovmentCostUseItemRequirementViewModel vm)
-    {
-        UseItemsRequired.Remove(vm);
     }
 }
