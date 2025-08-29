@@ -31,6 +31,7 @@ public partial class EquipmentUpgradeImprovmentExtraCostViewModel(UseItemManager
     public async Task LoadFromModel()
     {
         UseItemsRequired = [];
+        EquipmentsRequired = [];
 
         foreach (var consumable in Model.Consumables)
         {
@@ -62,6 +63,7 @@ public partial class EquipmentUpgradeImprovmentExtraCostViewModel(UseItemManager
     {
         Model.Consumables.Clear();
         Model.Levels.Clear();
+        Model.Equipments.Clear();
 
         foreach (UpgradeLevel level in Levels)
         {
