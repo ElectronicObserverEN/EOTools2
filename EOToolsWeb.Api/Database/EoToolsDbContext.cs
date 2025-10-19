@@ -1,4 +1,5 @@
 ﻿using EOToolsWeb.Shared.ApplicationLog;
+using EOToolsWeb.Shared.EquipmentDevelopment;
 using EOToolsWeb.Shared.Equipments;
 using EOToolsWeb.Shared.EquipmentUpgrades;
 using EOToolsWeb.Shared.Events;
@@ -11,6 +12,7 @@ using EOToolsWeb.Shared.Ships;
 using EOToolsWeb.Shared.Updates;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EOToolsWeb.Api.Database
 {
@@ -36,6 +38,7 @@ namespace EOToolsWeb.Api.Database
         public DbSet<EquipmentModel> Equipments { get; set; }
         public DbSet<EquipmentTranslationModel> EquipmentTranslations { get; set; }
         public DbSet<EquipmentUpgradeModel> EquipmentUpgrades { get; set; }
+        public DbSet<EquipmentRecipeModel> EquipmentRecipes { get; set; }
         public DbSet<EquipmentUpgradeImprovmentModel> Improvments { get; set; }
 
         public DbSet<ShipLockModel> Locks { get; set; }
@@ -45,10 +48,10 @@ namespace EOToolsWeb.Api.Database
         private EoToolsUsersDbContext UserDb { get; }
 
 
-        /* public EoToolsDbContext()
+         /*public EoToolsDbContext()
         {
-        }
-        */
+        }*/
+        
         
 
         public EoToolsDbContext(ICurrentSession session, EoToolsUsersDbContext userDb)
@@ -77,6 +80,26 @@ namespace EOToolsWeb.Api.Database
                 .WithOne(e => e.Improvment)
                 .OnDelete(DeleteBehavior.ClientCascade)
                 .HasForeignKey(nameof(EquipmentUpgradeHelpersModel.EquipmentUpgradeImprovmentModelId));
+
+            var shipTypeConverter = new ValueConverter<List<ShipTypes>?, string?>(
+                v => v == null ? null : string.Join(',', v.Select(e => ((int)e).ToString())),
+                v => v == null ? null : v.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                      .Select(s => (ShipTypes)int.Parse(s))
+                      .ToList());
+
+            var intConverter = new ValueConverter<List<int>?, string?>(
+                v => v == null ? null : string.Join(',', v.Select(e => e.ToString())),
+                v => v == null ? null : v.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                      .Select(s => int.Parse(s))
+                      .ToList());
+
+            modelBuilder.Entity<EquipmentRecipeModel>()
+                .Property(e => e.ShipTypes)
+                .HasConversion(shipTypeConverter);
+
+            modelBuilder.Entity<EquipmentRecipeModel>()
+                .Property(e => e.Ships)
+                .HasConversion(intConverter);
         }
 
         public async Task TrackAndSaveChanges()
