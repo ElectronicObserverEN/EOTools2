@@ -144,5 +144,9 @@
     <Compile Update="Views\MapEditor\MapRenderComponent.axaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\EquipmentUpgrades\EquipmentUpgradeCostEditView.axaml.cs">
+      <DependentUpon>EquipmentUpgradeCostEditView.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 </Project>
