@@ -4,8 +4,8 @@
     <Nullable>enable</Nullable>
     <LangVersion>preview</LangVersion>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-    <AssemblyVersion>2.3.2</AssemblyVersion>
-    <FileVersion>2.3.2</FileVersion>
+    <AssemblyVersion>2.4.0</AssemblyVersion>
+    <FileVersion>2.4.0</FileVersion>
   </PropertyGroup>
   
   <ItemGroup>
@@ -23,15 +23,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.2.2" />
-    <PackageReference Include="Avalonia.Controls.ColorPicker" Version="11.2.2" />
-    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.2.2" />
+    <PackageReference Include="Avalonia" Version="11.3.7" />
+    <PackageReference Include="Avalonia.Controls.ColorPicker" Version="11.3.7" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.3.7" />
     <PackageReference Include="Avalonia.Controls.ItemsRepeater" Version="11.1.5" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.2" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.2" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="11.2.2" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.7" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.7" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="11.3.7" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.2.2" />
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.7" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0-preview3" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="ReactiveUI" Version="20.1.63" />
@@ -42,6 +42,24 @@
   </ItemGroup>
 
   <ItemGroup>
+    <AvaloniaResource Update="Assets\MapEditor.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MapEditor.resx</DependentUpon>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\MapEditor.resx">
+      <SubType>Designer</SubType>
+      <LastGenOutput>MapEditor.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </AvaloniaResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Assets\MapEditor.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MapEditor.resx</DependentUpon>
+    </Compile>
     <Compile Update="Control\Grid\PaginationControl.axaml.cs">
       <DependentUpon>PaginationControl.axaml</DependentUpon>
     </Compile>
@@ -122,6 +140,9 @@
     </Compile>
     <Compile Update="Views\Users\UserEditView.axaml.cs">
       <DependentUpon>UserEditView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\MapEditor\MapRenderComponent.axaml.cs">
+      <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
 </Project>

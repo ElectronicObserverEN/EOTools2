@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using Avalonia.ReactiveUI;
 using EOToolsWeb.Shared.Equipments;
 using EOToolsWeb.Shared.EquipmentUpgrades;
@@ -77,6 +78,7 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
 
         ViewModel!.ShowDialogService!.ShowDialog = DoShowDialog;
         ViewModel!.ShowDialogService!.ShowWindow = DoShowWindow;
+        ViewModel!.ShowDialogService!.ShowFolderPicker = DoShowFolderPickerAsync;
 
         if (LoginViewModel is null || MainViewModel is null)
         {
@@ -298,6 +300,22 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
 
         bool result = await dialog.ShowDialog<bool?>(this) is true;
         interaction.SetOutput(result);
+    }
+
+    private async Task<IStorageFolder?> DoShowFolderPickerAsync(string? baseFolder)
+    {
+        IStorageProvider storage = TopLevel.GetTopLevel(this)!.StorageProvider;
+
+        IStorageFolder? folder = string.IsNullOrEmpty(baseFolder) ? null : await storage.TryGetFolderFromPathAsync(new Uri(baseFolder));
+
+        IReadOnlyList<IStorageFolder> result = await storage.OpenFolderPickerAsync(new()
+        {
+            AllowMultiple = false,
+            SuggestedStartLocation = folder,
+            Title = "Pick a folder",
+        });
+
+        return result.FirstOrDefault();
     }
 
     private async Task<bool> DoShowWindow(Window window)

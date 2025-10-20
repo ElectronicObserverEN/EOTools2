@@ -23,6 +23,7 @@ using EOToolsWeb.Services;
 using EOToolsWeb.Shared.Sessions;
 using EOToolsWeb.ViewModels.ApplicationLog;
 using EOToolsWeb.ViewModels.FitBonus;
+using EOToolsWeb.ViewModels.MapEditor;
 using EOToolsWeb.ViewModels.Quests;
 using EOToolsWeb.ViewModels.Seasons;
 using EOToolsWeb.ViewModels.Users;
@@ -98,6 +99,10 @@ namespace EOToolsWeb
             // Quests
             collection.AddScoped<QuestManagerViewModel>();
             collection.AddScoped<QuestViewModel>();
+            
+            // Map editor
+            collection.AddScoped<MapEditorViewModel>();
+            collection.AddScoped<NodeDataManager>();
 
             // Settings
             collection.AddScoped<SettingsModel>();

@@ -16,6 +16,7 @@ using EOToolsWeb.ViewModels.EquipmentUpgrades;
 using EOToolsWeb.ViewModels.Events;
 using EOToolsWeb.ViewModels.FitBonus;
 using EOToolsWeb.ViewModels.Login;
+using EOToolsWeb.ViewModels.MapEditor;
 using EOToolsWeb.ViewModels.Quests;
 using EOToolsWeb.ViewModels.Seasons;
 using EOToolsWeb.ViewModels.Settings;
@@ -66,6 +67,8 @@ public partial class MainViewModel : ViewModelBase
 
     public SettingsViewModel Settings { get; }
     
+    public MapEditorViewModel MapEditor { get; }
+
     private UsersManagerViewModel UsersManager { get; }
     private ICurrentSession CurrentSession { get; }
 
@@ -104,6 +107,7 @@ public partial class MainViewModel : ViewModelBase
         MapTranslationManager = provider.GetRequiredService<MapTranslationManager>();
         UsersManager = provider.GetRequiredService<UsersManagerViewModel>();
         CurrentSession = provider.GetRequiredService<ICurrentSession>();
+        MapEditor = provider.GetRequiredService<MapEditorViewModel>();
         ServiceProvider = provider;
 
         PropertyChanging += ViewModelChanging;
@@ -219,6 +223,12 @@ public partial class MainViewModel : ViewModelBase
         await MapTranslationManager.GetNonTranslatedDataAndPushItToTheApi();
     }
 
+    [RelayCommand]
+    private async Task OpenMapEditor()
+    {
+        CurrentViewModel = MapEditor;
+    }
+    
     [RelayCommand]
     private async Task OpenUserSettings()
     {

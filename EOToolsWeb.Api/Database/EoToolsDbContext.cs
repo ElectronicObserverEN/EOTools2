@@ -2,6 +2,7 @@
 using EOToolsWeb.Shared.Equipments;
 using EOToolsWeb.Shared.EquipmentUpgrades;
 using EOToolsWeb.Shared.Events;
+using EOToolsWeb.Shared.MapData;
 using EOToolsWeb.Shared.Maps;
 using EOToolsWeb.Shared.Quests;
 using EOToolsWeb.Shared.Seasons;
@@ -40,6 +41,8 @@ namespace EOToolsWeb.Api.Database
 
         public DbSet<ShipLockModel> Locks { get; set; }
         public DbSet<ShipLockPhaseModel> LockPhases { get; set; }
+        
+        public DbSet<NodeModel> Nodes { get; set; }
 
         private ICurrentSession Session { get; }
         private EoToolsUsersDbContext UserDb { get; }

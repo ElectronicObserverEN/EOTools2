@@ -68,6 +68,11 @@
 				Command="{Binding OpenLogViewCommand}"
 				Header="Logs"
 				IsVisible="{Binding CurrentUserKind, Converter={StaticResource IsAdminConverter}, FallbackValue={x:False}}" />
+			
+			<MenuItem
+				Command="{Binding OpenMapEditorCommand}"
+				Header="Map editor"
+				IsVisible="{Binding CurrentUserKind, Converter={StaticResource IsAdminConverter}, FallbackValue={x:False}}" />
 
 			<MenuItem Header="Actions" IsVisible="{Binding CurrentUserKind, Converter={StaticResource IsAdminConverter}, FallbackValue={x:False}}">
 				<MenuItem Command="{Binding UpdateMapsTranslationCommand}" Header="Get missing map data and create translations" />

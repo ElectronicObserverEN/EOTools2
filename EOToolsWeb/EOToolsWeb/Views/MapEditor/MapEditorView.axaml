@@ -1,0 +1,52 @@
+<UserControl
+	x:Class="EOToolsWeb.Views.MapEditor.MapEditorView"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:mapeditor="clr-namespace:EOToolsWeb.ViewModels.MapEditor"
+	xmlns:mapEditor="clr-namespace:EOToolsWeb.Views.MapEditor"
+	d:DesignHeight="450"
+	d:DesignWidth="800"
+	x:DataType="mapeditor:MapEditorViewModel"
+	mc:Ignorable="d">
+	<Design.DataContext>
+		<!--
+			This only sets the DataContext for the previewer in an IDE,
+			to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
+		-->
+		<mapeditor:MapEditorViewModel />
+	</Design.DataContext>
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"></RowDefinition>
+			<RowDefinition Height="Auto"></RowDefinition>
+			<RowDefinition Height="Auto"></RowDefinition>
+			<RowDefinition Height="Auto"></RowDefinition>
+		</Grid.RowDefinitions>
+		
+		<StackPanel Grid.Row="0" Orientation="Horizontal">
+			<Button Content="{Binding FolderButtonText}" Command="{Binding OpenFolderPickerCommand}"></Button>
+			<ComboBox ItemsSource="{Binding MapList}" SelectedItem="{Binding SelectedMap}"></ComboBox>
+		</StackPanel>
+		
+		<StackPanel Grid.Row="1" Orientation="Horizontal">
+			<Button Content="Load asset mapping" Command="{Binding DisplayIconMappingCommand}"></Button>
+			<ComboBox ItemsSource="{Binding AssetList}" SelectedItem="{Binding SelectedAsset}"></ComboBox>
+		</StackPanel>
+		
+		<StackPanel Grid.Row="2" Orientation="Horizontal">
+			<TextBlock Text="Current node : "></TextBlock>
+			<ComboBox ItemsSource="{Binding NodeList}" DisplayMemberBinding="{Binding Code}" SelectedItem="{Binding SelectedNodeModel}"></ComboBox>
+			
+			<TextBlock Text="Name"></TextBlock>
+			<TextBox Text="{Binding SelectedNodeViewModel.Code}"></TextBox>
+			
+			<TextBlock Text="Type"></TextBlock>
+			<ComboBox ItemsSource="{Binding NodeTypes}" SelectedItem="{Binding SelectedNodeViewModel.NodeType}"></ComboBox>
+		</StackPanel>
+		
+		<mapEditor:MapRenderComponent Grid.Row="3" Images="{Binding MapImages}"></mapEditor:MapRenderComponent>
+	</Grid>
+</UserControl>

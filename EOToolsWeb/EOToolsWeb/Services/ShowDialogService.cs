@@ -2,6 +2,7 @@
 using EOToolsWeb.ViewModels;
 using System;
 using System.Threading.Tasks;
+using Avalonia.Platform.Storage;
 
 namespace EOToolsWeb.Services
 {
@@ -27,5 +28,13 @@ namespace EOToolsWeb.Services
         };
 
         public Func<MessageViewModel, Task> ShowDialog { get; set; } = _ => Task.CompletedTask;
+        
+        public Func<string?, Task<IStorageFolder?>> ShowFolderPicker { get; set; } = _ =>
+        {
+            TaskCompletionSource<IStorageFolder?> result = new();
+            result.SetResult(null);
+
+            return result.Task;
+        };
     }
 }
