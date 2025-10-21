@@ -102,6 +102,7 @@ namespace EOToolsWeb
             
             // Map editor
             collection.AddScoped<MapEditorViewModel>();
+            collection.AddScoped<MapDisplayViewModel>();
             collection.AddScoped<NodeDataManager>();
 
             // Settings

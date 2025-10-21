@@ -4,34 +4,41 @@ using System.Linq;
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using EOToolsWeb.ViewModels.MapEditor;
 
 namespace EOToolsWeb.Views.MapEditor;
 
 public class MapRenderComponent : Avalonia.Controls.Control
 {
-    public static readonly StyledProperty<ObservableCollection<MapElementModel>> ImagesProperty =
-        AvaloniaProperty.Register<MapRenderComponent, ObservableCollection<MapElementModel>>(nameof(Images));
+    public static readonly StyledProperty<MapDisplayViewModel> ViewModelProperty =
+        AvaloniaProperty.Register<MapRenderComponent, MapDisplayViewModel>(nameof(ViewModel));
 
-    public ObservableCollection<MapElementModel> Images
+    public MapDisplayViewModel ViewModel
     {
-        get => GetValue(ImagesProperty);
-        set => SetValue(ImagesProperty, value);
+        get => GetValue(ViewModelProperty);
+        set => SetValue(ViewModelProperty, value);
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
-        if (change.Property == ImagesProperty)
+        if (change.Property == ViewModelProperty)
         {
-            var (oldValue, newValue) = change.GetOldAndNewValue<ObservableCollection<MapElementModel>>();
-            oldValue?.CollectionChanged -= OnImageCollectionChanged;
-            newValue?.CollectionChanged += OnImageCollectionChanged;
+            var (oldValue, newValue) = change.GetOldAndNewValue<MapDisplayViewModel>();
+            oldValue?.MapImages?.CollectionChanged -= OnImageCollectionChanged;
+            newValue?.MapImages?.CollectionChanged += OnImageCollectionChanged;
+
+            /*newValue?.GetImage = async () =>
+            {
+                this.
+            };*/
         }
+        
         base.OnPropertyChanged(change);
     }
 
     private void OnImageCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        if (Images.FirstOrDefault()?.Image is {} image)
+        if (ViewModel.MapImages.FirstOrDefault()?.Image is {} image)
         {
             Height = image.Size.Height;
             Width = image.Size.Width;
@@ -45,7 +52,7 @@ public class MapRenderComponent : Avalonia.Controls.Control
     {
         bool first = true;
         
-        foreach (MapElementModel image in Images)
+        foreach (MapElementModel image in ViewModel.MapImages)
         {
             if (first)
             {

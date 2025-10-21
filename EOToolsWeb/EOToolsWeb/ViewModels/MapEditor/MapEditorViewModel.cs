@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -17,12 +18,13 @@ using EOToolsWeb.Models.MapEditor.Deserialization.SpriteSheet;
 using EOToolsWeb.Services;
 using EOToolsWeb.Shared.MapData;
 using EOToolsWeb.Views.MapEditor;
+using SkiaSharp;
 
 namespace EOToolsWeb.ViewModels.MapEditor;
 
 public partial class MapEditorViewModel : ViewModelBase
 {
-    public ObservableCollection<MapElementModel> MapImages { get; set; } = [];
+    public MapDisplayViewModel MapDisplayViewModel { get; }
 
     public string Error { get; set; } = "";
 
@@ -42,7 +44,13 @@ public partial class MapEditorViewModel : ViewModelBase
 
     private IAvaloniaShowDialogService DialogService { get; }
 
-    [ObservableProperty] public partial NodeModel SelectedNodeModel { get; set; } = new NodeModel();
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(DisplayPreviousNodeCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DisplayNextNodeCommand))]
+    public partial NodeModel SelectedNodeModel { get; set; } = new NodeModel();
+    
+    public bool SelectedNodeIsNotFirstNode => NodeList.Count is not 0 && SelectedNodeModel.Number != NodeList.Min(node => node.Number);
+    public bool SelectedNodeIsNotLastNode => NodeList.Count is not 0 && SelectedNodeModel.Number != NodeList.Max(node => node.Number);
 
     public NodeViewModel SelectedNodeViewModel { get; set; } = new(new());
     
@@ -52,12 +60,15 @@ public partial class MapEditorViewModel : ViewModelBase
     private int CurrentWorldId { get; set; }
     private int CurrentMapId { get; set; }
     
-    private NodeDataManager  NodeDataManager { get; }
+    private double ExportScaling { get; set; } = 1.0;
     
-    public MapEditorViewModel(IAvaloniaShowDialogService dialogService, NodeDataManager nodeManager)
+    private NodeDataManager NodeDataManager { get; }
+    
+    public MapEditorViewModel(IAvaloniaShowDialogService dialogService, NodeDataManager nodeManager, MapDisplayViewModel displayViewModel)
     {
         DialogService = dialogService;
         NodeDataManager = nodeManager;
+        MapDisplayViewModel = displayViewModel;
 
         PropertyChanged += OnWorldPathChanged;
         PropertyChanged += OnSelectedMapChanged;
@@ -76,7 +87,7 @@ public partial class MapEditorViewModel : ViewModelBase
 
         if (crop is null) return;
 
-        MapImages.Add(new MapElementModel(crop, SelectedNodeViewModel.X - (crop.Size.Width / 2), SelectedNodeViewModel.Y - (crop.Size.Height / 2)));
+        MapDisplayViewModel.MapImages.Add(new MapElementModel(crop, SelectedNodeViewModel.X - (crop.Size.Width / 2), SelectedNodeViewModel.Y - (crop.Size.Height / 2)));
     }
 
     private async void OnSelectedNodeChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -106,12 +117,12 @@ public partial class MapEditorViewModel : ViewModelBase
 
     private void ClearMap()
     {
-        foreach (IDisposable croppedBitmap in MapImages.Select(el => el.Image).OfType<IDisposable>())
+        foreach (IDisposable croppedBitmap in MapDisplayViewModel.MapImages.Select(el => el.Image).OfType<IDisposable>())
         {
             croppedBitmap.Dispose();
         }
 
-        MapImages.Clear();
+        MapDisplayViewModel.MapImages.Clear();
     }
 
     private void OnSelectedAssetChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -126,7 +137,7 @@ public partial class MapEditorViewModel : ViewModelBase
 
         if (crop is null) return;
 
-        MapImages.Add(new MapElementModel(crop, 0, 0));
+        MapDisplayViewModel.MapImages.Add(new MapElementModel(crop, 0, 0));
     }
 
     private async void OnWorldPathChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -232,7 +243,7 @@ public partial class MapEditorViewModel : ViewModelBase
 
         CroppedBitmap crop = new CroppedBitmap(image, PixelRect.FromRect(rect, 1));
 
-        MapImages.Add(new MapElementModel(crop, 0, 0));
+        MapDisplayViewModel.MapImages.Add(new MapElementModel(crop, 0, 0));
     }
 
     private CroppedBitmap? GetAssetBitmap(NodeType assetIndex)
@@ -271,7 +282,7 @@ public partial class MapEditorViewModel : ViewModelBase
 
         CroppedBitmap crop = new CroppedBitmap(image, PixelRect.FromRect(rect, 1));
 
-        MapImages.Add(new MapElementModel(crop, 0, 0));
+        MapDisplayViewModel.MapImages.Add(new MapElementModel(crop, 0, 0));
     }
 
     private int GetAssetIdFromNodeType(NodeType nodeType) => nodeType switch
@@ -323,5 +334,66 @@ public partial class MapEditorViewModel : ViewModelBase
         if (spriteSheet is null) return;
 
         AssetList = spriteSheet.Frames.Keys.ToList();
+    }
+    
+    [RelayCommand(CanExecute = nameof(SelectedNodeIsNotFirstNode))]
+    private void DisplayPreviousNode()
+    {
+        if (NodeList.Count is 0) return;
+
+        int nodeNo = SelectedNodeModel.Number - 1;
+
+        if (NodeList.Find(node => node.Number == nodeNo) is { } nodeFound)
+        {
+            SelectedNodeModel = nodeFound;
+        }
+    }
+
+    [RelayCommand(CanExecute = nameof(SelectedNodeIsNotLastNode))]
+    private void DisplayNextNode()
+    {
+        if (NodeList.Count is 0) return;
+        
+        int nodeNo = SelectedNodeModel.Number + 1;
+
+        if (NodeList.Find(node => node.Number == nodeNo) is { } nodeFound)
+        {
+            SelectedNodeModel = nodeFound;
+        }
+    }
+    
+    [RelayCommand]
+    private async Task ExportMap()
+    {
+        try
+        {
+            // https://github.com/AvaloniaUI/Avalonia/discussions/13772
+            var croppedBitmap = MapDisplayViewModel.GetMapImage();
+            var image = MapDisplayViewModel.GetMapImage().Source as Bitmap;
+            Stream xxStream = new MemoryStream();
+            image.Save(xxStream);
+            xxStream.Seek(0, SeekOrigin.Begin);
+            var skBitmapSource = SKBitmap.Decode(xxStream);
+
+            using var skBitmapCrop = new SKBitmap(croppedBitmap.SourceRect.Width, croppedBitmap.SourceRect.Height);
+            using var skCanvas = new SKCanvas(skBitmapCrop);
+            {
+                var source = new SKRect(croppedBitmap.SourceRect.X, croppedBitmap.SourceRect.Y, croppedBitmap.SourceRect.Width+ croppedBitmap.SourceRect.X, croppedBitmap.SourceRect.Height+ croppedBitmap.SourceRect.Y);
+                var dest = new SKRect(0, 0, croppedBitmap.SourceRect.Width , croppedBitmap.SourceRect.Height);
+
+                skCanvas.DrawBitmap(skBitmapSource, source, dest);
+            }
+            
+            using MemoryStream memoryStream = new MemoryStream();
+            
+            SKData d = SKImage.FromBitmap(skBitmapCrop).Encode(SKEncodedImageFormat.Png, 100);
+            d.SaveTo(memoryStream);
+            
+            await DialogService.SaveFile(memoryStream, "png");
+        }
+        catch (Exception ex)
+        {
+            // nothing, ignore
+        }
     }
 }

@@ -36,5 +36,9 @@ namespace EOToolsWeb.Services
 
             return result.Task;
         };
+
+        public Func<object?, string, Task> SaveFileImplementation { private get; set; } = (_, _) => Task.CompletedTask; 
+        
+        public Task SaveFile(object? content, string extension) => SaveFileImplementation(content, extension);
     }
 }

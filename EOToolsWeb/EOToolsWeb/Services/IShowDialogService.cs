@@ -13,5 +13,7 @@ namespace EOToolsWeb.Services
         public Func<MessageViewModel, Task> ShowDialog { get; set; }
         
         public Func<string?, Task<IStorageFolder?>> ShowFolderPicker { get; set; }
+
+        public Task SaveFile(object? content, string extension);
     }
 }

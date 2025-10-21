@@ -31,8 +31,11 @@ using EOToolsWeb.Views.Updates;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia.Input;
+using Avalonia.Media.Imaging;
 
 namespace EOToolsWeb.Views;
 
@@ -79,6 +82,7 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         ViewModel!.ShowDialogService!.ShowDialog = DoShowDialog;
         ViewModel!.ShowDialogService!.ShowWindow = DoShowWindow;
         ViewModel!.ShowDialogService!.ShowFolderPicker = DoShowFolderPickerAsync;
+        ViewModel!.ShowDialogService!.SaveFileImplementation = SaveFile;
 
         if (LoginViewModel is null || MainViewModel is null)
         {
@@ -291,6 +295,68 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         if (topLevel.Clipboard is null) return;
 
         interaction.SetOutput(await topLevel.Clipboard.GetTextAsync());
+    }
+    
+    /// <summary>
+    /// This isn't tested yet
+    /// </summary>
+    /// <returns></returns>
+    /*private async Task<object?> ReadClipboard()
+    {
+        TopLevel? topLevel = GetTopLevel(this);
+
+        if (topLevel is null) return null; 
+        if (topLevel.Clipboard is null) return null;
+
+        using IAsyncDataTransfer? data = await topLevel.Clipboard.TryGetDataAsync();
+        
+        if (data is null) return null;
+        if (data.Items.Count is 0)  return null;
+
+        return await data.Items[0].TryGetRawAsync(data.Formats[0]);
+    }*/
+    
+    private async Task SaveFile(object? content, string format)
+    {
+        TopLevel? topLevel = GetTopLevel(this);
+
+        if (topLevel is null) return; 
+        if (topLevel.Clipboard is null) return;
+
+        using DataTransfer data = new DataTransfer();
+
+        if (content is Bitmap image)
+        {
+            IStorageFile? file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions()
+            {
+                DefaultExtension = format,
+                ShowOverwritePrompt = true,
+            });
+            
+            if (file is null) return;
+
+            await using Stream stream = await file.OpenWriteAsync();
+            image.Save(stream);
+        }
+        else if (content is Stream stream)
+        {
+            IStorageFile? file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions()
+            {
+                DefaultExtension = format,
+                ShowOverwritePrompt = true,
+            });
+            
+            if (file is null) return;
+
+            await using Stream streamDest = await file.OpenWriteAsync();
+            stream.Position = 0;
+            await stream.CopyToAsync(streamDest);
+        }
+        else
+        {
+            // TODO
+            throw new NotSupportedException();
+        }
     }
 
     private async Task DoShowEditDialogAsync(IInteractionContext<QuestViewModel, bool> interaction)

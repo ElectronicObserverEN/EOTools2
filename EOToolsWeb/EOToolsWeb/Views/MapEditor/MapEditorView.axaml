@@ -29,6 +29,7 @@
 		<StackPanel Grid.Row="0" Orientation="Horizontal">
 			<Button Content="{Binding FolderButtonText}" Command="{Binding OpenFolderPickerCommand}"></Button>
 			<ComboBox ItemsSource="{Binding MapList}" SelectedItem="{Binding SelectedMap}"></ComboBox>
+			<Button Content="Export map" Command="{Binding ExportMapCommand}"></Button>
 		</StackPanel>
 		
 		<StackPanel Grid.Row="1" Orientation="Horizontal">
@@ -40,6 +41,9 @@
 			<TextBlock Text="Current node : "></TextBlock>
 			<ComboBox ItemsSource="{Binding NodeList}" DisplayMemberBinding="{Binding Code}" SelectedItem="{Binding SelectedNodeModel}"></ComboBox>
 			
+			<Button Content="Previous" Command="{Binding DisplayPreviousNodeCommand}"></Button>
+			<Button Content="Next" Command="{Binding DisplayNextNodeCommand}"></Button>
+			
 			<TextBlock Text="Name"></TextBlock>
 			<TextBox Text="{Binding SelectedNodeViewModel.Code}"></TextBox>
 			
@@ -47,6 +51,6 @@
 			<ComboBox ItemsSource="{Binding NodeTypes}" SelectedItem="{Binding SelectedNodeViewModel.NodeType}"></ComboBox>
 		</StackPanel>
 		
-		<mapEditor:MapRenderComponent Grid.Row="3" Images="{Binding MapImages}"></mapEditor:MapRenderComponent>
+		<mapEditor:MapRenderComponent Grid.Row="3" ViewModel="{Binding MapDisplayViewModel}"></mapEditor:MapRenderComponent>
 	</Grid>
 </UserControl>
