@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using Avalonia;
 using Avalonia.Media;
@@ -26,11 +27,6 @@ public class MapRenderComponent : Avalonia.Controls.Control
             var (oldValue, newValue) = change.GetOldAndNewValue<MapDisplayViewModel>();
             oldValue?.MapImages?.CollectionChanged -= OnImageCollectionChanged;
             newValue?.MapImages?.CollectionChanged += OnImageCollectionChanged;
-
-            /*newValue?.GetImage = async () =>
-            {
-                this.
-            };*/
         }
         
         base.OnPropertyChanged(change);

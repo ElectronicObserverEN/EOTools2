@@ -57,6 +57,11 @@
 			<NumericUpDown Value="{Binding MapDisplayViewModel.ExportWidth}"></NumericUpDown>
 			<TextBlock Text="Export height"></TextBlock>
 			<NumericUpDown Value="{Binding MapDisplayViewModel.ExportHeight}"></NumericUpDown>
+			
+			<TextBlock Text="Offset width"></TextBlock>
+			<NumericUpDown Value="{Binding MapDisplayViewModel.OffsetWidth}"></NumericUpDown>
+			<TextBlock Text="Offset height"></TextBlock>
+			<NumericUpDown Value="{Binding MapDisplayViewModel.OffsetHeight}"></NumericUpDown>
 		</StackPanel>
 		
 		<mapEditor:MapRenderComponent Grid.Row="4" ViewModel="{Binding MapDisplayViewModel}"></mapEditor:MapRenderComponent>
