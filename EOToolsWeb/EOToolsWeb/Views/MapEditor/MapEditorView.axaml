@@ -24,6 +24,7 @@
 			<RowDefinition Height="Auto"></RowDefinition>
 			<RowDefinition Height="Auto"></RowDefinition>
 			<RowDefinition Height="Auto"></RowDefinition>
+			<RowDefinition Height="Auto"></RowDefinition>
 		</Grid.RowDefinitions>
 		
 		<StackPanel Grid.Row="0" Orientation="Horizontal">
@@ -51,6 +52,13 @@
 			<ComboBox ItemsSource="{Binding NodeTypes}" SelectedItem="{Binding SelectedNodeViewModel.NodeType}"></ComboBox>
 		</StackPanel>
 		
-		<mapEditor:MapRenderComponent Grid.Row="3" ViewModel="{Binding MapDisplayViewModel}"></mapEditor:MapRenderComponent>
+		<StackPanel Grid.Row="3"  Orientation="Horizontal">
+			<TextBlock Text="Export width"></TextBlock>
+			<NumericUpDown Value="{Binding MapDisplayViewModel.ExportWidth}"></NumericUpDown>
+			<TextBlock Text="Export height"></TextBlock>
+			<NumericUpDown Value="{Binding MapDisplayViewModel.ExportHeight}"></NumericUpDown>
+		</StackPanel>
+		
+		<mapEditor:MapRenderComponent Grid.Row="4" ViewModel="{Binding MapDisplayViewModel}"></mapEditor:MapRenderComponent>
 	</Grid>
 </UserControl>

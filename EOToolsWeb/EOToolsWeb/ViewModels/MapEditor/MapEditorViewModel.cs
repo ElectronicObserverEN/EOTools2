@@ -60,8 +60,6 @@ public partial class MapEditorViewModel : ViewModelBase
     private int CurrentWorldId { get; set; }
     private int CurrentMapId { get; set; }
     
-    private double ExportScaling { get; set; } = 1.0;
-    
     private NodeDataManager NodeDataManager { get; }
     
     public MapEditorViewModel(IAvaloniaShowDialogService dialogService, NodeDataManager nodeManager, MapDisplayViewModel displayViewModel)
@@ -244,6 +242,9 @@ public partial class MapEditorViewModel : ViewModelBase
         CroppedBitmap crop = new CroppedBitmap(image, PixelRect.FromRect(rect, 1));
 
         MapDisplayViewModel.MapImages.Add(new MapElementModel(crop, 0, 0));
+
+        MapDisplayViewModel.ExportHeight = mapFrame.FrameDefinitionModel.Height;
+        MapDisplayViewModel.ExportWidth = mapFrame.FrameDefinitionModel.Width;
     }
 
     private CroppedBitmap? GetAssetBitmap(NodeType assetIndex)
@@ -367,29 +368,9 @@ public partial class MapEditorViewModel : ViewModelBase
     {
         try
         {
-            // https://github.com/AvaloniaUI/Avalonia/discussions/13772
-            var croppedBitmap = MapDisplayViewModel.GetMapImage();
-            var image = MapDisplayViewModel.GetMapImage().Source as Bitmap;
-            Stream xxStream = new MemoryStream();
-            image.Save(xxStream);
-            xxStream.Seek(0, SeekOrigin.Begin);
-            var skBitmapSource = SKBitmap.Decode(xxStream);
-
-            using var skBitmapCrop = new SKBitmap(croppedBitmap.SourceRect.Width, croppedBitmap.SourceRect.Height);
-            using var skCanvas = new SKCanvas(skBitmapCrop);
-            {
-                var source = new SKRect(croppedBitmap.SourceRect.X, croppedBitmap.SourceRect.Y, croppedBitmap.SourceRect.Width+ croppedBitmap.SourceRect.X, croppedBitmap.SourceRect.Height+ croppedBitmap.SourceRect.Y);
-                var dest = new SKRect(0, 0, croppedBitmap.SourceRect.Width , croppedBitmap.SourceRect.Height);
-
-                skCanvas.DrawBitmap(skBitmapSource, source, dest);
-            }
+            using MemoryStream stream = MapDisplayViewModel.GetImageMerged();
             
-            using MemoryStream memoryStream = new MemoryStream();
-            
-            SKData d = SKImage.FromBitmap(skBitmapCrop).Encode(SKEncodedImageFormat.Png, 100);
-            d.SaveTo(memoryStream);
-            
-            await DialogService.SaveFile(memoryStream, "png");
+            await DialogService.SaveFile(stream, "png");
         }
         catch (Exception ex)
         {
