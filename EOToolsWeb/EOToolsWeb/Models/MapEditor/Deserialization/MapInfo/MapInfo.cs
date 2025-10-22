@@ -4,20 +4,23 @@ namespace EOToolsWeb.Models.MapEditor.Deserialization.MapInfo{
 
     public class MapInfo
     {
+        [JsonPropertyName("labels")] 
+        public List<Label> Labels { get; set; } = [];
+        
         [JsonPropertyName("bg")]
-        public List<object> Bg { get; set; }
+        public List<object> Bg { get; set; }= [];
 
         [JsonPropertyName("spots")]
-        public List<Spot> Spots { get; set; }
+        public List<Spot> Spots { get; set; }= [];
 
         [JsonPropertyName("airbases")]
-        public List<AirBase> AirBases { get; set; }
+        public List<AirBase> AirBases { get; set; }= [];
 
         [JsonPropertyName("airraids")]
-        public List<AirRaid> AirRaids { get; set; }
+        public List<AirRaid> AirRaids { get; set; }= [];
 
         [JsonPropertyName("enemies")]
-        public List<Enemy> Enemies { get; set; }
+        public List<Enemy> Enemies { get; set; }= [];
     }
 
 }

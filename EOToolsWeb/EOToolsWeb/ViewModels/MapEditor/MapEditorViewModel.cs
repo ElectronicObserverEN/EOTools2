@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Avalonia;
 using CommunityToolkit.Mvvm.Input;
@@ -175,8 +176,8 @@ public partial class MapEditorViewModel : ViewModelBase
                 await NodeDataManager.AddNode(new NodeModel()
                 {
                     Code = spot.No?.ToString() ?? "0",
-                    X = spot.X ?? 0,
-                    Y = spot.Y ?? 0,
+                    X = spot.X,
+                    Y = spot.Y,
                     Number = spot.No ?? 0,
                     MapId = CurrentMapId,
                     WorldId = CurrentWorldId,
@@ -226,6 +227,87 @@ public partial class MapEditorViewModel : ViewModelBase
 
         LoadMap(worldId, mapId, spriteSheet);
         LoadMapMainPath(worldId, mapId, spriteSheet);
+        
+        // Load other parts :
+        await LoadParts(worldId, mapId);
+    }
+
+    private async Task LoadParts(string worldId, string mapId)
+    {
+        if (string.IsNullOrEmpty(PathToMapFolder)) return;
+        if (string.IsNullOrEmpty(SelectedMap)) return;
+        
+        string[] files = Directory.GetFiles(PathToMapFolder);
+
+        Regex regex = new Regex($"{SelectedMap}_info([0-9]+).json");
+
+        List<string> infoJsonFiles = files.Where(path => regex.IsMatch(path)).ToList();
+
+        foreach (string infoJsonFile in infoJsonFiles)
+        {
+            await LoadOnePath(regex, infoJsonFile, worldId, mapId);
+        }
+    }
+
+    private async Task LoadOnePath(Regex regex, string infoJsonFile, string worldId, string mapId)
+    {
+        if (string.IsNullOrEmpty(PathToMapFolder)) return;
+
+        string key = regex.Match(infoJsonFile).Groups[1].Value;
+
+        string json = await File.ReadAllTextAsync(Path.Combine(PathToMapFolder, $"{SelectedMap}_info{key}.json"));
+
+        MapInfo? infos = JsonSerializer.Deserialize<MapInfo>(json);
+
+        if (infos is null) return;
+
+        json = await File.ReadAllTextAsync(Path.Combine(PathToMapFolder, $"{SelectedMap}_image{key}.json"));
+
+        SpriteSheetModel? spriteSheet = JsonSerializer.Deserialize<SpriteSheetModel>(json);
+
+        if (spriteSheet is null) return;
+
+        Bitmap image = new(Path.Combine(PathToMapFolder, $"{SelectedMap}_image{key}.png"));
+
+        PathDisplayViewModel vm = new();
+
+        // Add labels
+        foreach (Label label in infos.Labels)
+        {
+            FrameModel frame = spriteSheet.Frames[$"map0{worldId}0{mapId}_{label.Image}"];
+
+            Rect rect = new Rect(frame.FrameDefinitionModel.X, frame.FrameDefinitionModel.Y,
+                frame.FrameDefinitionModel.Width, frame.FrameDefinitionModel.Height);
+
+            CroppedBitmap crop = new CroppedBitmap(image, PixelRect.FromRect(rect, 1));
+
+            MapDisplayViewModel.MapImages.Add(new MapElementModel(crop, label.X, label.Y));
+        }
+
+        // Add nodes : 
+        foreach (Spot spot in infos.Spots)
+        {
+            CroppedBitmap? crop = GetAssetBitmap(NodeType.NotVisited);
+
+            if (crop is not null)
+            {
+                MapDisplayViewModel.MapImages.Add(new MapElementModel(crop, spot.X - (crop.Size.Width / 2),
+                    spot.Y - (crop.Size.Height / 2)));
+            }
+        }
+
+        // Add paths : 
+        foreach (Spot spot in infos.Spots.Where(s => s.Route?.Image is not null && s.Line is not null))
+        {
+            FrameModel frame = spriteSheet.Frames[$"map0{worldId}0{mapId}_{spot.Route?.Image}"];
+            
+            Rect rect = new Rect(frame.FrameDefinitionModel.X, frame.FrameDefinitionModel.Y,
+                frame.FrameDefinitionModel.Width, frame.FrameDefinitionModel.Height);
+
+            CroppedBitmap crop = new CroppedBitmap(image, PixelRect.FromRect(rect, 1));
+
+            MapDisplayViewModel.MapImages.Add(new MapElementModel(crop, spot.X + spot.Line!.X, spot.Y + spot.Line!.Y));
+        }
     }
 
     private void LoadMap(string worldId, string mapId, SpriteSheetModel spriteSheet)
@@ -292,12 +374,13 @@ public partial class MapEditorViewModel : ViewModelBase
         NodeType.Ambush => 17,
         NodeType.AirRaid => 46,
         NodeType.Anchor => 52,
-        NodeType.Empty => 52,
+        NodeType.Empty => 60,
         NodeType.BossBattle => 62,
         NodeType.Resource => 63,
         NodeType.Storm => 65,
         NodeType.Battle => 66,
-        _ => 60,
+        NodeType.NotVisited => 67,
+        _ => 67,
     };
     
     private async Task LoadWorldFolder()

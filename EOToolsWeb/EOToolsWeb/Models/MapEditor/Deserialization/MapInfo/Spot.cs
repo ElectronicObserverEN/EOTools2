@@ -7,13 +7,13 @@ namespace EOToolsWeb.Models.MapEditor.Deserialization.MapInfo{
         public int? No { get; set; }
 
         [JsonPropertyName("x")]
-        public int? X { get; set; }
+        public int X { get; set; }
 
         [JsonPropertyName("y")]
-        public int? Y { get; set; }
+        public int Y { get; set; }
 
         [JsonPropertyName("line")]
-        public Line Line { get; set; }
+        public Line? Line { get; set; }
 
         [JsonPropertyName("offsets")]
         public Offsets Offsets { get; set; }
@@ -26,6 +26,9 @@ namespace EOToolsWeb.Models.MapEditor.Deserialization.MapInfo{
 
         [JsonPropertyName("direction")]
         public string Direction { get; set; }
+        
+        [JsonPropertyName("route")]
+        public Route? Route { get; set; }
 
         [JsonPropertyName("comment")]
         public Comment Comment { get; set; }

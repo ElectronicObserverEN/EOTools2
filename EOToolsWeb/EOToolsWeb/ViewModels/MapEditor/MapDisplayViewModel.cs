@@ -14,6 +14,8 @@ namespace EOToolsWeb.ViewModels.MapEditor;
 public partial class MapDisplayViewModel : ObservableObject
 {
     public ObservableCollection<MapElementModel> MapImages { get; } = [];
+    
+    public ObservableCollection<PathDisplayViewModel> Paths { get; } = [];
 
     [ObservableProperty]
     public partial int ExportWidth { get; set; } = 1;
@@ -29,6 +31,10 @@ public partial class MapDisplayViewModel : ObservableObject
     
     public MemoryStream GetImageMerged()
     {
+        // image manipulation is hard for me :c
+        // some of this stuff is probably not very optimized, but it seems to be working ...
+        // We first build the image by combining all the layers, then crop it if needed, then scale it if needed
+            
         // https://github.com/AvaloniaUI/Avalonia/discussions/13772
         List<CroppedBitmap> images = GetImages();
 
@@ -81,13 +87,8 @@ public partial class MapDisplayViewModel : ObservableObject
     
     private List<CroppedBitmap> GetImages()
     {
-        return MapImages.Select(image =>
-        {
-            return image.Image switch
-            {
-                CroppedBitmap croppedBitmap => croppedBitmap,
-                _ => throw new NotSupportedException(),
-            };
-        }).ToList();
+        return [.. MapImages
+            .Select(part => part.Image)
+            .OfType<CroppedBitmap>(), ..Paths.SelectMany(path => path.GetImages())];
     }
 }

@@ -4,10 +4,10 @@ namespace EOToolsWeb.Models.MapEditor.Deserialization.MapInfo{
     public class Line
     {
         [JsonPropertyName("x")]
-        public int? X { get; set; }
+        public int X { get; set; }
 
         [JsonPropertyName("y")]
-        public int? Y { get; set; }
+        public int Y { get; set; }
     }
 
 }
