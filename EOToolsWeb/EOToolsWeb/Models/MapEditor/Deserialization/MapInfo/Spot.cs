@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text.Json.Serialization; 
 namespace EOToolsWeb.Models.MapEditor.Deserialization.MapInfo{ 
 
@@ -16,7 +17,7 @@ namespace EOToolsWeb.Models.MapEditor.Deserialization.MapInfo{
         public Line? Line { get; set; }
 
         [JsonPropertyName("offsets")]
-        public Offsets Offsets { get; set; }
+        public Dictionary<string, Point>? Offsets { get; set; }
 
         [JsonPropertyName("color")]
         public int? Color { get; set; }

@@ -11,5 +11,7 @@ public enum NodeType
     Resource,
     Storm,
     Battle,
+    Start1,
+    Start2,
     NotVisited
 }

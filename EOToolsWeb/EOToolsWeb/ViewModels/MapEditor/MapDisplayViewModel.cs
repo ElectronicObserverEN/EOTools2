@@ -85,7 +85,7 @@ public partial class MapDisplayViewModel : ObservableObject
         return memoryStream;
     }
     
-    private List<CroppedBitmap> GetImages()
+    public List<CroppedBitmap> GetImages()
     {
         return [.. MapImages
             .Select(part => part.Image)

@@ -18,6 +18,9 @@
 		<mapeditor:MapEditorViewModel />
 	</Design.DataContext>
 
+	<UserControl.Resources>
+		<x:Double x:Key="Zero">0.0</x:Double>
+	</UserControl.Resources>
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"></RowDefinition>
@@ -31,6 +34,7 @@
 			<Button Content="{Binding FolderButtonText}" Command="{Binding OpenFolderPickerCommand}"></Button>
 			<ComboBox ItemsSource="{Binding MapList}" SelectedItem="{Binding SelectedMap}"></ComboBox>
 			<Button Content="Export map" Command="{Binding ExportMapCommand}"></Button>
+			<CheckBox Content="Display all nodes" IsChecked="{Binding DisplayAll}"></CheckBox>
 		</StackPanel>
 		
 		<StackPanel Grid.Row="1" Orientation="Horizontal">
@@ -50,6 +54,12 @@
 			
 			<TextBlock Text="Type"></TextBlock>
 			<ComboBox ItemsSource="{Binding NodeTypes}" SelectedItem="{Binding SelectedNodeViewModel.NodeType}"></ComboBox>
+			
+			<TextBlock Text="X"></TextBlock>
+			<NumericUpDown Text="{Binding SelectedNodeViewModel.X, FallbackValue={StaticResource Zero}}"></NumericUpDown>
+			
+			<TextBlock Text="Y"></TextBlock>
+			<NumericUpDown Text="{Binding SelectedNodeViewModel.Y, FallbackValue={StaticResource Zero}}"></NumericUpDown>
 		</StackPanel>
 		
 		<StackPanel Grid.Row="3"  Orientation="Horizontal">

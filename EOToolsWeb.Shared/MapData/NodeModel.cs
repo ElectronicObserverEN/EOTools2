@@ -1,6 +1,6 @@
 ﻿namespace EOToolsWeb.Shared.MapData;
 
-public class NodeModel
+public record NodeModel
 {
     public int? Id { get; set; }
     

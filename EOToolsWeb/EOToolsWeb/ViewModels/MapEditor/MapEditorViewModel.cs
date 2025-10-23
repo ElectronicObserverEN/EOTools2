@@ -43,15 +43,17 @@ public partial class MapEditorViewModel : ViewModelBase
 
     [ObservableProperty] public partial string? SelectedAsset { get; set; }
 
+    [ObservableProperty] public partial bool DisplayAll { get; set; }
+    
     private IAvaloniaShowDialogService DialogService { get; }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(DisplayPreviousNodeCommand))]
     [NotifyCanExecuteChangedFor(nameof(DisplayNextNodeCommand))]
-    public partial NodeModel SelectedNodeModel { get; set; } = new NodeModel();
+    public partial NodeModel? SelectedNodeModel { get; set; } = new NodeModel();
     
-    public bool SelectedNodeIsNotFirstNode => NodeList.Count is not 0 && SelectedNodeModel.Number != NodeList.Min(node => node.Number);
-    public bool SelectedNodeIsNotLastNode => NodeList.Count is not 0 && SelectedNodeModel.Number != NodeList.Max(node => node.Number);
+    public bool SelectedNodeIsNotFirstNode => SelectedNodeModel is not null && NodeList.Count is not 0 && SelectedNodeModel.Number != NodeList.Min(node => node.Number);
+    public bool SelectedNodeIsNotLastNode => SelectedNodeModel is not null && NodeList.Count is not 0 && SelectedNodeModel.Number != NodeList.Max(node => node.Number);
 
     public NodeViewModel SelectedNodeViewModel { get; set; } = new(new());
     
@@ -74,19 +76,32 @@ public partial class MapEditorViewModel : ViewModelBase
 
         PropertyChanged += OnSelectedAssetChanged;
         PropertyChanged += OnSelectedNodeChanged;
+        PropertyChanged += OnDisplayAllChanged;
         
         SelectedNodeViewModel.PropertyChanged += OnSelectedNodeViewModelPropertyChanged;
     }
 
+    private async void OnDisplayAllChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is not nameof(DisplayAll)) return;
+        
+        await LoadMap();
+    }
+
     private async void OnSelectedNodeViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
+        if (e.PropertyName is not nameof(SelectedNodeViewModel.X) and not nameof(SelectedNodeViewModel.Y) and not nameof(SelectedNodeViewModel.NodeType)) return;
+        
+        if (SelectedNodeModel is null) return;
+        
         await LoadMap();
 
-        CroppedBitmap? crop = GetAssetBitmap(SelectedNodeViewModel.NodeType);
-
-        if (crop is null) return;
-
-        MapDisplayViewModel.MapImages.Add(new MapElementModel(crop, SelectedNodeViewModel.X - (crop.Size.Width / 2), SelectedNodeViewModel.Y - (crop.Size.Height / 2)));
+        AddNodeToMap(SelectedNodeModel with
+        {
+            NodeType = SelectedNodeViewModel.NodeType,
+            X = SelectedNodeViewModel.X,
+            Y = SelectedNodeViewModel.Y,
+        });
     }
 
     private async void OnSelectedNodeChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -116,12 +131,13 @@ public partial class MapEditorViewModel : ViewModelBase
 
     private void ClearMap()
     {
-        foreach (IDisposable croppedBitmap in MapDisplayViewModel.MapImages.Select(el => el.Image).OfType<IDisposable>())
+        foreach (IDisposable croppedBitmap in MapDisplayViewModel.GetImages())
         {
             croppedBitmap.Dispose();
         }
 
         MapDisplayViewModel.MapImages.Clear();
+        MapDisplayViewModel.Paths.Clear();
     }
 
     private void OnSelectedAssetChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -173,7 +189,7 @@ public partial class MapEditorViewModel : ViewModelBase
         {
             if (nodes.All(node => node.Number != spot.No))
             {
-                await NodeDataManager.AddNode(new NodeModel()
+                NodeModel newNode = new NodeModel()
                 {
                     Code = spot.No?.ToString() ?? "0",
                     X = spot.X,
@@ -181,10 +197,23 @@ public partial class MapEditorViewModel : ViewModelBase
                     Number = spot.No ?? 0,
                     MapId = CurrentMapId,
                     WorldId = CurrentWorldId,
-                });
+                };
+
+                if (spot.Offsets?.FirstOrDefault() is {} offset)
+                {
+                    newNode.X += offset.Value.X;
+                    newNode.Y += offset.Value.Y;
+                }
+                
+                await NodeDataManager.AddNode(newNode);
 
                 anyChange = true;
             }
+        }
+
+        foreach (string key in GetPaths())
+        {
+            anyChange = await LoadPathNodeData(key) || anyChange;
         }
 
         if (anyChange)
@@ -230,30 +259,42 @@ public partial class MapEditorViewModel : ViewModelBase
         
         // Load other parts :
         await LoadParts(worldId, mapId);
+
+        if (DisplayAll)
+        {
+            foreach (NodeModel node in NodeList)
+            {
+                AddNodeToMap(node);
+            }
+        }
     }
 
     private async Task LoadParts(string worldId, string mapId)
     {
-        if (string.IsNullOrEmpty(PathToMapFolder)) return;
-        if (string.IsNullOrEmpty(SelectedMap)) return;
+        foreach (string infoJsonFile in GetPaths())
+        {
+            await LoadOnePath(infoJsonFile, worldId, mapId);
+        }
+    }
+
+    private List<string> GetPaths()
+    {
+        if (string.IsNullOrEmpty(PathToMapFolder)) return [];
+        if (string.IsNullOrEmpty(SelectedMap)) return [];
         
         string[] files = Directory.GetFiles(PathToMapFolder);
 
         Regex regex = new Regex($"{SelectedMap}_info([0-9]+).json");
 
-        List<string> infoJsonFiles = files.Where(path => regex.IsMatch(path)).ToList();
-
-        foreach (string infoJsonFile in infoJsonFiles)
-        {
-            await LoadOnePath(regex, infoJsonFile, worldId, mapId);
-        }
+        return files
+            .Where(path => regex.IsMatch(path))
+            .Select(path => regex.Match(path).Groups[1].Value)
+            .ToList();
     }
 
-    private async Task LoadOnePath(Regex regex, string infoJsonFile, string worldId, string mapId)
+    private async Task LoadOnePath(string key, string worldId, string mapId)
     {
         if (string.IsNullOrEmpty(PathToMapFolder)) return;
-
-        string key = regex.Match(infoJsonFile).Groups[1].Value;
 
         string json = await File.ReadAllTextAsync(Path.Combine(PathToMapFolder, $"{SelectedMap}_info{key}.json"));
 
@@ -287,12 +328,34 @@ public partial class MapEditorViewModel : ViewModelBase
         // Add nodes : 
         foreach (Spot spot in infos.Spots)
         {
-            CroppedBitmap? crop = GetAssetBitmap(NodeType.NotVisited);
+            // Don't display current node
+            NodeModel? node = NodeList.FirstOrDefault(node => node.Number == spot.No);
 
-            if (crop is not null)
+            if (SelectedNodeModel != node)
             {
-                MapDisplayViewModel.MapImages.Add(new MapElementModel(crop, spot.X - (crop.Size.Width / 2),
-                    spot.Y - (crop.Size.Height / 2)));
+                if (node is null)
+                {
+                    node = new NodeModel()
+                    {
+                        Code = spot.No?.ToString() ?? "0",
+                        X = spot.X,
+                        Y = spot.Y,
+                        Number = spot.No ?? 0,
+                        MapId = CurrentMapId,
+                        WorldId = CurrentWorldId,
+                    };
+
+                    if (spot.Offsets?.FirstOrDefault() is {} offset)
+                    {
+                        node.X += offset.Value.X;
+                        node.Y += offset.Value.Y;
+                    }
+                }
+
+                if (!DisplayAll)
+                {
+                    AddNodeToMap(node with { NodeType = NodeType.NotVisited });
+                }
             }
         }
 
@@ -308,6 +371,70 @@ public partial class MapEditorViewModel : ViewModelBase
 
             MapDisplayViewModel.MapImages.Add(new MapElementModel(crop, spot.X + spot.Line!.X, spot.Y + spot.Line!.Y));
         }
+    }
+
+    private void AddNodeToMap(NodeModel node)
+    {
+        CroppedBitmap? crop = GetAssetBitmap(node.NodeType);
+
+        // if node is sub/air attack, apply a +8 offset on X
+        int offsetX = node.NodeType switch
+        {
+            NodeType.AirSubNode => 8,
+            _ => 0,
+        };
+            
+        if (crop is not null)
+        {
+            MapDisplayViewModel.MapImages.Add(new MapElementModel(crop, node.X - (crop.Size.Width / 2) + offsetX,
+                node.Y - (crop.Size.Height / 2)));
+        }
+    }
+
+    private async Task<bool> LoadPathNodeData(string pathKey)
+    {
+        if (string.IsNullOrEmpty(PathToMapFolder)) return false;
+
+        string json = await File.ReadAllTextAsync(Path.Combine(PathToMapFolder, $"{SelectedMap}_info{pathKey}.json"));
+
+        MapInfo? infos = JsonSerializer.Deserialize<MapInfo>(json);
+        
+        if (infos is null) return false;
+        
+        // Update Node Infos 
+        List<NodeModel>? nodes = await NodeDataManager.GetNodes(CurrentWorldId, CurrentMapId);
+        
+        if (nodes is null) return false;
+        
+        bool anyChange = false;
+
+        foreach (Spot spot in infos.Spots)
+        {
+            if (nodes.All(node => node.Number != spot.No))
+            {
+                NodeModel newNode = new NodeModel()
+                {
+                    Code = spot.No?.ToString() ?? "0",
+                    X = spot.X,
+                    Y = spot.Y,
+                    Number = spot.No ?? 0,
+                    MapId = CurrentMapId,
+                    WorldId = CurrentWorldId,
+                };
+                
+                if (spot.Offsets?.FirstOrDefault() is {} offset)
+                {
+                    newNode.X += offset.Value.X;
+                    newNode.Y += offset.Value.Y;
+                }
+                
+                await NodeDataManager.AddNode(newNode);
+
+                anyChange = true;
+            }
+        }
+
+        return anyChange;
     }
 
     private void LoadMap(string worldId, string mapId, SpriteSheetModel spriteSheet)
@@ -374,6 +501,8 @@ public partial class MapEditorViewModel : ViewModelBase
         NodeType.Ambush => 17,
         NodeType.AirRaid => 46,
         NodeType.Anchor => 52,
+        NodeType.Start1 => 58,
+        NodeType.Start2 => 59,
         NodeType.Empty => 60,
         NodeType.BossBattle => 62,
         NodeType.Resource => 63,
