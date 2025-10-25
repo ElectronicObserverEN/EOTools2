@@ -1,11 +1,9 @@
 ﻿using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using EOTools.Models;
 using EOToolsWeb.Api.Database;
 using EOToolsWeb.Api.Services.GitManager;
 using EOToolsWeb.Shared.Equipments;
-using EOToolsWeb.Shared.Quests;
 using EOToolsWeb.Shared.Translations;
 using Microsoft.EntityFrameworkCore;
 
@@ -144,7 +142,7 @@ public class UpdateEquipmentDataService(IGitManagerService git, EoToolsDbContext
     {
         EquipmentTranslationModel? tlFound = await Database.EquipmentTranslations
             .Include(tl => tl.Translations)
-            .FirstOrDefaultAsync(tl => tl.EquipmentId == eq.ApiId);
+            .FirstOrDefaultAsync(tl => tl.EquipmentId == eq.Id);
 
         if (tlFound is null)
         {
