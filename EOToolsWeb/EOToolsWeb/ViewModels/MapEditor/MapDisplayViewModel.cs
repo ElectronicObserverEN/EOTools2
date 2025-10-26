@@ -39,16 +39,17 @@ public partial class MapDisplayViewModel : ObservableObject
         // We first build the image by combining all the layers, then crop it if needed, then scale it if needed
             
         // https://github.com/AvaloniaUI/Avalonia/discussions/13772
-        List<CroppedBitmap> images = GetImages();
+        List<MapElementModel> images = GetElementsToDisplay();
 
         if (images.Count == 0) return new MemoryStream();
         
-        CroppedBitmap firstCroppedBitmap = images[0];
+        CroppedBitmap firstCroppedBitmap = (CroppedBitmap)MapImages[0].Image;
         using var skBitmapCrop = new SKBitmap(firstCroppedBitmap.SourceRect.Width, firstCroppedBitmap.SourceRect.Height);
         using var skCanvas = new SKCanvas(skBitmapCrop);
         
-        foreach (var croppedBitmap in images)
+        foreach (var element in images)
         {
+            var croppedBitmap = element.Image as CroppedBitmap;
             var image = croppedBitmap.Source as Bitmap;
             Stream xxStream = new MemoryStream();
             image.Save(xxStream);
@@ -56,7 +57,7 @@ public partial class MapDisplayViewModel : ObservableObject
             var skBitmapSource = SKBitmap.Decode(xxStream);
 
             var source = new SKRect(croppedBitmap.SourceRect.X, croppedBitmap.SourceRect.Y, croppedBitmap.SourceRect.Width+ croppedBitmap.SourceRect.X, croppedBitmap.SourceRect.Height+ croppedBitmap.SourceRect.Y);
-            var dest = new SKRect(0, 0, croppedBitmap.SourceRect.Width , croppedBitmap.SourceRect.Height);
+            var dest = new SKRect((float)element.X, (float)element.Y, croppedBitmap.SourceRect.Width + (float)element.X, croppedBitmap.SourceRect.Height + (float)element.Y);
 
             skCanvas.DrawBitmap(skBitmapSource, source, dest);
         }
