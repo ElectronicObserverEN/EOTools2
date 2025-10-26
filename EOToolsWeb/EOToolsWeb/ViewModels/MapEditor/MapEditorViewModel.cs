@@ -38,6 +38,7 @@ public partial class MapEditorViewModel : ViewModelBase
     [ObservableProperty] public partial List<string> MapList { get; set; } = [];
 
     [ObservableProperty] public partial string? SelectedMap { get; set; }
+    [ObservableProperty] public partial bool IsMapNotLoading { get; set; } = true;
 
     [ObservableProperty] public partial List<string> AssetList { get; set; } = [];
 
@@ -166,12 +167,28 @@ public partial class MapEditorViewModel : ViewModelBase
     private async void OnSelectedMapChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
         if (e.PropertyName != nameof(SelectedMap)) return;
+        
+        IsMapNotLoading = false;
+        
+        try
+        {
+            if (string.IsNullOrEmpty(PathToMapFolder)) return;
+            if (string.IsNullOrEmpty(SelectedMap)) return;
 
+            await LoadMap();
+
+            await UpdateNodesData();
+        }
+        finally
+        {
+            IsMapNotLoading = true;
+        }
+    }
+
+    private async Task UpdateNodesData()
+    {
         if (string.IsNullOrEmpty(PathToMapFolder)) return;
-        if (string.IsNullOrEmpty(SelectedMap)) return;
-
-        await LoadMap();
-
+        
         string json = await File.ReadAllTextAsync(Path.Combine(PathToMapFolder, $"{SelectedMap}_info.json"));
 
         MapInfo? infos = JsonSerializer.Deserialize<MapInfo>(json);
@@ -185,26 +202,27 @@ public partial class MapEditorViewModel : ViewModelBase
 
         bool anyChange = false;
 
+        // A spot is actually an edge, hence the spot No is actually the edge Id
         foreach (Spot spot in infos.Spots)
         {
-            if (nodes.All(node => node.Number != spot.No))
+            NodeModel newNode = new NodeModel()
             {
-                NodeModel newNode = new NodeModel()
-                {
-                    Code = spot.No?.ToString() ?? "0",
-                    X = spot.X,
-                    Y = spot.Y,
-                    Number = spot.No ?? 0,
-                    MapId = CurrentMapId,
-                    WorldId = CurrentWorldId,
-                };
+                Code = spot.No?.ToString() ?? "0",
+                X = spot.X,
+                Y = spot.Y,
+                Number = spot.No ?? 0,
+                MapId = CurrentMapId,
+                WorldId = CurrentWorldId,
+            };
 
-                if (spot.Offsets?.FirstOrDefault() is {} offset)
-                {
-                    newNode.X += offset.Value.X;
-                    newNode.Y += offset.Value.Y;
-                }
-                
+            if (spot.Offsets?.FirstOrDefault() is {} offset)
+            {
+                newNode.X += offset.Value.X;
+                newNode.Y += offset.Value.Y;
+            }
+            
+            if (nodes.All(node => node.X != newNode.X && node.Y != newNode.X))
+            {
                 await NodeDataManager.AddNode(newNode);
 
                 anyChange = true;
@@ -410,24 +428,24 @@ public partial class MapEditorViewModel : ViewModelBase
 
         foreach (Spot spot in infos.Spots)
         {
-            if (nodes.All(node => node.Number != spot.No))
+            NodeModel newNode = new NodeModel()
             {
-                NodeModel newNode = new NodeModel()
-                {
-                    Code = spot.No?.ToString() ?? "0",
-                    X = spot.X,
-                    Y = spot.Y,
-                    Number = spot.No ?? 0,
-                    MapId = CurrentMapId,
-                    WorldId = CurrentWorldId,
-                };
-                
-                if (spot.Offsets?.FirstOrDefault() is {} offset)
-                {
-                    newNode.X += offset.Value.X;
-                    newNode.Y += offset.Value.Y;
-                }
-                
+                Code = spot.No?.ToString() ?? "0",
+                X = spot.X,
+                Y = spot.Y,
+                Number = spot.No ?? 0,
+                MapId = CurrentMapId,
+                WorldId = CurrentWorldId,
+            };
+            
+            if (spot.Offsets?.FirstOrDefault() is {} offset)
+            {
+                newNode.X += offset.Value.X;
+                newNode.Y += offset.Value.Y;
+            }
+            
+            if (nodes.All(node => node.X != newNode.X && node.Y != newNode.X))
+            {
                 await NodeDataManager.AddNode(newNode);
 
                 anyChange = true;
@@ -548,31 +566,31 @@ public partial class MapEditorViewModel : ViewModelBase
 
         AssetList = spriteSheet.Frames.Keys.ToList();
     }
-    
+
     [RelayCommand(CanExecute = nameof(SelectedNodeIsNotFirstNode))]
     private void DisplayPreviousNode()
     {
         if (NodeList.Count is 0) return;
+        if (SelectedNodeModel is not { } selectedNode) return;
 
-        int nodeNo = SelectedNodeModel.Number - 1;
+        int nodeNo = NodeList.IndexOf(selectedNode);
 
-        if (NodeList.Find(node => node.Number == nodeNo) is { } nodeFound)
-        {
-            SelectedNodeModel = nodeFound;
-        }
+        if (nodeNo == -1) return;
+
+        SelectedNodeModel = NodeList[nodeNo - 1];
     }
 
     [RelayCommand(CanExecute = nameof(SelectedNodeIsNotLastNode))]
     private void DisplayNextNode()
     {
         if (NodeList.Count is 0) return;
+        if (SelectedNodeModel is not {} selectedNode) return;
         
-        int nodeNo = SelectedNodeModel.Number + 1;
+        int nodeNo = NodeList.IndexOf(selectedNode);
 
-        if (NodeList.Find(node => node.Number == nodeNo) is { } nodeFound)
-        {
-            SelectedNodeModel = nodeFound;
-        }
+        if (nodeNo == -1) return;
+
+        SelectedNodeModel = NodeList[nodeNo + 1];
     }
     
     [RelayCommand]
