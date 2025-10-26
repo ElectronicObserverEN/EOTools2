@@ -16,6 +16,7 @@ using CommunityToolkit.Mvvm.Input;
 using EOToolsWeb.Models.MapEditor;
 using EOToolsWeb.Models.MapEditor.Deserialization.MapInfo;
 using EOToolsWeb.Models.MapEditor.Deserialization.SpriteSheet;
+using EOToolsWeb.Models.MapEditor.Serialization;
 using EOToolsWeb.Services;
 using EOToolsWeb.Shared.MapData;
 using EOToolsWeb.Views.MapEditor;
@@ -47,6 +48,7 @@ public partial class MapEditorViewModel : ViewModelBase
     [ObservableProperty] public partial bool DisplayAll { get; set; }
     
     private IAvaloniaShowDialogService DialogService { get; }
+    private IAvaloniaClipboardService ClipboardService { get; }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(DisplayPreviousNodeCommand))]
@@ -64,13 +66,17 @@ public partial class MapEditorViewModel : ViewModelBase
     private int CurrentWorldId { get; set; }
     private int CurrentMapId { get; set; }
     
+    private int MapFrameWidth { get; set; }
+    private int MapFrameHeight { get; set; }
+    
     private NodeDataManager NodeDataManager { get; }
     
-    public MapEditorViewModel(IAvaloniaShowDialogService dialogService, NodeDataManager nodeManager, MapDisplayViewModel displayViewModel)
+    public MapEditorViewModel(IAvaloniaShowDialogService dialogService, NodeDataManager nodeManager, MapDisplayViewModel displayViewModel, IAvaloniaClipboardService clipboardService)
     {
         DialogService = dialogService;
         NodeDataManager = nodeManager;
         MapDisplayViewModel = displayViewModel;
+        ClipboardService = clipboardService;
 
         PropertyChanged += OnWorldPathChanged;
         PropertyChanged += OnSelectedMapChanged;
@@ -102,12 +108,14 @@ public partial class MapEditorViewModel : ViewModelBase
             NodeType = SelectedNodeViewModel.NodeType,
             X = SelectedNodeViewModel.X,
             Y = SelectedNodeViewModel.Y,
-        });
+        }, MapDisplayViewModel.MapImages);
     }
 
     private async void OnSelectedNodeChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
         if (e.PropertyName is not nameof(SelectedNodeModel)) return;
+        
+        SelectedNodeViewModel.PropertyChanged -= OnSelectedNodeViewModelPropertyChanged;
 
         SelectedNodeViewModel.SaveModel();
         
@@ -118,6 +126,19 @@ public partial class MapEditorViewModel : ViewModelBase
         
         SelectedNodeViewModel.Model = SelectedNodeModel;
         SelectedNodeViewModel.LoadFromModel();
+        
+        SelectedNodeViewModel.PropertyChanged += OnSelectedNodeViewModelPropertyChanged;
+        
+        await LoadMap();
+        
+        if (SelectedNodeModel is null) return;
+        
+        AddNodeToMap(SelectedNodeModel with
+        {
+            NodeType = SelectedNodeViewModel.NodeType,
+            X = SelectedNodeViewModel.X,
+            Y = SelectedNodeViewModel.Y,
+        }, MapDisplayViewModel.MapImages);
     }
 
     public override async Task OnViewClosing()
@@ -282,7 +303,7 @@ public partial class MapEditorViewModel : ViewModelBase
         {
             foreach (NodeModel node in NodeList)
             {
-                AddNodeToMap(node);
+                AddNodeToMap(node, MapDisplayViewModel.MapImages);
             }
         }
     }
@@ -340,7 +361,7 @@ public partial class MapEditorViewModel : ViewModelBase
 
             CroppedBitmap crop = new CroppedBitmap(image, PixelRect.FromRect(rect, 1));
 
-            MapDisplayViewModel.MapImages.Add(new MapElementModel(crop, label.X, label.Y));
+            vm.PathParts.Add(new MapElementModel(crop, label.X, label.Y));
         }
 
         // Add nodes : 
@@ -370,9 +391,9 @@ public partial class MapEditorViewModel : ViewModelBase
                     }
                 }
 
-                if (!DisplayAll)
+                if (!DisplayAll && node.NodeType is not NodeType.AirRaid)
                 {
-                    AddNodeToMap(node with { NodeType = NodeType.NotVisited });
+                    AddNodeToMap(node with { NodeType = NodeType.NotVisited }, vm.PathParts);
                 }
             }
         }
@@ -387,26 +408,33 @@ public partial class MapEditorViewModel : ViewModelBase
 
             CroppedBitmap crop = new CroppedBitmap(image, PixelRect.FromRect(rect, 1));
 
-            MapDisplayViewModel.MapImages.Add(new MapElementModel(crop, spot.X + spot.Line!.X, spot.Y + spot.Line!.Y));
+            vm.PathParts.Add(new MapElementModel(crop, spot.X + spot.Line!.X, spot.Y + spot.Line!.Y));
         }
+        
+        MapDisplayViewModel.Paths.Add(vm);
     }
 
-    private void AddNodeToMap(NodeModel node)
+    private void AddNodeToMap(NodeModel node, ObservableCollection<MapElementModel> collection)
     {
         CroppedBitmap? crop = GetAssetBitmap(node.NodeType);
 
         // if node is sub/air attack, apply a +8 offset on X
-        int offsetX = node.NodeType switch
+        int offsetX = GetNodeXOffset(node);
+            
+        if (crop is not null)
+        {
+            collection.Add(new MapElementModel(crop, node.X - (crop.Size.Width / 2) + offsetX,
+                node.Y - (crop.Size.Height / 2)));
+        }
+    }
+
+    private int GetNodeXOffset(NodeModel node)
+    {
+        return node.NodeType switch
         {
             NodeType.AirSubNode => 8,
             _ => 0,
         };
-            
-        if (crop is not null)
-        {
-            MapDisplayViewModel.MapImages.Add(new MapElementModel(crop, node.X - (crop.Size.Width / 2) + offsetX,
-                node.Y - (crop.Size.Height / 2)));
-        }
     }
 
     private async Task<bool> LoadPathNodeData(string pathKey)
@@ -470,6 +498,9 @@ public partial class MapEditorViewModel : ViewModelBase
 
         MapDisplayViewModel.MapImages.Add(new MapElementModel(crop, 0, 0));
 
+        MapFrameWidth = mapFrame.FrameDefinitionModel.Width;
+        MapFrameHeight = mapFrame.FrameDefinitionModel.Height;
+        
         MapDisplayViewModel.ExportHeight = mapFrame.FrameDefinitionModel.Height;
         MapDisplayViewModel.ExportWidth = mapFrame.FrameDefinitionModel.Width;
     }
@@ -604,7 +635,46 @@ public partial class MapEditorViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            // nothing, ignore
+            await HandleException(ex);
+        }
+    }
+    
+    [RelayCommand]
+    private async Task ExportMapData()
+    {
+        try
+        {
+            int GetNodeX(NodeModel node)
+            {
+                double x = node.X + GetNodeXOffset(node);
+                x -= MapDisplayViewModel.OffsetWidth;
+                x *= MapDisplayViewModel.ExportWidth / (double)MapFrameWidth;
+
+                return (int)x;
+            }
+            
+            int GetNodeY(NodeModel node)
+            {
+                double y = node.Y;
+                y -= MapDisplayViewModel.OffsetHeight;
+                y *= MapDisplayViewModel.ExportHeight / (double)MapFrameHeight;
+
+                return (int)y;
+            }
+            
+            Dictionary<string, ExportNodeDataModel> nodes = NodeList
+                .ToDictionary(node => node.Code, node => new ExportNodeDataModel()
+                {
+                    Type = 3,
+                    X = GetNodeX(node),
+                    Y = GetNodeY(node),
+                });
+            
+            await ClipboardService.CopyToClipboard(JsonSerializer.Serialize(nodes));
+        }
+        catch (Exception ex)
+        {
+            await HandleException(ex);
         }
     }
 }

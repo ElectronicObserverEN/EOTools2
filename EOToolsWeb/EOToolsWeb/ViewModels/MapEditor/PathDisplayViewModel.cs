@@ -13,6 +13,8 @@ namespace EOToolsWeb.ViewModels.MapEditor;
 
 public partial class PathDisplayViewModel : ObservableObject
 {
+    [ObservableProperty] public partial bool Shown { get; set; } = true;
+    
     public ObservableCollection<MapElementModel> PathParts { get; } = [];
 
     public List<CroppedBitmap> GetImages()

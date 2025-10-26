@@ -27,9 +27,54 @@ public class MapRenderComponent : Avalonia.Controls.Control
             var (oldValue, newValue) = change.GetOldAndNewValue<MapDisplayViewModel>();
             oldValue?.MapImages?.CollectionChanged -= OnImageCollectionChanged;
             newValue?.MapImages?.CollectionChanged += OnImageCollectionChanged;
+            
+            oldValue?.Paths?.CollectionChanged -= OnPathCollectionChanged;
+            newValue?.Paths?.CollectionChanged += OnPathCollectionChanged;
+            
+            oldValue?.PropertyChanged -= OnMapVisibleChanged;
+            newValue?.PropertyChanged += OnMapVisibleChanged;
+
+            foreach (PathDisplayViewModel vm in oldValue?.Paths ?? [])
+            {
+                vm.PropertyChanged -= OnPathShownChanged;
+            }
         }
         
         base.OnPropertyChanged(change);
+    }
+
+    private void OnMapVisibleChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is not nameof(ViewModel.DisplayMap)) return;
+        
+        InvalidateVisual();
+    }
+
+    private void OnPathCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (e.Action is NotifyCollectionChangedAction.Add)
+        {
+            foreach (PathDisplayViewModel vm in e.NewItems)
+            {
+                vm.PropertyChanged += OnPathShownChanged;
+            }
+        }
+        else if (e.Action is NotifyCollectionChangedAction.Remove)
+        {
+            foreach (PathDisplayViewModel vm in e.OldItems)
+            {
+                vm.PropertyChanged -= OnPathShownChanged;
+            }
+        }
+        
+        InvalidateVisual();
+    }
+
+    private void OnPathShownChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is not nameof(PathDisplayViewModel.Shown)) return;
+        
+        InvalidateVisual();
     }
 
     private void OnImageCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -42,13 +87,12 @@ public class MapRenderComponent : Avalonia.Controls.Control
         
         InvalidateVisual();
     }
-
-
+    
     public sealed override void Render(DrawingContext context)
     {
         bool first = true;
         
-        foreach (MapElementModel image in ViewModel.MapImages)
+        foreach (MapElementModel image in ViewModel.GetElementsToDisplay())
         {
             if (first)
             {

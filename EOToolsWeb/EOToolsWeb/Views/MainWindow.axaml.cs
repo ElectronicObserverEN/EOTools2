@@ -84,6 +84,8 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         ViewModel!.ShowDialogService!.ShowFolderPicker = DoShowFolderPickerAsync;
         ViewModel!.ShowDialogService!.SaveFileImplementation = SaveFile;
 
+        ViewModel!.ClipboardService!.CopyToClipboardImplementation = SetClipboard;
+
         if (LoginViewModel is null || MainViewModel is null)
         {
             Close();
@@ -295,6 +297,16 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         if (topLevel.Clipboard is null) return;
 
         interaction.SetOutput(await topLevel.Clipboard.GetTextAsync());
+    }
+    
+    private async Task SetClipboard(string text)
+    {
+        TopLevel? topLevel = GetTopLevel(this);
+
+        if (topLevel is null) return;
+        if (topLevel.Clipboard is null) return;
+
+        await topLevel.Clipboard.SetTextAsync(text);
     }
     
     /// <summary>

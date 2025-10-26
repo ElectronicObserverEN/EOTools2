@@ -28,12 +28,14 @@
 			<RowDefinition Height="Auto"></RowDefinition>
 			<RowDefinition Height="Auto"></RowDefinition>
 			<RowDefinition Height="Auto"></RowDefinition>
+			<RowDefinition Height="Auto"></RowDefinition>
 		</Grid.RowDefinitions>
 		
 		<StackPanel Grid.Row="0" Orientation="Horizontal">
 			<Button Content="{Binding FolderButtonText}" IsEnabled="{Binding IsMapNotLoading}" Command="{Binding OpenFolderPickerCommand}"></Button>
 			<ComboBox ItemsSource="{Binding MapList}" IsEnabled="{Binding IsMapNotLoading}" SelectedItem="{Binding SelectedMap}"></ComboBox>
 			<Button Content="Export map" Command="{Binding ExportMapCommand}" IsEnabled="{Binding IsMapNotLoading}"></Button>
+			<Button Content="Copy map data" Command="{Binding ExportMapDataCommand}" IsEnabled="{Binding IsMapNotLoading}"></Button>
 			<CheckBox Content="Display all nodes" IsChecked="{Binding DisplayAll}" IsEnabled="{Binding IsMapNotLoading}"></CheckBox>
 		</StackPanel>
 		
@@ -74,6 +76,29 @@
 			<NumericUpDown Value="{Binding MapDisplayViewModel.OffsetHeight}"></NumericUpDown>
 		</StackPanel>
 		
-		<mapEditor:MapRenderComponent Grid.Row="4" ViewModel="{Binding MapDisplayViewModel}"></mapEditor:MapRenderComponent>
+		<StackPanel Grid.Row="4" Orientation="Horizontal">
+			<CheckBox Content="Display map ?" IsChecked="{Binding MapDisplayViewModel.DisplayMap}"></CheckBox>
+			
+			<ListBox ItemsSource="{Binding MapDisplayViewModel.Paths}">
+				<ListBox.ItemsPanel>
+					<ItemsPanelTemplate>
+						<StackPanel Orientation="Horizontal" />
+					</ItemsPanelTemplate>
+				</ListBox.ItemsPanel>
+				
+				<ListBox.ItemTemplate>
+					<DataTemplate DataType="{x:Type mapeditor:PathDisplayViewModel}">
+						<CheckBox IsChecked="{Binding Shown}">
+							<CheckBox.Content>
+								<TextBlock><Run Text="todo : path names"></Run></TextBlock>
+							</CheckBox.Content>
+						</CheckBox>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+			
+		</StackPanel>
+		
+		<mapEditor:MapRenderComponent Grid.Row="5" ViewModel="{Binding MapDisplayViewModel}"></mapEditor:MapRenderComponent>
 	</Grid>
 </UserControl>

@@ -120,6 +120,7 @@ namespace EOToolsWeb
             collection.AddSingleton<HttpClient>();
 
             collection.AddScoped<IAvaloniaShowDialogService, ShowDialogService>();
+            collection.AddScoped<IAvaloniaClipboardService, ClipboardService>();
 
             collection.AddSingleton(_ => new JsonSerializerOptions()
             {

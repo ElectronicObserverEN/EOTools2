@@ -18,6 +18,9 @@ public partial class MapDisplayViewModel : ObservableObject
     public ObservableCollection<PathDisplayViewModel> Paths { get; } = [];
 
     [ObservableProperty]
+    public partial bool DisplayMap { get; set; } = true;
+
+    [ObservableProperty]
     public partial int ExportWidth { get; set; } = 1;
     
     [ObservableProperty]
@@ -90,5 +93,17 @@ public partial class MapDisplayViewModel : ObservableObject
         return [.. MapImages
             .Select(part => part.Image)
             .OfType<CroppedBitmap>(), ..Paths.SelectMany(path => path.GetImages())];
+    }
+    
+    public List<MapElementModel> GetElementsToDisplay()
+    {
+        if (DisplayMap)
+        {
+            return [.. MapImages.Select(part => part), ..Paths.Where(part => part.Shown).SelectMany(path => path.PathParts)];
+        }
+        else
+        {
+            return [..Paths.Where(part => part.Shown).SelectMany(path => path.PathParts)];
+        }
     }
 }

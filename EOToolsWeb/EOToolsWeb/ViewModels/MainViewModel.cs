@@ -68,6 +68,8 @@ public partial class MainViewModel : ViewModelBase
     public SettingsViewModel Settings { get; }
     
     public MapEditorViewModel MapEditor { get; }
+    
+    public IAvaloniaClipboardService ClipboardService { get; }
 
     private UsersManagerViewModel UsersManager { get; }
     private ICurrentSession CurrentSession { get; }
@@ -108,6 +110,9 @@ public partial class MainViewModel : ViewModelBase
         UsersManager = provider.GetRequiredService<UsersManagerViewModel>();
         CurrentSession = provider.GetRequiredService<ICurrentSession>();
         MapEditor = provider.GetRequiredService<MapEditorViewModel>();
+        
+        ClipboardService = provider.GetRequiredService<IAvaloniaClipboardService>();
+        
         ServiceProvider = provider;
 
         PropertyChanging += ViewModelChanging;
