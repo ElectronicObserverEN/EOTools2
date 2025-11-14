@@ -42,7 +42,8 @@
 				Grid.Column="1"
 				Maximum="100"
 				Minimum="1"
-				Text="{Binding Map}" />
+				ShowButtonSpinner="False"
+				Value="{Binding Map}" />
 
 			<TextBlock
 				Grid.Row="2"
@@ -54,7 +55,8 @@
 				Grid.Column="1"
 				Maximum="999"
 				Minimum="0"
-				Text="{Binding SortId}" />
+				ShowButtonSpinner="False"
+				Value="{Binding SortId}" />
 
 			<ComboBox
 				Grid.Row="3"
