@@ -13,6 +13,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Checkout
     - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker buildx build --platform linux/arm64 -t jebzou2/eotoolsapi:latest --push .
+
+    - name: Build and push Docker images
+    - uses: docker/build-push-action@v6.18.0
+      with:
+        platforms: linux/arm64 
