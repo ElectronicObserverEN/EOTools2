@@ -2,13 +2,15 @@ using EOToolsWeb.Api.Database;
 using EOToolsWeb.Api.Services;
 using EOToolsWeb.Api.Services.GitManager;
 using EOToolsWeb.Api.Services.UpdateData;
+using EOToolsWeb.Shared.Sessions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
+using NSwag;
+using NSwag.Generation.Processors.Security;
+using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using System.Text.Encodings.Web;
 using System.Text.Json;
-using EOToolsWeb.Shared.Sessions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,55 +20,28 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSwaggerGen(option =>
+builder.Services.AddOpenApiDocument(option =>
 {
-    option.AddSecurityDefinition("ApiAuthentication", new OpenApiSecurityScheme
+    option.AddSecurity("ApiAuthentication", new OpenApiSecurityScheme()
     {
-        In = ParameterLocation.Header,
+        In = OpenApiSecurityApiKeyLocation.Header,
         Description = "Username / Password",
         Name = "Authorization",
-        Type = SecuritySchemeType.Http,
+        Type = OpenApiSecuritySchemeType.Http,
         Scheme = "Basic",
     });
 
-    option.AddSecurityDefinition("TokenAuthentication", new OpenApiSecurityScheme
+    option.AddSecurity("TokenAuthentication", new OpenApiSecurityScheme
     {
-        In = ParameterLocation.Header,
+        In = OpenApiSecurityApiKeyLocation.Header,
         Description = "Token",
         Name = "X-TOKEN-EO-TOOLS-WEB-X",
-        Type = SecuritySchemeType.ApiKey,
+        Type = OpenApiSecuritySchemeType.ApiKey,
         Scheme = "",
     });
 
-    option.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "ApiAuthentication"
-                }
-            },
-            new string[]{}
-        }
-    });
-
-    option.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "TokenAuthentication"
-                }
-            },
-            new string[]{}
-        }
-    });
+    option.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("ApiAuthentication"));
+    option.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("TokenAuthentication"));
 });
 
 builder.Services.AddScoped<UsersService>();
@@ -120,10 +95,10 @@ await app.Services.GetRequiredService<IGitManagerService>().Initialize();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(config =>
+    app.UseOpenApi();
+    app.UseSwaggerUi(config =>
     {
-        config.EnablePersistAuthorization();
+        config.PersistAuthorization = true;
     });
 }
 
