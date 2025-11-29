@@ -11,4 +11,7 @@ public static class LanguageExtensions
         Language.Spanish => "es-ES",
         _ => "",
     };
+
+    public static List<Language> OtherLanguagesTyped => [Language.Korean, Language.SimplifiedChinese, Language.Spanish];
+    public static List<Language> AllLanguagesTyped => [.. OtherLanguagesTyped, Language.English];
 }

@@ -45,7 +45,7 @@ public class UpdateShipDataService(IGitManagerService git, EoToolsDbContext db, 
             .Include(nameof(ShipNameTranslationModel.Translations))
             .ToList();
 
-        foreach (Language lang in AllLanguagesTyped)
+        foreach (Language lang in LanguageExtensions.AllLanguagesTyped)
         {
             await UpdateOtherLanguage(lang, ships, suffixes);
         }

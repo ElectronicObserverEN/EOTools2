@@ -46,6 +46,10 @@
 									Command="{Binding ViewModel.EditTranslationCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=translations1:TranslationManagerView}}"
 									CommandParameter="{Binding}"
 									Content="Edit" />
+								<Button
+									Command="{Binding ViewModel.AutoTranslateCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=translations1:TranslationManagerView}}"
+									CommandParameter="{Binding}"
+									Content="Translate with AI" />
 							</StackPanel>
 						</DataTemplate>
 					</DataGridTemplateColumn.CellTemplate>

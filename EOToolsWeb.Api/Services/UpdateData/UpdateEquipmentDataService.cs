@@ -32,7 +32,7 @@ public class UpdateEquipmentDataService(IGitManagerService git, EoToolsDbContext
 
         await UpdateOtherLanguage(Language.English, tls);
 
-        foreach (Language lang in OtherLanguagesTyped)
+        foreach (Language lang in LanguageExtensions.OtherLanguagesTyped)
         {
             await UpdateOtherLanguage(lang, tls);
         }
@@ -124,7 +124,7 @@ public class UpdateEquipmentDataService(IGitManagerService git, EoToolsDbContext
         EquipmentTranslationModel tl = new()
         {
             EquipmentId = eq.ApiId,
-            Translations = AllLanguagesTyped
+            Translations = LanguageExtensions.AllLanguagesTyped
                 .Select(lang => new TranslationModel()
                 {
                     Language = lang,

@@ -1,0 +1,35 @@
+<Window
+	x:Class="EOToolsWeb.Views.ConfirmPromptWindow"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:viewModels="clr-namespace:EOToolsWeb.ViewModels"
+	Title="{Binding Title}"
+	d:DesignHeight="450"
+	d:DesignWidth="800"
+	x:DataType="viewModels:MessageViewModel"
+	SizeToContent="WidthAndHeight"
+	mc:Ignorable="d">
+	<Grid Margin="10" RowDefinitions="*,Auto" ColumnDefinitions="Auto,Auto">
+
+		<TextBlock Text="{Binding Message}"
+			Grid.Column="0"
+			Grid.ColumnSpan="2"
+			Grid.Row="0" />
+
+		<Button
+			Grid.Row="1"
+			Grid.Column="0"
+			HorizontalAlignment="Center"
+			Click="OnConfirmClick"
+			Content="Confirm" />
+
+		<Button
+			Grid.Row="1"
+			Grid.Column="1"
+			HorizontalAlignment="Center"
+			Click="OnCancelClick"
+			Content="Cancel" />
+	</Grid>
+</Window>

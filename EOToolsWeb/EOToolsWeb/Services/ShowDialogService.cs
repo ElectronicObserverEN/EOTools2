@@ -3,6 +3,7 @@ using EOToolsWeb.ViewModels;
 using System;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
+using CommunityToolkit.Mvvm.Input;
 
 namespace EOToolsWeb.Services
 {
@@ -40,5 +41,18 @@ namespace EOToolsWeb.Services
         public Func<object?, string, Task> SaveFileImplementation { private get; set; } = (_, _) => Task.CompletedTask; 
         
         public Task SaveFile(object? content, string extension) => SaveFileImplementation(content, extension);
+
+        public async Task<bool> ShowConfirmPrompt(string title, string message)
+        {
+            ConfirmPromptViewModel vm = new()
+            {
+                Title = title,
+                Message = message
+            };
+
+            return await ShowConfirmPromptImplementation(vm);
+        }
+
+        public Func<MessageViewModel, Task<bool>> ShowConfirmPromptImplementation { get; set; } = _ => Task.FromResult(false);
     }
 }

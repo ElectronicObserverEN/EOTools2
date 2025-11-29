@@ -24,6 +24,9 @@ public partial class SettingsViewModel(SettingsModel settings, JsonSerializerOpt
     [ObservableProperty]
     private string _eoApiKey = "";
 
+    [ObservableProperty]
+    public partial string DeepLApiKey { get; set; } = "";
+
     private string SettingsPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "EOTools", "Configuration.json");
 
     public Interaction<string?, IStorageFolder?> ShowFolderPicker { get; } = new();
@@ -43,6 +46,7 @@ public partial class SettingsViewModel(SettingsModel settings, JsonSerializerOpt
         Settings.KancolleEoApiFolder = settings.KancolleEoApiFolder;
         Settings.EoApiUrl = settings.EoApiUrl;
         Settings.EoApiKey = settings.EoApiKey;
+        Settings.DeepLApiKey = settings.DeepLApiKey;
 
         LoadFromModel();
     }
@@ -52,6 +56,7 @@ public partial class SettingsViewModel(SettingsModel settings, JsonSerializerOpt
         KancolleEoApiFolder = Settings.KancolleEoApiFolder;
         EoApiUrl = Settings.EoApiUrl;
         EoApiKey = Settings.EoApiKey;
+        DeepLApiKey = Settings.DeepLApiKey;
     }
 
     public override async Task OnViewClosing()
@@ -66,6 +71,7 @@ public partial class SettingsViewModel(SettingsModel settings, JsonSerializerOpt
         Settings.KancolleEoApiFolder = KancolleEoApiFolder;
         Settings.EoApiUrl = EoApiUrl;
         Settings.EoApiKey = EoApiKey;
+        Settings.DeepLApiKey = DeepLApiKey;
 
         await File.WriteAllTextAsync(SettingsPath, JsonSerializer.Serialize(Settings, jsonOptions));
     }

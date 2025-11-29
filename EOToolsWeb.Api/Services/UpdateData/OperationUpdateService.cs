@@ -35,7 +35,7 @@ public class OperationUpdateService(IGitManagerService git, EoToolsDbContext db,
 
         if (toSerialize is null) return;
 
-        foreach (Language lang in AllLanguagesTyped)
+        foreach (Language lang in LanguageExtensions.AllLanguagesTyped)
         {
             await UpdateOtherLanguage(lang);
         }

@@ -59,7 +59,7 @@ public class UpdateQuestDataService(IGitManagerService git, EoToolsDbContext db,
             .Where(tl => tl.Translations.Any(tlModel => tlModel.IsPendingChange))
             .ToListAsync();
 
-        foreach (Language lang in AllLanguagesTyped)
+        foreach (Language lang in LanguageExtensions.AllLanguagesTyped)
         {
             await UpdateOneLanguage(lang, questlist, titles, descriptions);
         }
@@ -194,7 +194,7 @@ public class UpdateQuestDataService(IGitManagerService git, EoToolsDbContext db,
         QuestTitleTranslationModel tl = new()
         {
             QuestId = quest.Id,
-            Translations = AllLanguagesTyped
+            Translations = LanguageExtensions.AllLanguagesTyped
                 .Select(lang => new TranslationModel()
                 {
                     Language = lang,
@@ -213,7 +213,7 @@ public class UpdateQuestDataService(IGitManagerService git, EoToolsDbContext db,
         QuestDescriptionTranslationModel tl = new()
         {
             QuestId = quest.Id,
-            Translations = AllLanguagesTyped
+            Translations = LanguageExtensions.AllLanguagesTyped
                 .Select(lang => new TranslationModel()
                 {
                     Language = lang,

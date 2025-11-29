@@ -15,6 +15,8 @@ using EOToolsWeb.Shared.Maps;
 using EOToolsWeb.Shared.Sessions;
 using EOToolsWeb.Shared.Ships;
 using ReactiveUI;
+using EOToolsWeb.Services.AutoTranslation;
+using EOToolsWeb.Services;
 
 namespace EOToolsWeb.ViewModels.Translations;
 
@@ -42,11 +44,14 @@ public partial class TranslationManagerViewModel : ViewModelBase
 
     public ICurrentSession Session { get; private set; }
 
-    public TranslationManagerViewModel(HttpClient httpClient, TranslationViewModelOld viewModelOld, ICurrentSession session)
+    private IAutoTranslationService AutoTranslationService { get; }
+
+    public TranslationManagerViewModel(HttpClient httpClient, TranslationViewModelOld viewModelOld, ICurrentSession session, IAutoTranslationService autoTranslation)
     {
         HttpClient = httpClient;
         TranslationViewModelOld = viewModelOld;
         Session = session;
+        AutoTranslationService = autoTranslation;
 
         PropertyChanged += AfterTranslationKindChanged;
         PropertyChanged += AfterLanguageChanged;
@@ -211,6 +216,44 @@ public partial class TranslationManagerViewModel : ViewModelBase
         try
         {
             await HttpClient.PutAsync($"{SelectedTranslationKind.GetApiRoute()}/pushTranslations", null);
+        }
+        catch (Exception ex)
+        {
+            await HandleException(ex);
+        }
+    }
+
+    [RelayCommand]
+    private async Task AutoTranslate(TranslationBaseModelRow vm)
+    {
+        if (ShowDialogService is null) return;
+
+        try
+        {
+            string source = vm.TranslationJapanese;
+            string destination = await AutoTranslationService.TranslateText(source, Language.Japanese, Language.English);
+
+            if (!await ShowDialogService.ShowConfirmPrompt("AI translation", $"Result : {destination}")) return;
+
+            foreach (Language lang in LanguageExtensions.AllLanguagesTyped)
+            {
+                if (vm.GetTranslation(lang) is { } translation)
+                { 
+                    translation.Translation = destination;
+                    translation.IsPendingChange = true;
+                }
+                else
+                {
+                    vm.Translations.Add(new TranslationModel
+                    {
+                        Language = lang,
+                        Translation = destination,
+                        IsPendingChange = true,
+                    });
+                }
+            }
+
+            HttpResponseMessage response = await HttpClient.PutAsJsonAsync(SelectedTranslationKind.GetApiRoute(), vm);
         }
         catch (Exception ex)
         {

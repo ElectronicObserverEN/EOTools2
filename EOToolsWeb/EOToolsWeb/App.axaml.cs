@@ -27,6 +27,7 @@ using EOToolsWeb.ViewModels.MapEditor;
 using EOToolsWeb.ViewModels.Quests;
 using EOToolsWeb.ViewModels.Seasons;
 using EOToolsWeb.ViewModels.Users;
+using EOToolsWeb.Services.AutoTranslation;
 
 namespace EOToolsWeb
 {
@@ -86,6 +87,7 @@ namespace EOToolsWeb
             collection.AddScoped<TranslationViewModelOld>();
             collection.AddScoped<ShipTranslationManager>();
             collection.AddScoped<MapTranslationManager>();
+            collection.AddSingleton<IAutoTranslationService, DeepLTranslationService>();
 
             // Fit bonus
             collection.AddScoped<FitBonusCheckerViewModel>();

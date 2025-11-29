@@ -80,6 +80,7 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         base.OnOpened(e);
 
         ViewModel!.ShowDialogService!.ShowDialog = DoShowDialog;
+        ViewModel!.ShowDialogService!.ShowConfirmPromptImplementation = DoShowConfirmPrompt;
         ViewModel!.ShowDialogService!.ShowWindow = DoShowWindow;
         ViewModel!.ShowDialogService!.ShowFolderPicker = DoShowFolderPickerAsync;
         ViewModel!.ShowDialogService!.SaveFileImplementation = SaveFile;
@@ -287,6 +288,14 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         message.DataContext = messageVm;
 
         await message.ShowDialog(this);
+    }
+
+    private async Task<bool> DoShowConfirmPrompt(MessageViewModel messageVm)
+    {
+        ConfirmPromptWindow message = new();
+        message.DataContext = messageVm;
+
+        return await message.ShowDialog<bool>(this);
     }
 
     private async Task ReadClipboard(IInteractionContext<object?, string?> interaction)
