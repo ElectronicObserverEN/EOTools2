@@ -9,8 +9,13 @@ namespace EOToolsWeb.Services.AutoTranslation;
 public class DeepLTranslationService(SettingsViewModel settings) : IAutoTranslationService
 {
     private SettingsViewModel SettingsViewModel { get; } = settings;
-
+    
     public async Task<string> TranslateText(string text, Language languageSource, Language languageDestination)
+    {
+        return await TranslateText(text, languageSource, languageDestination, null);
+    }
+
+    public async Task<string> TranslateText(string text, Language languageSource, Language languageDestination, string? context)
     {
         var authKey = SettingsViewModel.DeepLApiKey;
         var client = new DeepLClient(authKey);
@@ -22,12 +27,12 @@ public class DeepLTranslationService(SettingsViewModel settings) : IAutoTranslat
             options: new TextTranslateOptions()
             {
                 GlossaryId = "6c2a3a23-b619-4211-b331-afca1272bb36",
-                Context = "We are translating enemy fleet name for the game Kantai collection. The enemies are called Abyssals. Avoid using coma in the fleet name."
+                Context = context,
             });
 
         return translatedText.Text;
     }
-
+    
     private static string MapLanguage(Language language)
     {
         return language switch

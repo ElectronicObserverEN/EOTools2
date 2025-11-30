@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Reactive.Linq;
@@ -26,6 +27,7 @@ public partial class TranslationManagerViewModel : ViewModelBase
     public partial ObservableCollection<TranslationBaseModelRow> Translations { get; set; } = [];
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(AutoTranslateCommand))]
     public partial TranslationKind SelectedTranslationKind { get; set; }
 
     [ObservableProperty] 
@@ -33,6 +35,8 @@ public partial class TranslationManagerViewModel : ViewModelBase
 
     public TranslationKind[] TranslationKinds { get; } = Enum.GetValues<TranslationKind>();
     public Language[] Languages { get; } = Enum.GetValues<Language>();
+
+    public bool CanAutoTranslate => SelectedTranslationKind is TranslationKind.FleetName;
 
     [ObservableProperty]
     public partial TranslationBaseModelRow? SelectedRow { get; set; }
@@ -223,41 +227,60 @@ public partial class TranslationManagerViewModel : ViewModelBase
         }
     }
 
-    [RelayCommand]
-    private async Task AutoTranslate(TranslationBaseModelRow vm)
+    [RelayCommand(CanExecute = nameof(CanAutoTranslate))]
+    private async Task AutoTranslate()
     {
         if (ShowDialogService is null) return;
 
         try
         {
-            string source = vm.TranslationJapanese;
-            string destination = await AutoTranslationService.TranslateText(source, Language.Japanese, Language.English);
-
-            if (!await ShowDialogService.ShowConfirmPrompt("AI translation", $"Result : {destination}")) return;
-
-            foreach (Language lang in LanguageExtensions.AllLanguagesTyped)
+            List<TranslationBaseModelRow> translations = Translations
+                .Where(vm => vm.TranslationEnglish == vm.TranslationJapanese)
+                .Reverse()
+                .ToList();
+            
+            foreach (TranslationBaseModelRow vm in translations)
             {
-                if (vm.GetTranslation(lang) is { } translation)
-                { 
-                    translation.Translation = destination;
-                    translation.IsPendingChange = true;
-                }
-                else
-                {
-                    vm.Translations.Add(new TranslationModel
-                    {
-                        Language = lang,
-                        Translation = destination,
-                        IsPendingChange = true,
-                    });
-                }
-            }
+                bool shouldContinue = await AutoTranslateOne(vm);
 
-            HttpResponseMessage response = await HttpClient.PutAsJsonAsync(SelectedTranslationKind.GetApiRoute(), vm);
+                if (!shouldContinue) return;
+            }
         }
         catch (Exception ex)
         {
             await HandleException(ex);
         }
+    }
+
+    private async Task<bool> AutoTranslateOne(TranslationBaseModelRow vm)
+    {
+        if (ShowDialogService is null) return false;
+        
+        string source = vm.TranslationJapanese;
+        string destination = await AutoTranslationService.TranslateText(source, Language.Japanese, Language.English, "We are translating enemy fleet name for the game Kantai collection. The enemies are called Abyssals. Avoid using coma in the fleet name.");
+
+        if (!await ShowDialogService.ShowConfirmPrompt("AI translation", $"Result : {destination}")) return false;
+
+        foreach (Language lang in LanguageExtensions.AllLanguagesTyped)
+        {
+            if (vm.GetTranslation(lang) is { } translation)
+            { 
+                translation.Translation = destination;
+                translation.IsPendingChange = true;
+            }
+            else
+            {
+                vm.Translations.Add(new TranslationModel
+                {
+                    Language = lang,
+                    Translation = destination,
+                    IsPendingChange = true,
+                });
+            }
+        }
+
+        await HttpClient.PutAsJsonAsync(SelectedTranslationKind.GetApiRoute(), vm);
+        
+        return true;
     }
 }

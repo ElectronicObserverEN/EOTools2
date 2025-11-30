@@ -6,4 +6,5 @@ namespace EOToolsWeb.Services.AutoTranslation;
 public interface IAutoTranslationService
 {
     public Task<string> TranslateText(string text, Language languageSource, Language languageDestination);
+    public Task<string> TranslateText(string text, Language languageSource, Language languageDestination, string? context);
 }
