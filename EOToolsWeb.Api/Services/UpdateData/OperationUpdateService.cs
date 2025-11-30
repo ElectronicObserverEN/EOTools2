@@ -91,13 +91,25 @@ public class OperationUpdateService(IGitManagerService git, EoToolsDbContext db,
             TranslationModel? jp = model.Translations.FirstOrDefault(t => t.Language is Language.Japanese);
             TranslationModel? tl = model.Translations.FirstOrDefault(t => t.Language == language);
 
-            if (jp?.Translation is { } jpTranslation && !translationsFleets.ContainsKey(jpTranslation))
-            {
-                translationsFleets.Add(jpTranslation, tl?.Translation ?? "");
-            }
-        }
+            if (jp is not { } jpTranslation) continue;
+            if (tl is not { } langTranslation) continue;
 
+            if (!translationsFleets.ContainsKey(jpTranslation.Translation))
+            {
+                translationsFleets.Add(jpTranslation.Translation, tl.Translation);
+            }
+            else if (langTranslation.IsPendingChange)
+            {
+                translationsFleets[jpTranslation.Translation] = tl.Translation;
+            }
+                
+            langTranslation.IsPendingChange = false;
+            Database.Update(langTranslation);
+        }
+        
         await File.WriteAllTextAsync(operationFilePath, JsonSerializer.Serialize(toSerialize, SerializationOptions), Encoding.UTF8);
         await File.WriteAllTextAsync(updatePath, JsonSerializer.Serialize(updateJson, SerializationOptions), Encoding.UTF8);
+        
+        await Database.SaveChangesAsync();
     }
 }
