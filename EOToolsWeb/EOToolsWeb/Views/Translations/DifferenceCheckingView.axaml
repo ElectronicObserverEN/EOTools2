@@ -1,0 +1,27 @@
+<Window
+	x:Class="EOToolsWeb.Views.Translations.DifferenceCheckingView"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	WindowState="Maximized"
+	Title="Differences"
+	d:DesignHeight="450"
+	d:DesignWidth="800"
+	xmlns:translations="clr-namespace:EOToolsWeb.ViewModels.Translations.DifferenceChecking"
+	x:DataType="translations:DifferenceCheckingViewModel"
+	SizeToContent="WidthAndHeight"
+	mc:Ignorable="d">
+	<Grid RowDefinitions="Auto, *">
+		<DataGrid
+			ItemsSource="{Binding Differences}"
+			AutoGenerateColumns="False"
+			IsReadOnly="True"
+			Grid.Row="1">
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="DB Text" Binding="{Binding TextInDb}" />
+				<DataGridTextColumn Header="Github Text" Binding="{Binding TextInRepo}" />
+			</DataGrid.Columns>
+		</DataGrid>
+	</Grid>
+</Window>

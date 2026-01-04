@@ -27,7 +27,12 @@
 				IsVisible="{Binding Session.User.Kind, Converter={StaticResource IsAdminConverter}, FallbackValue={x:False}}" />
 			<Button
 				Command="{Binding AutoTranslateCommand}"
-				Content="Translate with AI" />
+				Content="Translate with AI"
+				IsVisible="{Binding Session.User.Kind, Converter={StaticResource IsAdminConverter}, FallbackValue={x:False}}" />
+			<Button
+				Command="{Binding OpenDifferenceCheckerCommand}"
+				Content="Check differences"
+				IsVisible="{Binding Session.User.Kind, Converter={StaticResource IsAdminConverter}, FallbackValue={x:False}}" />
 		</StackPanel>
 		<DataGrid
 			Grid.Row="1"

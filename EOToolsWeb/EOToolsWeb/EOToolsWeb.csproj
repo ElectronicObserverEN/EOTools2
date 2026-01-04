@@ -133,6 +133,9 @@
     <Compile Update="Views\Ships\ShipClassListView.axaml.cs">
       <DependentUpon>ShipClassListView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\Translations\DifferenceCheckingView.axaml.cs">
+      <DependentUpon>DifferenceCheckingView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Updates\UpdateManagerView.axaml.cs">
       <DependentUpon>UpdateManagerView.axaml</DependentUpon>
     </Compile>

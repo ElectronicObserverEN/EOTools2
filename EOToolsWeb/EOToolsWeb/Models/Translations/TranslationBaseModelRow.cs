@@ -10,7 +10,4 @@ public class TranslationBaseModelRow : TranslationBaseModel
     public string TranslationEnglish => GetTranslation(Language.English)?.Translation ?? "";
 
     public TranslationViewModel TranslationDestination { get; set; } = new();
-
-    public TranslationModel? GetTranslation(Language lang) => Translations
-        .FirstOrDefault(l => l.Language == lang && l.Translation != "");
 }
