@@ -13,6 +13,11 @@
 	SizeToContent="WidthAndHeight"
 	mc:Ignorable="d">
 	<Grid RowDefinitions="Auto, *">
+		<StackPanel Orientation="Horizontal">
+			<Button
+				Command="{Binding UpdateDatabaseWithGithubDataCommand}"
+				Content="Update db with Repo's translations" />
+		</StackPanel>
 		<DataGrid
 			ItemsSource="{Binding Differences}"
 			AutoGenerateColumns="False"

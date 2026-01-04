@@ -100,9 +100,7 @@ public partial class TranslationManagerViewModel : ViewModelBase
 
         Task.Run<Task>(async () =>
         {
-            HttpResponseMessage response = await HttpClient.PutAsJsonAsync($"{SelectedTranslationKind.GetApiRoute()}/updateTranslation", model);
-
-            response.EnsureSuccessStatusCode();
+            await UpdateOneTranslationOnServer(model);
         });
     }
 
@@ -140,6 +138,13 @@ public partial class TranslationManagerViewModel : ViewModelBase
     public async Task UpdateTranslationOnServer(TranslationBaseModel vm)
     {
         HttpResponseMessage response = await HttpClient.PutAsJsonAsync(SelectedTranslationKind.GetApiRoute(), vm);
+
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task UpdateOneTranslationOnServer(TranslationModel model)
+    {
+        HttpResponseMessage response = await HttpClient.PutAsJsonAsync($"{SelectedTranslationKind.GetApiRoute()}/updateTranslation", model);
 
         response.EnsureSuccessStatusCode();
     }
@@ -308,6 +313,8 @@ public partial class TranslationManagerViewModel : ViewModelBase
             {
                 DataContext = differenceChecker,
             });
+
+            await LoadTranslations();
         }
         catch (Exception ex)
         {

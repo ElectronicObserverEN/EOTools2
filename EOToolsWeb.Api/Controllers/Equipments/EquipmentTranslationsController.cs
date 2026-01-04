@@ -1,6 +1,7 @@
 using EOToolsWeb.Api.Database;
 using EOToolsWeb.Api.Services.UpdateData;
 using EOToolsWeb.Shared.Equipments;
+using EOToolsWeb.Shared.Ships;
 using EOToolsWeb.Shared.Translations;
 using EOToolsWeb.Shared.Users;
 using Microsoft.AspNetCore.Authorization;
@@ -21,6 +22,47 @@ public class EquipmentTranslationsController(EoToolsDbContext db, UpdateEquipmen
     public async Task<List<EquipmentTranslationModel>> Get()
     {
         return await UpdateEquipmentDataService.GetAllEquipmentTranslations();
+    }
+
+    [HttpPut]
+    [Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]
+    public async Task<IActionResult> Put(EquipmentTranslationModel newData)
+    {
+        EquipmentTranslationModel? savedData = Database.EquipmentTranslations
+            .Include(nameof(EquipmentTranslationModel.Translations))
+            .FirstOrDefault(tl => tl.Id == newData.Id);
+
+        if (savedData is null)
+        {
+            return NotFound();
+        }
+
+        foreach (TranslationModel newTranslation in newData.Translations)
+        {
+            TranslationModel? savedTranslation = savedData.Translations.Find(tl => tl.Language == newTranslation.Language);
+
+            if (savedTranslation is null)
+            {
+                savedTranslation = new()
+                {
+                    Translation = newTranslation.Translation,
+                    Language = newTranslation.Language,
+                    IsPendingChange = true,
+                };
+
+                savedData.Translations.Add(savedTranslation);
+                Database.Add(savedTranslation);
+            }
+            else
+            {
+                savedTranslation.Translation = newTranslation.Translation;
+            }
+        }
+
+        Database.EquipmentTranslations.Update(savedData);
+        await Database.SaveChangesAsync();
+
+        return Ok(savedData);
     }
 
     [HttpPut("updateTranslation")]
