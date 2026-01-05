@@ -1,6 +1,7 @@
 ﻿using EOToolsWeb.Shared.Translations;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
@@ -46,12 +47,19 @@ public class GithubTranslationFileProvider : ViewModelBase
 
         Dictionary<string, string> result = [];
 
+        List<string> duplicates = [];
+
         foreach (var node in jsonObject.AsObject())
         {
             if (node.Key == "version") continue;
 
-            result.Add(node.Key, node.Value[propertyName].ToString());
+            if (!result.TryAdd(node.Value[$"{propertyName}_jp"].ToString(), node.Value[propertyName].ToString()))
+            {
+                duplicates.Add($"{node.Value[$"{propertyName}_jp"].ToString()} / {node.Value[propertyName].ToString()}");
+            }
         }
+
+        await ShowDialogService.ShowMessage("", $"Duplicate entries : {string.Join("\n", duplicates)}");
 
         return result;
     }

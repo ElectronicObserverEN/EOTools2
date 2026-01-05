@@ -305,6 +305,7 @@ public partial class TranslationManagerViewModel : ViewModelBase
     {
         try
         {
+            GithubTranslationFileProvider.ShowDialogService = ShowDialogService;
             var differenceChecker = new DifferenceCheckingViewModel(this, GithubTranslationFileProvider);
 
             await differenceChecker.LoadDifferences();

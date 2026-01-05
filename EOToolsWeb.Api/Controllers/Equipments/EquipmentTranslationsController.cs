@@ -1,7 +1,6 @@
 using EOToolsWeb.Api.Database;
 using EOToolsWeb.Api.Services.UpdateData;
 using EOToolsWeb.Shared.Equipments;
-using EOToolsWeb.Shared.Ships;
 using EOToolsWeb.Shared.Translations;
 using EOToolsWeb.Shared.Users;
 using Microsoft.AspNetCore.Authorization;

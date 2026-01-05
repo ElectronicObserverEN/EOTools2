@@ -72,6 +72,47 @@ public class QuestTitleTranslationsController(EoToolsDbContext db, UpdateQuestDa
         return tls;
     }
 
+    [HttpPut]
+    [Authorize(AuthenticationSchemes = "TokenAuthentication", Roles = nameof(UserKind.Admin))]
+    public async Task<IActionResult> Put(QuestTitleTranslationModel newData)
+    {
+        QuestTitleTranslationModel? savedData = Database.QuestTitleTranslations
+            .Include(nameof(QuestTitleTranslationModel.Translations))
+            .FirstOrDefault(tl => tl.Id == newData.Id);
+
+        if (savedData is null)
+        {
+            return NotFound();
+        }
+
+        foreach (TranslationModel newTranslation in newData.Translations)
+        {
+            TranslationModel? savedTranslation = savedData.Translations.Find(tl => tl.Language == newTranslation.Language);
+
+            if (savedTranslation is null)
+            {
+                savedTranslation = new()
+                {
+                    Translation = newTranslation.Translation,
+                    Language = newTranslation.Language,
+                    IsPendingChange = true,
+                };
+
+                savedData.Translations.Add(savedTranslation);
+                Database.Add(savedTranslation);
+            }
+            else
+            {
+                savedTranslation.Translation = newTranslation.Translation;
+            }
+        }
+
+        Database.QuestTitleTranslations.Update(savedData);
+        await Database.SaveChangesAsync();
+
+        return Ok(savedData);
+    }
+
     [HttpPut("updateTranslation")]
     [Authorize(AuthenticationSchemes = "TokenAuthentication")]
     public async Task<IActionResult> Put(TranslationModel newData)

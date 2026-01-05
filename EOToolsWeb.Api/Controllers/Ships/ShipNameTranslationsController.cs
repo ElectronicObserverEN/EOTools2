@@ -1,6 +1,5 @@
 using EOToolsWeb.Api.Database;
 using EOToolsWeb.Api.Services.UpdateData;
-using EOToolsWeb.Shared.Maps;
 using EOToolsWeb.Shared.Ships;
 using EOToolsWeb.Shared.Translations;
 using EOToolsWeb.Shared.Users;
