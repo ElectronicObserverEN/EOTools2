@@ -22,6 +22,7 @@ public class UpdateQuestDataService(IGitManagerService git, EoToolsDbContext db,
     private string UpdateFilePath => Path.Combine(GitManager.FolderPath, "Translations", "en-US", "update.json");
     private string UpdateDataFilePath => Path.Combine(GitManager.FolderPath, "update.json");
     public string TrackersFilePath => Path.Combine(GitManager.FolderPath, "Data", "QuestTrackers.json");
+    public string TimeLimitedQuestFilePath => Path.Combine(GitManager.FolderPath, "Data", "TimeLimitedQuests.json");
     public string QuestsTranslationsFilePath => Path.Combine(GitManager.FolderPath, "Translations", "en-US", "quest.json");
 
     public async Task UpdateQuestTranslations()
@@ -64,6 +65,8 @@ public class UpdateQuestDataService(IGitManagerService git, EoToolsDbContext db,
             await UpdateOneLanguage(lang, questlist, titles, descriptions);
         }
 
+        await UpdateLimeLimitedQuestData(questlist);
+
         await DatabaseSyncService.StageDatabaseChangesToGit();
         
         await GitManager.Push($"Quests - {version}");
@@ -86,6 +89,42 @@ public class UpdateQuestDataService(IGitManagerService git, EoToolsDbContext db,
         if (update is null) return false;
 
         return !update.UpdateIsComing() || update.UpdateInProgress();
+    }
+
+    private bool IsTimeLimitedQuest(QuestModel quest)
+    {
+        if (quest.SeasonId is null) return false;
+
+        return true;
+    }
+
+    private async Task UpdateLimeLimitedQuestData(List<QuestModel> questlist)
+    {
+        List<TimeLimitedQuestData> timeLimitedQuestList = [];
+
+        foreach (QuestModel quest in questlist.Where(IsTimeLimitedQuest))
+        {
+            DateTime? endTime = null;
+
+            if (quest.RemovedOnUpdateId is not null)
+            {
+                UpdateModel? update = Database.Updates.Find(quest.RemovedOnUpdateId);
+
+                if (update?.UpdateDate is { } date && update.UpdateEndTime is { } end)
+                {
+                    endTime = date.Date.Add(end);
+                }
+            }
+
+            timeLimitedQuestList.Add(new TimeLimitedQuestData()
+            {
+                ApiId = quest.ApiId,
+                EndTime = endTime,
+                ProgressResetsDaily = quest.ProgressResetsDaily ?? false,
+            });
+        }
+
+        await File.WriteAllTextAsync(TimeLimitedQuestFilePath, JsonSerializer.Serialize(timeLimitedQuestList, SerializationOptions), Encoding.UTF8);
     }
 
     private async Task UpdateOneLanguage(Language language, List<QuestModel> questlist, List<QuestTitleTranslationModel> titles, List<QuestDescriptionTranslationModel> descriptions)
