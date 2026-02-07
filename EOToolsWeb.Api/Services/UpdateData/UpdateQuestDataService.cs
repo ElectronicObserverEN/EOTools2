@@ -130,7 +130,7 @@ public class UpdateQuestDataService(IGitManagerService git, EoToolsDbContext db,
 
         if (updateJson is null) return;
 
-        updateJson["TimeLimitedQuest"] = updateJson?["quest"] switch
+        updateJson["TimeLimitedQuest"] = updateJson?["TimeLimitedQuest"] switch
         {
             JsonNode node => node.GetValue<int>() + 1,
             _ => 1,
