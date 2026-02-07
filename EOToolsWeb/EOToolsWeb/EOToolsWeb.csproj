@@ -4,8 +4,8 @@
     <Nullable>enable</Nullable>
     <LangVersion>preview</LangVersion>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-    <AssemblyVersion>2.5.3</AssemblyVersion>
-    <FileVersion>2.5.3</FileVersion>
+    <AssemblyVersion>2.5.4</AssemblyVersion>
+    <FileVersion>2.5.4</FileVersion>
   </PropertyGroup>
   
   <ItemGroup>

@@ -14,28 +14,31 @@ namespace EOToolsWeb.ViewModels.Quests;
 public partial class QuestViewModel : ObservableObject
 {
     [ObservableProperty]
-    private string _code = "";
+    public partial string Code { get; set; }
 
     [ObservableProperty]
-    private string _nameJP = "";
+    public partial string NameJP { get; set; }
 
     [ObservableProperty]
-    private string _nameEN = "";
+    public partial string NameEN { get; set; }
 
     [ObservableProperty]
-    private string _descJP = "";
+    public partial string DescJP { get; set; }
 
     [ObservableProperty]
-    private string _descEN = "";
+    public partial string DescEN { get; set; }
 
     [ObservableProperty]
-    private string _tracker = "";
+    public partial string Tracker { get; set; }
 
     [ObservableProperty]
-    private int _apiId;
+    public partial int ApiId { get; set; }
 
     [ObservableProperty]
-    private int? _addedOnUpdateId;
+    public partial int? AddedOnUpdateId { get; set; }
+
+    [ObservableProperty]
+    public partial bool ProgressResetsDaily { get; set; }
 
     public string AddedOnUpdateDisplay => AddedOnUpdate?.Name ?? "Select an update";
 
@@ -135,6 +138,7 @@ public partial class QuestViewModel : ObservableObject
         AddedOnUpdateId = Model.AddedOnUpdateId;
 
         SeasonId = Model.SeasonId;
+        ProgressResetsDaily = Model.ProgressResetsDaily ?? false;
     }
 
     private void QuestViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -161,6 +165,7 @@ public partial class QuestViewModel : ObservableObject
         Model.RemovedOnUpdateId = RemovedOnUpdateId;
         Model.AddedOnUpdateId = AddedOnUpdateId;
         Model.SeasonId = SeasonId;
+        Model.ProgressResetsDaily = ProgressResetsDaily;
     }
 
     [RelayCommand]

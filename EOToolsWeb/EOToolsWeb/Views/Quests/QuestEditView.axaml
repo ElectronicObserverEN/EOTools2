@@ -39,6 +39,7 @@
 				<RowDefinition Height="*" />
 				<RowDefinition Height="*" />
 				<RowDefinition Height="*" />
+				<RowDefinition Height="*" />
 				<RowDefinition />
 			</Grid.RowDefinitions>
 
@@ -215,6 +216,18 @@
 				Margin="5"
 				Text="{Binding Tracker}"
 				TextWrapping="Wrap" />
+
+			<TextBlock
+				Grid.Row="10"
+				Grid.Column="0"
+				Margin="5"
+				Text="Resets daily ?" />
+			
+			<CheckBox
+				Grid.Row="10"
+				Grid.Column="1"
+				Margin="5"
+				IsChecked="{Binding ProgressResetsDaily}" />
 		</Grid>
 
 		<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">

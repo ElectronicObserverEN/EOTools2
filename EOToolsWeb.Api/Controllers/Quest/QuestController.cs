@@ -49,6 +49,7 @@ public class QuestController(EoToolsDbContext db, UpdateQuestDataService updateS
         savedQuest.Tracker = quest.Tracker;
 
         savedQuest.SeasonId = quest.SeasonId;
+        savedQuest.ProgressResetsDaily = quest.ProgressResetsDaily;
 
         Database.Quests.Update(savedQuest);
         await Database.SaveChangesAsync();

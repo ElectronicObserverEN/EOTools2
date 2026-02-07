@@ -43,7 +43,7 @@ public class UpdateQuestDataService(IGitManagerService git, EoToolsDbContext db,
         };
 
         updateJson["quest"] = version;
-        
+
         List<QuestModel> questlist = Database.Quests
             .AsEnumerable()
             .Where(quest => !HasQuestEnded(quest))
@@ -125,6 +125,18 @@ public class UpdateQuestDataService(IGitManagerService git, EoToolsDbContext db,
         }
 
         await File.WriteAllTextAsync(TimeLimitedQuestFilePath, JsonSerializer.Serialize(timeLimitedQuestList, SerializationOptions), Encoding.UTF8);
+
+        JsonObject? updateJson = JsonSerializer.Deserialize<JsonObject>(await File.ReadAllTextAsync(UpdateDataFilePath));
+
+        if (updateJson is null) return;
+
+        updateJson["TimeLimitedQuest"] = updateJson?["quest"] switch
+        {
+            JsonNode node => node.GetValue<int>() + 1,
+            _ => 1,
+        };
+
+        await File.WriteAllTextAsync(UpdateDataFilePath, JsonSerializer.Serialize(updateJson, SerializationOptions), Encoding.UTF8);
     }
 
     private async Task UpdateOneLanguage(Language language, List<QuestModel> questlist, List<QuestTitleTranslationModel> titles, List<QuestDescriptionTranslationModel> descriptions)
