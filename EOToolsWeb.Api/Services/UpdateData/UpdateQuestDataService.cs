@@ -104,7 +104,7 @@ public class UpdateQuestDataService(IGitManagerService git, EoToolsDbContext db,
             {
                 UpdateModel? update = Database.Updates.Find(quest.RemovedOnUpdateId);
 
-                if (update?.UpdateDate is { } date && update.UpdateEndTime is { } end)
+                if (update?.UpdateDate is { } date && update.UpdateStartTime is { } end)
                 {
                     endTime = date.Date.Add(end);
                 }
