@@ -138,7 +138,7 @@ public partial class QuestViewModel : ObservableObject
         AddedOnUpdateId = Model.AddedOnUpdateId;
 
         SeasonId = Model.SeasonId;
-        ProgressResetsDaily = Model.ProgressResetsDaily ?? false;
+        ProgressResetsDaily = Model.QuestProgressResetType is QuestProgressResetType.Daily;
     }
 
     private void QuestViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -165,7 +165,7 @@ public partial class QuestViewModel : ObservableObject
         Model.RemovedOnUpdateId = RemovedOnUpdateId;
         Model.AddedOnUpdateId = AddedOnUpdateId;
         Model.SeasonId = SeasonId;
-        Model.ProgressResetsDaily = ProgressResetsDaily;
+        Model.QuestProgressResetType = ProgressResetsDaily ? QuestProgressResetType.Daily : null;
     }
 
     [RelayCommand]

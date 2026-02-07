@@ -22,7 +22,7 @@ public class UpdateQuestDataService(IGitManagerService git, EoToolsDbContext db,
     private string UpdateFilePath => Path.Combine(GitManager.FolderPath, "Translations", "en-US", "update.json");
     private string UpdateDataFilePath => Path.Combine(GitManager.FolderPath, "update.json");
     public string TrackersFilePath => Path.Combine(GitManager.FolderPath, "Data", "QuestTrackers.json");
-    public string TimeLimitedQuestFilePath => Path.Combine(GitManager.FolderPath, "Data", "TimeLimitedQuests.json");
+    public string TimeLimitedQuestFilePath => Path.Combine(GitManager.FolderPath, "Data", "QuestsMetadata.json");
     public string QuestsTranslationsFilePath => Path.Combine(GitManager.FolderPath, "Translations", "en-US", "quest.json");
 
     public async Task UpdateQuestTranslations()
@@ -65,7 +65,7 @@ public class UpdateQuestDataService(IGitManagerService git, EoToolsDbContext db,
             await UpdateOneLanguage(lang, questlist, titles, descriptions);
         }
 
-        await UpdateLimeLimitedQuestData(questlist);
+        await UpdateQuestMetadata(questlist);
 
         await DatabaseSyncService.StageDatabaseChangesToGit();
         
@@ -91,18 +91,12 @@ public class UpdateQuestDataService(IGitManagerService git, EoToolsDbContext db,
         return !update.UpdateIsComing() || update.UpdateInProgress();
     }
 
-    private bool IsTimeLimitedQuest(QuestModel quest)
+
+    private async Task UpdateQuestMetadata(List<QuestModel> questlist)
     {
-        if (quest.SeasonId is null) return false;
+        List<QuestMetadata> timeLimitedQuestList = [];
 
-        return true;
-    }
-
-    private async Task UpdateLimeLimitedQuestData(List<QuestModel> questlist)
-    {
-        List<TimeLimitedQuestData> timeLimitedQuestList = [];
-
-        foreach (QuestModel quest in questlist.Where(IsTimeLimitedQuest))
+        foreach (QuestModel quest in questlist.Where(quest => quest.RemovedOnUpdateId is not null || quest.QuestProgressResetType is not null))
         {
             DateTime? endTime = null;
 
@@ -116,11 +110,11 @@ public class UpdateQuestDataService(IGitManagerService git, EoToolsDbContext db,
                 }
             }
 
-            timeLimitedQuestList.Add(new TimeLimitedQuestData()
+            timeLimitedQuestList.Add(new QuestMetadata()
             {
                 ApiId = quest.ApiId,
                 EndTime = endTime,
-                ProgressResetsDaily = quest.ProgressResetsDaily ?? false,
+                QuestProgressResetType = quest.QuestProgressResetType,
             });
         }
 
@@ -130,7 +124,7 @@ public class UpdateQuestDataService(IGitManagerService git, EoToolsDbContext db,
 
         if (updateJson is null) return;
 
-        updateJson["TimeLimitedQuests"] = updateJson?["TimeLimitedQuests"] switch
+        updateJson["QuestsMetadata"] = updateJson?["QuestsMetadata"] switch
         {
             JsonNode node => node.GetValue<int>() + 1,
             _ => 1,

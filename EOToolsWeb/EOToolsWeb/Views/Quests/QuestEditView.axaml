@@ -221,7 +221,8 @@
 				Grid.Row="10"
 				Grid.Column="0"
 				Margin="5"
-				Text="Resets daily ?" />
+				Text="Resets daily ?"
+				/>
 			
 			<CheckBox
 				Grid.Row="10"

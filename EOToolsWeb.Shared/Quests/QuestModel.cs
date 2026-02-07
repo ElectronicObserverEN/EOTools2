@@ -45,7 +45,7 @@ namespace EOToolsWeb.Shared.Quests
         [JsonPropertyName("tracker")]
         public string Tracker { get; set; } = "";
 
-        [JsonPropertyName("progressResetsDaily")]
-        public bool? ProgressResetsDaily { get; set; }
+        [JsonPropertyName("progressResetType")]
+        public QuestProgressResetType? QuestProgressResetType { get; set; }
     }
 }
