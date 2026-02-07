@@ -17,6 +17,7 @@ public class UpdateAndDataController() : ControllerBase
         "Locks.json",
         "Quests.json",
         "QuestTrackers.json",
+        "TimeLimitedQuests.json",
         "Seasons.json",
         "ShipClass.json",
         "Ships.json",
