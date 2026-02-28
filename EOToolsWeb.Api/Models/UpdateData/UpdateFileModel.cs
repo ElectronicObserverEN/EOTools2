@@ -54,4 +54,7 @@ public record UpdateFileModel
 
     [JsonPropertyName("MaintEventState")]
     public int MaintEventState { get; set; }
+
+    [JsonPropertyName("QuestsMetadata")]
+    public int QuestsMetadata { get; set; }
 }
