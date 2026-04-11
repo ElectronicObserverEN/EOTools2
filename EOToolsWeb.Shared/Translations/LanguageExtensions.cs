@@ -8,10 +8,11 @@ public static class LanguageExtensions
         Language.English => "en-US",
         Language.Korean => "ko-KR",
         Language.SimplifiedChinese => "zh-CN",
+        Language.TraditionalChinese => "zh-TW",
         Language.Spanish => "es-ES",
         _ => "",
     };
 
-    public static List<Language> OtherLanguagesTyped => [Language.Korean, Language.SimplifiedChinese, Language.Spanish];
+    public static List<Language> OtherLanguagesTyped => [Language.Korean, Language.SimplifiedChinese, Language.TraditionalChinese, Language.Spanish];
     public static List<Language> AllLanguagesTyped => [.. OtherLanguagesTyped, Language.English];
 }

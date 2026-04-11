@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using EOToolsWeb.Models.Translations.DifferenceChecking;
 using EOToolsWeb.Shared.Translations;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace EOToolsWeb.ViewModels.Translations.DifferenceChecking;
@@ -28,7 +29,6 @@ public partial class DifferenceCheckingViewModel : ViewModelBase
         // Load the Json depending on the tl kind : 
         Dictionary<string, string> translations = await GithubTranslationFileProvider.GetTranslations(TranslationManager.SelectedTranslationKind, TranslationManager.SelectedLanguage);
 
-        // NOTE : this doesn't check for translations that are on github but not in db
         foreach (var translation in TranslationManager.Translations)
         {
             string key = translation.TranslationJapanese;
@@ -45,6 +45,25 @@ public partial class DifferenceCheckingViewModel : ViewModelBase
                         Model = translation,
                         TextInDb = dbTranslation.Translation,
                         TextInRepo = githubTranslation
+                    });
+                }
+            }
+        }
+
+        // Check missing tl in db
+        foreach (var translation in translations)
+        {
+            TranslationBaseModel? dbTranslation = TranslationManager.Translations.FirstOrDefault(tl => tl.TranslationJapanese == translation.Key);
+
+            if (dbTranslation is not null)
+            {
+                if (dbTranslation.GetTranslation(TranslationManager.SelectedLanguage) is null)
+                {
+                    newList.Add(new TranslationDifferencesModel
+                    {
+                        Model = dbTranslation,
+                        TextInDb = string.Empty,
+                        TextInRepo = translation.Value
                     });
                 }
             }

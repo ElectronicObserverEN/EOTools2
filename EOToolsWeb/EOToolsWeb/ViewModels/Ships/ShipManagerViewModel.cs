@@ -244,7 +244,7 @@ public partial class ShipManagerViewModel : ViewModelBase
             {
                 model.Translations.Add(new TranslationModel()
                 {
-                    Language = Language.Spanish,
+                    Language = Language.TraditionalChinese,
                     Translation = nameTl,
                 });
 

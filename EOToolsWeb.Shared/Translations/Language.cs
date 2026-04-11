@@ -7,4 +7,5 @@ public enum Language
     Korean,
     SimplifiedChinese,
     Spanish,
+    TraditionalChinese,
 }

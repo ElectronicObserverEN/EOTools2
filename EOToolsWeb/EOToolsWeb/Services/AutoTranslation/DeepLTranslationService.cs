@@ -38,7 +38,8 @@ public class DeepLTranslationService(SettingsViewModel settings) : IAutoTranslat
         return language switch
         {
             Language.English => LanguageCode.EnglishBritish,
-            Language.SimplifiedChinese => LanguageCode.Chinese,
+            Language.SimplifiedChinese => LanguageCode.Chinese + "-CN",
+            Language.TraditionalChinese => LanguageCode.Chinese + "-TW",
             Language.Korean => LanguageCode.Korean,
             Language.Spanish => LanguageCode.Spanish,
             Language.Japanese => LanguageCode.Japanese,
